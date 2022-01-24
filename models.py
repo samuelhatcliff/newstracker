@@ -1,3 +1,4 @@
+from imaplib import _CommandResults
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 
@@ -30,6 +31,7 @@ class User(db.Model):
     last_name = db.Column(db.String(30),
                      nullable=False)
     saved_stories = db.relationship('Story', secondary='saved_stories', backref= 'users')
+    comments = db.relationship('Comments', backref= 'user')
 
     
     @classmethod
@@ -57,9 +59,20 @@ class Story(db.Model):
     id = db.Column(db.Integer,
     primary_key=True,
     autoincrement=True)
-    headline = db.Column(db.text, nullable=False)
-    publisher = db.Column(db.text, nullable=False)
-    author = db.Column(db.text)
+
+    """information taken from newsapi request"""
+    headline = db.Column(db.String, nullable=False)
+    source = db.Column(db.String, nullable=False)
+    content= db.Column(db.String, nullable=False)
+    author = db.Column(db.String)
+    description = db.Column(db.String)
+    url = db.Column(db.Text)
+    image = db.Column(db.Text)
+    published_at = db.Column(db.Text)
+
+    """information related to its interaction with app"""
+    comments = db.relationship('Comments', backref= 'story')
+    views = db.Column(db.Integer)
 
 
 
@@ -71,3 +84,17 @@ class SavedStory(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = False)
     story_id = db.Column(db.Integer, db.ForeignKey('stories.id'), nullable = False)
+
+class Comment(db.Model):
+    __tablename__ = "comments"
+    id = db.Column(db.Integer,
+    primary_key=True,
+    autoincrement=True)
+
+    parent_comment = db.Column(db.Integer, db.ForeignKey('comments.id'))
+    user = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = False)
+    story = db.Column(db.Integer, db.ForeignKey('stories.id'), nullable = False)
+    votes = db.Column(db.Integer)
+    content = db.Column(db.Text)
+    date = db.Column(db.DateTime)
+

@@ -1,5 +1,8 @@
 from flask import Flask, request, render_template, flash, redirect, render_template, jsonify, session
 import psycopg2
+import datetime as dt
+from newsapi import NewsApiClient
+# from key import api_key
 from flask_debugtoolbar import DebugToolbarExtension 
 from models import connect_db, db, User, Story, SavedStory
 from flask_bcrypt import Bcrypt
@@ -18,8 +21,30 @@ app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 debug = DebugToolbarExtension(app)
 
 
-connect_db(app)
-db.create_all()
+# connect_db(app)
+
+newsapi= NewsApiClient(api_key='b4f52eb738354e648912261c010632e7')
+
+data = newsapi.get_everything(q="trump")
+articles = data['articles']
+def get_stories():
+    for article in articles:
+        headline = article['title']
+        source = article["source"]["name"]
+        content =article['content']
+        author =article['author']
+        description = article['description']
+        url = article['url']
+        image = article['urlToImage']
+        published_at = dt.datetime.strptime(article['publishedAt'],"%Y-%m-%dT%H:%M:%SZ").date()
+        story = Story(headline=headline, source=source, content=content,
+        author=author, description=description, url=url, image=image,
+        published_at= published_at)
+        db.session.add(story)
+        db.session.commit()
+
+
+
 
 @app.route('/')
 def home_page():
