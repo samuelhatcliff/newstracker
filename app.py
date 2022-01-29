@@ -4,16 +4,17 @@ import datetime as dt
 from newsapi import NewsApiClient
 # from key import api_key
 from flask_debugtoolbar import DebugToolbarExtension 
-from models import connect_db, db, User, Story, SavedStory
+from models import connect_db, db, User, Story, Comment, SavedStory
 from flask_bcrypt import Bcrypt
 from forms import RegisterForm, LoginForm
+import requests
 
 bcrypt = Bcrypt()
 
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///newstracker'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///nt'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 app.config['SECRET_KEY'] = "topsecret1"
@@ -21,17 +22,29 @@ app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 debug = DebugToolbarExtension(app)
 
 
-# connect_db(app)
 
+
+
+# def getHeadlines():
+#     key = 'b4f52eb738354e648912261c010632e7'
+
+
+connect_db(app)
+# db.drop_all()
+db.create_all()
 newsapi= NewsApiClient(api_key='b4f52eb738354e648912261c010632e7')
 
-data = newsapi.get_everything(q="trump")
-articles = data['articles']
-def get_stories():
+def get_headlines():
+    data = newsapi.get_top_headlines(language="en")
+    articles = data['articles']
     for article in articles:
         headline = article['title']
         source = article["source"]["name"]
-        content =article['content']
+        if type(article["content"]) == 'NoneType':
+            content = "Click the following link to view story."
+        else:
+            content=article['content']
+        
         author =article['author']
         description = article['description']
         url = article['url']

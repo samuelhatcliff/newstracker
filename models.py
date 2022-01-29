@@ -1,6 +1,8 @@
-from imaplib import _CommandResults
+# from imaplib import _CommandResults
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
+from datetime import datetime
+
 
 db = SQLAlchemy()
 
@@ -17,21 +19,21 @@ def connect_db(app):
 class User(db.Model):
     
     __tablename__ = "users"
-    id = db.Column(db.Integer,
-                   primary_key=True,
-                   autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(20),
-                     nullable=False)
+                     nullable=False, 
+                     unique=True)
     password = db.Column(db.Text,
                      nullable=False)
     email = db.Column(db.String(50),
-                     nullable=False)
+                     nullable=False, 
+                     unique=True)
     first_name = db.Column(db.String(30),
                      nullable=False)
     last_name = db.Column(db.String(30),
                      nullable=False)
     saved_stories = db.relationship('Story', secondary='saved_stories', backref= 'users')
-    comments = db.relationship('Comments', backref= 'user')
+    comments = db.relationship('Comment', backref= 'user')
 
     
     @classmethod
@@ -44,7 +46,7 @@ class User(db.Model):
         db.session.add(new_user)
         return new_user
     
-    
+
     @classmethod
     def authenticate(cls, username, pwd):
         u = User.query.filter_by(username=username).first()
@@ -54,25 +56,32 @@ class User(db.Model):
         else:
             return False
 
+    def __repr__(self):
+        return f"<ID: {self.id}, Username:{self.username}"
+
+
+
 class Story(db.Model):
     __tablename__ = "stories"
-    id = db.Column(db.Integer,
-    primary_key=True,
-    autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
     """information taken from newsapi request"""
     headline = db.Column(db.String, nullable=False)
     source = db.Column(db.String, nullable=False)
-    content= db.Column(db.String, nullable=False)
+    content= db.Column(db.String)
     author = db.Column(db.String)
     description = db.Column(db.String)
     url = db.Column(db.Text)
     image = db.Column(db.Text)
-    published_at = db.Column(db.Text)
+    published_at = db.Column(db.DateTime)
+
 
     """information related to its interaction with app"""
-    comments = db.relationship('Comments', backref= 'story')
+    comments = db.relationship('Comment', backref= 'story')
     views = db.Column(db.Integer)
+
+    def __repr__(self):
+        return f"<ID: {self.id}, H:{self.headline}, S:{self.source}>"
 
 
 
@@ -85,6 +94,9 @@ class SavedStory(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = False)
     story_id = db.Column(db.Integer, db.ForeignKey('stories.id'), nullable = False)
 
+    def __repr__(self):
+        return f"<ID: {self.id}, User ID#:{self.user_id}, Story ID#:{self.story_id}>"
+
 class Comment(db.Model):
     __tablename__ = "comments"
     id = db.Column(db.Integer,
@@ -92,9 +104,13 @@ class Comment(db.Model):
     autoincrement=True)
 
     parent_comment = db.Column(db.Integer, db.ForeignKey('comments.id'))
-    user = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = False)
-    story = db.Column(db.Integer, db.ForeignKey('stories.id'), nullable = False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = False)
+    story_id = db.Column(db.Integer, db.ForeignKey('stories.id'), nullable = False)
     votes = db.Column(db.Integer)
-    content = db.Column(db.Text)
+    content = db.Column(db.Text, nullable = False)
     date = db.Column(db.DateTime)
+
+
+    def __repr__(self):
+        return f"<ID: {self.id}, User ID#:{self.user_id}, Story ID#:{self.story_id}, Date: {self.date} Parent ID#:{self.parent_comment}>"
 
