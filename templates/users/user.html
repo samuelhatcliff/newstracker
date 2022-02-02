@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+{% for story in user.saved_stories%}
+
+<ul>
+    <li> <a href="{{story.url}}"> {{story.headline}}</a></li>
+    <li>{{story.content}}</li>
+    <li>{{story.published_at}}</li>
+    <span><a href="show_story/{{story.id}}">Show Full Story</a></span>
+    <hr>
+    <form action='/story/{{story.id}}/delete_story' , method="DELETE">
+        <input type="submit" value="Remove Story">
+        </form>
+</ul>
+{%endfor%}
+{% endblock %}

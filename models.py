@@ -33,6 +33,7 @@ class User(db.Model):
     last_name = db.Column(db.String(30),
                      nullable=False)
     saved_stories = db.relationship('Story', secondary='saved_stories', backref= 'users')
+    history = db.relationship('Story', secondary='user_history', backref= "viewed_by")
     comments = db.relationship('Comment', backref= 'user')
 
     
@@ -57,7 +58,7 @@ class User(db.Model):
             return False
 
     def __repr__(self):
-        return f"<ID: {self.id}, Username:{self.username}"
+        return f"<ID: {self.id}, Username:{self.username}>"
 
 
 
@@ -80,6 +81,8 @@ class Story(db.Model):
     comments = db.relationship('Comment', backref= 'story')
     views = db.Column(db.Integer)
 
+   
+
     def __repr__(self):
         return f"<ID: {self.id}, H:{self.headline}, S:{self.source}>"
 
@@ -93,6 +96,20 @@ class SavedStory(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = False)
     story_id = db.Column(db.Integer, db.ForeignKey('stories.id'), nullable = False)
+    notes = db.Column(db.Text)
+
+    def __repr__(self):
+        return f"<ID: {self.id}, User ID#:{self.user_id}, Story ID#:{self.story_id}>"
+
+class UserHistory(db.Model):
+    __tablename__ = "user_history"
+    id = db.Column(db.Integer,
+    primary_key=True,
+    autoincrement=True)
+
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = False)
+    story_id = db.Column(db.Integer, db.ForeignKey('stories.id'), nullable = False)
+    #add date viewed
 
     def __repr__(self):
         return f"<ID: {self.id}, User ID#:{self.user_id}, Story ID#:{self.story_id}>"

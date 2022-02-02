@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+{% for story in headlines%}
+<ul>
+    
+    <li> <a href="story/{{story.id}}/open"> {{story.headline}}</a></li>
+    <li>{{story.content}}</li>
+    <li>{{story.published_at}}</li>
+    <span><a href="show_story/{{story.id}}">Show Full Story</a></span>
+    
+    <form action='/story/{{story.id}}/save_story', method="POST">
+        <input type="submit" value="Save Story">
+        </form>
+</ul>
+<hr>
+{%endfor%}
+{% endblock %}
+
+
