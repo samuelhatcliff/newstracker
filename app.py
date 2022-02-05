@@ -9,8 +9,18 @@ from forms import RegisterForm, LoginForm
 import requests
 from dateutil import parser
 
-# from bs4 import BeautifulSoup
+#libraries for parsing and sentiment analysis
+from bs4 import BeautifulSoup
+from newspaper import Article
 from sqlalchemy.exc import IntegrityError
+import nltk
+nltk.download('stopwords')
+nltk.download('punkt')
+from nltk.corpus import stopwords
+import spacy
+nlp = spacy.load('en_core_web_sm', disable=["parser", "ner"])
+import re
+
 
 CURR_USER_KEY = "curr_user"
 
@@ -92,6 +102,61 @@ def get_top_headlines():
 
     return top_headlines
 
+
+
+def scrap(headlines):
+    headline = headlines[16]
+    article = Article(headline.url)
+    article.download()
+    article.parse()
+    print(headline.headline)
+
+    print("Below is article.text")
+    print(article.text)
+
+    
+    #tokenization and remove punctuations
+    words = set([str(token) for token in nlp(article.text) if not token.is_punct])
+    print("Below is length upon tokenization")
+    print(len(words))
+    # remove digits and other symbols except "@"--used to remove email
+    words = list(words)
+    words = [re.sub(r"[^A-Za-z@]", "", word) for word in words]
+     #remove special characters
+    words = [re.sub(r'\W+', '', word) for word in words]
+    #remove websites and email addresses 
+    words = [re.sub(r'\S+@\S+', "", word) for word in words]
+    #remove empty spaces 
+    words = [word for word in words if word!=""]
+    
+    print("Below is length before stopwords")
+    print(len(words))
+    #import other lists of stopwords
+    stop_words = set(stopwords.words('english'))
+    words = [w for w in words if not w.lower() in stop_words]
+
+    print("Below is length after stopwords filtered")
+    print(len(words))
+
+    words = [token.lemma_ for token in nlp(str(words)) if not token.is_punct]
+    print("Below is length after Lemmatization")
+    #this doesn't appear to be doing anything
+    print(len(words))
+
+    vowels = ['a','e','i','o','u']
+    words = [word for word in words if any(v in word for v in vowels)]
+    print("Below is length after words with no vowels removed")
+    print(len(words))  
+    
+    #eliminate duplicate words by turning list into a set
+    words_set = set(words)
+    print("Below is length after converted to set")
+    print(len(words_set))  
+    return words_set
+
+
+    # sources: https://towardsdatascience.com/a-step-by-step-tutorial-for-conducting-sentiment-analysis-a7190a444366
+    #https://datascience.stackexchange.com/questions/39960/remove-special-character-in-a-list-or-string
 def order_stories(stories):
     ordered = sorted(stories, key = lambda story : story.published_at, reverse=True )
     return ordered
