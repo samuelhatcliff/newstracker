@@ -17,6 +17,9 @@ import nltk
 nltk.download('stopwords')
 nltk.download('punkt')
 from nltk.corpus import stopwords
+from nltk.sentiment.vader import SentimentIntensityAnalyzer as SIA
+sia = SIA()
+
 import spacy
 nlp = spacy.load('en_core_web_sm', disable=["parser", "ner"])
 import re
@@ -105,17 +108,51 @@ def get_top_headlines():
 
 
 def scrap(headlines):
-    headline = headlines[16]
+    headline = headlines[11]
     article = Article(headline.url)
     article.download()
     article.parse()
     print(headline.headline)
+    headline = headline.headline
+    
+    sentenced = nltk.tokenize.sent_tokenize(article.text)
+    print(sentenced)
+    coms = []
+    pos = []
+    negs = []
+    neus = []
+    
+    for sentence in sentenced:
+        res = sia.polarity_scores(sentence)
 
-    print("Below is article.text")
-    print(article.text)
+        pos.append(res["pos"])
+        negs.append(res["neg"])
+        neus.append(res["neu"])
+        if res['compound']:
+            coms.append(res['compound'])
 
     
-    #tokenization and remove punctuations
+
+    avg_com = sum(coms) / len(coms)
+    avg_pos = sum(pos) / len(pos)
+    avg_neu = sum(neus) / len(neus)
+    avg_neg = sum(negs) / len(negs)
+
+    
+
+
+    
+    print(f"Average sentiment of each sentence in article: compound {avg_com}")
+    # print(f"Average sentiment of each sentence in article: pos {avg_pos}")
+    # print(f"Average sentiment of each sentence in article: neu {avg_neu}")
+    # print(f"Average sentiment of each sentence in article: neg {avg_neg}")
+
+    print(f"sentence was rated as , {avg_neg *100}, % Negative")
+    print(f"sentence was rated as , {avg_neu *100}, % Neutral")
+    print(f"sentence was rated as , {avg_pos *100}, % Positive")
+
+
+    #tokenization from spacy and remove punctuations, convert to set to remove duplicates
     words = set([str(token) for token in nlp(article.text) if not token.is_punct])
     print("Below is length upon tokenization")
     print(len(words))
@@ -131,16 +168,16 @@ def scrap(headlines):
     
     print("Below is length before stopwords")
     print(len(words))
-    #import other lists of stopwords
+    #import lists of stopwords from NLTK
     stop_words = set(stopwords.words('english'))
     words = [w for w in words if not w.lower() in stop_words]
 
     print("Below is length after stopwords filtered")
     print(len(words))
 
+    # lemmization from spacy. doesn't appear to be doing anything
     words = [token.lemma_ for token in nlp(str(words)) if not token.is_punct]
     print("Below is length after Lemmatization")
-    #this doesn't appear to be doing anything
     print(len(words))
 
     vowels = ['a','e','i','o','u']
@@ -152,7 +189,38 @@ def scrap(headlines):
     words_set = set(words)
     print("Below is length after converted to set")
     print(len(words_set))  
-    return words_set
+    sentiment_dict = sia.polarity_scores(headline)
+    print("Overall sentiment dictionary from headline is : ", sentiment_dict)
+    print("sentence was rated as ", sentiment_dict['neg']*100, "% Negative")
+    print("sentence was rated as ", sentiment_dict['neu']*100, "% Neutral")
+    print("sentence was rated as ", sentiment_dict['pos']*100, "% Positive")
+    if sentiment_dict['compound'] >= 0.2 :
+        print("Positive")
+ 
+    elif sentiment_dict['compound'] <= - 0.2 :
+        print("Negative")
+ 
+    else :
+        print("Neutral")
+
+    print("Overall sentiment dictionary is from raw article text")
+
+    raw = sia.polarity_scores(article.text)
+    print("Overall sentiment dictionary from headline is : ", raw)
+    print("sentence was rated as ", raw['neg']*100, "% Negative")
+    print("sentence was rated as ", raw['neu']*100, "% Neutral")
+    print("sentence was rated as ", raw['pos']*100, "% Positive")
+    if raw['compound'] >= 0.2 :
+        print("Positive")
+ 
+    elif raw['compound'] <= - 0.2 :
+        print("Negative")
+ 
+    else :
+        print("Neutral")
+  
+
+    return raw
 
 
     # sources: https://towardsdatascience.com/a-step-by-step-tutorial-for-conducting-sentiment-analysis-a7190a444366
