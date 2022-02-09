@@ -12,6 +12,8 @@ import requests
 from dateutil import parser
 from newsapi import NewsApiClient
 
+
+
 from flask_debugtoolbar import DebugToolbarExtension 
 from flask_bcrypt import Bcrypt
 
