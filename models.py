@@ -62,11 +62,9 @@ class User(db.Model):
             return False
 
 
-    # @classmethod
-    # def query(cls, keywords, search_by, source, language, quantity, date, rankings):
 
-    # def __repr__(self):
-    #     return f"<ID: {self.id}, Username:{self.username}>"
+    def __repr__(self):
+        return f"<ID: {self.id}, Username:{self.username}>"
 
 
 
