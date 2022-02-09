@@ -1,11 +1,12 @@
 from flask import Flask, request, render_template, flash, redirect, render_template, jsonify, session, g
+from langcodes import Language
 import psycopg2
 import datetime as dt
 from newsapi import NewsApiClient
 from flask_debugtoolbar import DebugToolbarExtension 
 from models import connect_db, db, User, Story, Note, SavedStory
 from flask_bcrypt import Bcrypt
-from forms import RegisterForm, LoginForm
+from forms import RegisterForm, LoginForm, SearchForm
 import requests
 from dateutil import parser
 
@@ -106,6 +107,10 @@ def get_top_headlines():
 
     return top_headlines
 
+def get_search_results(query):
+    results = []
+    return results
+    
 """Sentiment Analysis Functions"""
 
 def parse(headline):
@@ -170,7 +175,7 @@ def subjectize(headline):
         sub_obj['measure'] = "Moderately Objective"
     elif subjectivity > .40:
         sub_obj['measure'] = "Neutral"
-    elif subjectivity > .20]
+    elif subjectivity > .20:
         sub_obj['measure'] = "Moderately Subjective"
     else:
         sub_obj['measure'] = "Very Subjective"
@@ -265,11 +270,55 @@ def order_stories_recent(stories):
 """View functions for application"""
 
 
-@app.route('/')
+@app.route('/', methods= ['GET', 'POST'])
 def home_page():
-    top = get_top_headlines()
-    headlines = order_stories_recent(top)
+    if session['query']:
+        results = session['query']
+    else:
+        results = get_top_headlines()
+    
+    headlines = order_stories_recent(results)
     return render_template('/home.html', headlines=headlines)
+
+
+"""Search Query Functions"""
+@app.route('/user/search/submit', methods = ["POST"])
+def search_params():
+    form = SearchForm()
+    if form.validate_on_submit():
+        try:
+        #     if form.data.default == True: (ADD TO USER TABLE IN DATABASE)
+            
+            keyword = form.keyword.data
+            source = form.source.data
+            quantity = form.quantity.data
+            search_by = form.search_by.data
+            date_from = form.date_from.data
+            date_to = form.date_to.data
+            language = form.language.data
+            sort_by = form.sort_by.data
+            default = form.defualt.data
+            #check to see if this is a string of true or false, or the boolean type values
+            dict = {}
+            dict['keyword'] = keyword
+            dict['source'] = source
+            dict['quantity'] = quantity
+            dict['date_from'] = date_from
+            dict['date_to'] = date_to
+            dict['search_by'] = search_by
+            dict['language'] = language
+            dict['sort_by'] = sort_by
+            dict['default'] = default
+            # if default == True:
+            #     User.default_search = dict
+            #     db.session.commit()
+            results = get_search_results()
+            session['query'] = results
+            return redirect('/')
+
+        except IntegrityError:
+            flash("hmmmm. do this appear, or messages from form validators?", 'danger')
+            return render_template('register.html', form=form)
 
 @app.route('/show_story/<int:story_id>')
 def show_story(story_id):
