@@ -14,6 +14,7 @@ def connect_db(app):
 
     db.app = app
     db.init_app(app)
+
     
 
 class User(db.Model):
@@ -34,7 +35,10 @@ class User(db.Model):
                      nullable=False)
     saved_stories = db.relationship('Story', secondary='saved_stories', backref= 'users')
     history = db.relationship('Story', secondary='user_history', backref= "viewed_by")
-    comments = db.relationship('Comment', backref= 'user')
+    notes = db.relationship('Note', backref= 'user') 
+
+    default_search = None
+    # user to get headlines on home page
 
     
     @classmethod
@@ -57,8 +61,12 @@ class User(db.Model):
         else:
             return False
 
-    def __repr__(self):
-        return f"<ID: {self.id}, Username:{self.username}>"
+
+    # @classmethod
+    # def query(cls, keywords, search_by, source, language, quantity, date, rankings):
+
+    # def __repr__(self):
+    #     return f"<ID: {self.id}, Username:{self.username}>"
 
 
 
@@ -78,7 +86,7 @@ class Story(db.Model):
 
 
     """information related to its interaction with app"""
-    comments = db.relationship('Comment', backref= 'story')
+    notes = db.relationship('Note', backref= 'story')
     views = db.Column(db.Integer)
 
    
@@ -114,16 +122,16 @@ class UserHistory(db.Model):
     def __repr__(self):
         return f"<ID: {self.id}, User ID#:{self.user_id}, Story ID#:{self.story_id}>"
 
-class Comment(db.Model):
-    __tablename__ = "comments"
+class Note(db.Model):
+    #originally used as comments
+    __tablename__ = "notes"
     id = db.Column(db.Integer,
     primary_key=True,
     autoincrement=True)
 
-    parent_comment = db.Column(db.Integer, db.ForeignKey('comments.id'))
+    parent_note = db.Column(db.Integer, db.ForeignKey('notes.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = False)
     story_id = db.Column(db.Integer, db.ForeignKey('stories.id'), nullable = False)
-    votes = db.Column(db.Integer)
     content = db.Column(db.Text, nullable = False)
     date = db.Column(db.DateTime)
 

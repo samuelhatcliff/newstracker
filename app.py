@@ -3,7 +3,7 @@ import psycopg2
 import datetime as dt
 from newsapi import NewsApiClient
 from flask_debugtoolbar import DebugToolbarExtension 
-from models import connect_db, db, User, Story, Comment, SavedStory
+from models import connect_db, db, User, Story, Note, SavedStory
 from flask_bcrypt import Bcrypt
 from forms import RegisterForm, LoginForm
 import requests
@@ -19,6 +19,7 @@ nltk.download('punkt')
 from nltk.corpus import stopwords
 from nltk.sentiment.vader import SentimentIntensityAnalyzer as SIA
 sia = SIA()
+from textblob import TextBlob
 
 import spacy
 nlp = spacy.load('en_core_web_sm', disable=["parser", "ner"])
@@ -105,55 +106,19 @@ def get_top_headlines():
 
     return top_headlines
 
+"""Sentiment Analysis Functions"""
 
-
-def scrap(headlines):
-    headline = headlines[11]
+def parse(headline):
     article = Article(headline.url)
     article.download()
     article.parse()
-    print(headline.headline)
-    headline = headline.headline
-    
-    sentenced = nltk.tokenize.sent_tokenize(article.text)
-    print(sentenced)
-    coms = []
-    pos = []
-    negs = []
-    neus = []
-    
-    for sentence in sentenced:
-        res = sia.polarity_scores(sentence)
+    parsed = article.text
+    return parsed
 
-        pos.append(res["pos"])
-        negs.append(res["neg"])
-        neus.append(res["neu"])
-        if res['compound']:
-            coms.append(res['compound'])
-
-    
-
-    avg_com = sum(coms) / len(coms)
-    avg_pos = sum(pos) / len(pos)
-    avg_neu = sum(neus) / len(neus)
-    avg_neg = sum(negs) / len(negs)
-
-    
-
-
-    
-    print(f"Average sentiment of each sentence in article: compound {avg_com}")
-    # print(f"Average sentiment of each sentence in article: pos {avg_pos}")
-    # print(f"Average sentiment of each sentence in article: neu {avg_neu}")
-    # print(f"Average sentiment of each sentence in article: neg {avg_neg}")
-
-    print(f"sentence was rated as , {avg_neg *100}, % Negative")
-    print(f"sentence was rated as , {avg_neu *100}, % Neutral")
-    print(f"sentence was rated as , {avg_pos *100}, % Positive")
-
-
+def tokenize(headline):
+    parsed = parse(headline)
     #tokenization from spacy and remove punctuations, convert to set to remove duplicates
-    words = set([str(token) for token in nlp(article.text) if not token.is_punct])
+    words = set([str(token) for token in nlp(parsed) if not token.is_punct])
     print("Below is length upon tokenization")
     print(len(words))
     # remove digits and other symbols except "@"--used to remove email
@@ -175,7 +140,7 @@ def scrap(headlines):
     print("Below is length after stopwords filtered")
     print(len(words))
 
-    # lemmization from spacy. doesn't appear to be doing anything
+    # lemmization from spacy. doesn't appear to be doing anything. fix this
     words = [token.lemma_ for token in nlp(str(words)) if not token.is_punct]
     print("Below is length after Lemmatization")
     print(len(words))
@@ -188,62 +153,127 @@ def scrap(headlines):
     #eliminate duplicate words by turning list into a set
     words_set = set(words)
     print("Below is length after converted to set")
-    print(len(words_set))  
-    sentiment_dict = sia.polarity_scores(headline)
-    print("Overall sentiment dictionary from headline is : ", sentiment_dict)
-    print("sentence was rated as ", sentiment_dict['neg']*100, "% Negative")
-    print("sentence was rated as ", sentiment_dict['neu']*100, "% Neutral")
-    print("sentence was rated as ", sentiment_dict['pos']*100, "% Positive")
-    if sentiment_dict['compound'] >= 0.2 :
-        print("Positive")
- 
-    elif sentiment_dict['compound'] <= - 0.2 :
-        print("Negative")
- 
-    else :
-        print("Neutral")
+    print(len(words_set)) 
 
-    print("Overall sentiment dictionary is from raw article text")
-
-    raw = sia.polarity_scores(article.text)
-    print("Overall sentiment dictionary from headline is : ", raw)
-    print("sentence was rated as ", raw['neg']*100, "% Negative")
-    print("sentence was rated as ", raw['neu']*100, "% Neutral")
-    print("sentence was rated as ", raw['pos']*100, "% Positive")
-    if raw['compound'] >= 0.2 :
-        print("Positive")
- 
-    elif raw['compound'] <= - 0.2 :
-        print("Negative")
- 
-    else :
-        print("Neutral")
-  
-
-    return raw
-
-
+    return words_set
     # sources: https://towardsdatascience.com/a-step-by-step-tutorial-for-conducting-sentiment-analysis-a7190a444366
     #https://datascience.stackexchange.com/questions/39960/remove-special-character-in-a-list-or-string
-def order_stories(stories):
+
+def subjectize(headline):
+    parsed = parse(headline)
+    tblobbed = TextBlob(parsed)
+    subjectivity = tblobbed.sentiment.subjectivity
+    sub_obj = {}
+    if subjectivity > .80:
+        sub_obj['measure'] = "Very Objective"
+    elif subjectivity > .60:
+        sub_obj['measure'] = "Moderately Objective"
+    elif subjectivity > .40:
+        sub_obj['measure'] = "Neutral"
+    elif subjectivity > .20]
+        sub_obj['measure'] = "Moderately Subjective"
+    else:
+        sub_obj['measure'] = "Very Subjective"
+    sub_obj['score'] = subjectivity
+    return sub_obj
+
+def polarize(headline):
+    #function returns an object of two sepearate polarity scores; one based off the text of the article and the other
+    #from just the headline alone. Each of these are represented in their own respective objects. 
+    pol_obj = {}
+    headline_res = {}
+    article_res = {}
+
+    """Logic for polarity from article text"""
+    parsed = parse(headline)
+    sentenced = nltk.tokenize.sent_tokenize(parsed)
+
+    coms = []
+    pos = []
+    negs = []
+    neus = []
+
+    for sentence in sentenced:
+        res = sia.polarity_scores(sentence)
+
+        pos.append(res["pos"])
+        negs.append(res["neg"])
+        neus.append(res["neu"])
+        if res['compound']:
+            #sometimes the composite will be zero for certain sentences. We don't want to include that data. 
+            coms.append(res['compound'])
+
+    avg_com = sum(coms) / len(coms)
+    avg_pos = sum(pos) / len(pos)
+    avg_neu = sum(neus) / len(neus)
+    avg_neg = sum(negs) / len(negs)
+
+    """Logic for polarity from headline text"""
+
+    headline = sia.polarity_scores(headline.headline)
+    headline_res["com"] = headline['compound']
+    headline_res["pos"] = headline['pos']
+    headline_res["neg"] = headline['neg']
+    headline_res["neu"] = headline['neu']
+
+    if headline_res['com'] >= 0.2 :
+        headline_res['result'] = "Positive"
+ 
+    elif headline_res['com'] <= - 0.2 :
+        headline_res['result'] = "Negative"
+ 
+    else:
+        headline_res['result'] = "Neutral"
+
+    article_res["avg_com"] = avg_com
+    article_res["avg_pos"] = avg_pos
+    article_res["avg_neg"] = avg_neg
+    article_res["avg_neu"] = avg_neu
+
+    if avg_com >= 0.2 :
+        article_res['result'] = "Positive"
+ 
+    elif avg_com <= - 0.2 :
+        article_res['result'] = "Negative"
+ 
+    else :
+        article_res['result'] = "Neutral"
+
+    print(f"Average sentiment of each sentence in article: compound {avg_com}")
+    print(f"sentence was rated as , {avg_neg *100}, % Negative")
+    print(f"sentence was rated as , {avg_neu *100}, % Neutral")
+    print(f"sentence was rated as , {avg_pos *100}, % Positive")
+
+    pol_obj['headline_res'] = headline_res
+    pol_obj['article_res'] = article_res
+    return pol_obj
+
+def sa_sum(headlines):
+    for headline in headlines:
+        sum = {}
+        sum['parsed']  = parse(headline)
+        sum['tokenized'] = tokenize(headline)
+        sum['subjectivity'] = subjectize(headline)
+        sum['polarity'] = polarize(headline)
+        return sum
+
+def order_stories_recent(stories):
     ordered = sorted(stories, key = lambda story : story.published_at, reverse=True )
     return ordered
         
 
-
+"""View functions for application"""
 
 
 @app.route('/')
 def home_page():
     top = get_top_headlines()
-    headlines = order_stories(top)
+    headlines = order_stories_recent(top)
     return render_template('/home.html', headlines=headlines)
 
 @app.route('/show_story/<int:story_id>')
 def show_story(story_id):
     story = Story.query.get(story_id)
- 
-
     return render_template('/users/story.html', story = story)
 
 @app.route('/user')
@@ -254,14 +284,12 @@ def user():
     
     else:
         user = User.query.get(g.user.id)
-        ordered = order_stories(user.saved_stories)
+        ordered = order_stories_recent(user.saved_stories)
         user.saved_stories = ordered
         return render_template("/users/user.html", user = user)
 
-
 @app.route('/story/<int:story_id>/open')
 def open_story_link(story_id):   
-        print("NICE")
         story = Story.query.get(story_id)
         user = User.query.get(g.user.id)
         user.history.append(story)
@@ -276,7 +304,7 @@ def save_story(story_id):
     if g.user.id != session[CURR_USER_KEY]:
         flash("Please log-in and try again.", "danger")
         return redirect("/")
-    
+
     else: 
         story = Story.query.get(story_id)
         user = User.query.get(g.user.id)
@@ -292,15 +320,13 @@ def delete_story(story_id):
     if g.user.id != session[CURR_USER_KEY]:
         flash("Please log-in and try again.", "danger")
         return redirect("/")
-    
+
     else: 
         story = Story.query.get(story_id)
         user = User.query.get(g.user.id)
         user.saved_stories.remove(story)
         db.session.commit()
         return redirect("/user")
-
-
 
 @app.route('/register', methods=['GET', 'POST'])
 def register_user():
@@ -317,32 +343,27 @@ def register_user():
             db.session.commit()
             do_login(new_user)
             return redirect('/')
-        
+
         except IntegrityError:
             flash("Username already taken", 'danger')
             return render_template('register.html', form=form)
     
     return render_template('register.html', form=form)
 
-
 @app.route('/login', methods=['GET', 'POST'])
 def login_user():
-
-
     form = LoginForm()
-    
     if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
-        
         user = User.authenticate(username, password)
         if user:
             do_login(user)
-
             return redirect('/')
+
         else:
             form.username.errors=["Invalid username or password. Please try again."]
-    
+
     return render_template('login.html', form=form)
 
 @app.route('/logout')
