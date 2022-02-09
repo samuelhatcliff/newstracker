@@ -76,10 +76,14 @@ def do_logout():
 
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
+        del session['query']
 
 
-def get_top_headlines():
-    data = newsapi.get_top_headlines(language="en")
+def get_from_newsapi():
+    if session['query']:
+        data = get_search_results(session['query'])
+    else:
+        data = newsapi.get_top_headlines(language="en")
     articles = data['articles']
     top_headlines = []
     for article in articles:
@@ -104,10 +108,20 @@ def get_top_headlines():
         top_headlines.append(story)
         db.session.add(story)
         db.session.commit()
+        del session['query']
 
     return top_headlines
 
 def get_search_results(query):
+    all_articles = newsapi.get_everything(q=f'{query.keyword}',
+                                      search_in = f'{query.search_in}',
+                                      sources=f'{query.source}',
+                                      from_param=f'{query.date_from}',
+                                      to=f'{query.date_to}',
+                                      language=f'{query.language}',
+                                      sort_by=f'{query.sort_by}',
+                                      page_size= f'{query.quantity}')
+                                      #searchIn and pageSize may be incorrect due to casing
     results = []
     return results
     
@@ -272,12 +286,11 @@ def order_stories_recent(stories):
 
 @app.route('/', methods= ['GET', 'POST'])
 def home_page():
-    if session['query']:
-        results = session['query']
-    else:
-        results = get_top_headlines()
+    results = get_from_newsapi()
     
-    headlines = order_stories_recent(results)
+    # headlines = order_stories_recent(results)
+    #^^probaly dont want this here, but depends on sort logic elsewhere
+    headlines = results
     return render_template('/home.html', headlines=headlines)
 
 
@@ -287,12 +300,11 @@ def search_params():
     form = SearchForm()
     if form.validate_on_submit():
         try:
-        #     if form.data.default == True: (ADD TO USER TABLE IN DATABASE)
             
             keyword = form.keyword.data
             source = form.source.data
             quantity = form.quantity.data
-            search_by = form.search_by.data
+            search_in = form.search_in.data
             date_from = form.date_from.data
             date_to = form.date_to.data
             language = form.language.data
@@ -305,7 +317,7 @@ def search_params():
             dict['quantity'] = quantity
             dict['date_from'] = date_from
             dict['date_to'] = date_to
-            dict['search_by'] = search_by
+            dict['search_in'] = search_in
             dict['language'] = language
             dict['sort_by'] = sort_by
             dict['default'] = default

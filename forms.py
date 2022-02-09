@@ -27,7 +27,7 @@ class SearchForm(FlaskForm):
     quantity = IntegerField("Enter of many articles you want returned (max 10)", validators = [NumberRange(min=1, max=10, message ="Please enter a number between 1 and 10")])
     #this is represented by the "pageSize" parameter in the API. The default and max are both set to 100.
     #figure out how to change this default to 10
-    searchBy = SelectField("Search for:", choices=[('headline', 'Headline'), ('description', 'Description'), ('content', 'Content')], validators= [Optional()])
+    search_in = SelectField("Search for:", choices=[('headline', 'Headline'), ('description', 'Description'), ('content', 'Content')], validators= [Optional()])
     #default from api: all fields are searched
     date_from = DateField("Select a date range", validators= [Optional()])
     date_to = DateField("Up until which date?", validators= [Optional()])
@@ -39,7 +39,7 @@ class SearchForm(FlaskForm):
     )
     #can't find 'ud' language code (which is specificied by the api), try to run a search with ud as part of query to figure out what it is
     #API default is all languages. Set to english if this becomes problematic
-    sortBy = SelectField("Search by", choices=[('relevancy', 'Relevant'), ('popularity', 'Popular'), ('publishedAt', 'Recent'), 
+    sort_by = SelectField("Search by", choices=[('relevancy', 'Relevant'), ('popularity', 'Popular'), ('publishedAt', 'Recent'), 
     ('polarity', 'Polarity'), ('subjectivity', 'Subjectivity')], validators= [Optional()])
     #API default: publishedAt. subjectivity and polarity might take more time as individual get requests are needed for each url. This data
     #comes from our own logic, rather than the API's
