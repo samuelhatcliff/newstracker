@@ -38,6 +38,7 @@ class User(db.Model):
     notes = db.relationship('Note', backref= 'user') 
 
     default_search = None
+    queries =  None
     # user to get headlines on home page
 
     

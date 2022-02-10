@@ -27,7 +27,11 @@ class SearchForm(FlaskForm):
     quantity = IntegerField("Enter of many articles you want returned (max 10)", validators = [NumberRange(min=1, max=10, message ="Please enter a number between 1 and 10")])
     #this is represented by the "pageSize" parameter in the API. The default and max are both set to 100.
     #figure out how to change this default to 10
+
     search_in = SelectField("Search for:", choices=[('headline', 'Headline'), ('description', 'Description'), ('content', 'Content')], validators= [Optional()])
+    #SelectField as written here doesn't allow for data to be accessed from form in search_params(). Something here must be written wrong. Refer to previous other
+    #assignments where i have used SelectField
+
     #default from api: all fields are searched
     date_from = DateField("Select a date range", validators= [Optional()])
     date_to = DateField("Up until which date?", validators= [Optional()])
