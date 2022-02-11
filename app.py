@@ -49,7 +49,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///nt'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 app.config['SECRET_KEY'] = "topsecret1"
-app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
+app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
 debug = DebugToolbarExtension(app)
 
 
@@ -99,15 +99,11 @@ def order_stories_recent(stories):
 
 @app.route("/search/results")
 def test():
+    #write logic for if no results are found
     if CURR_USER_KEY in session:
         query = session.get("query")
         headlines = get_from_newsapi(query)
-        print(headlines)
-        print("head1")
         return render_template('/home.html', headlines=headlines)
-
-
-
 
 @app.route('/', methods= ['GET', 'POST'])
 def home_page():
@@ -119,23 +115,12 @@ def search_params():
     form = SearchForm()
     if form.validate_on_submit():
         try:
-            # keyword = form.keyword.data
-            # source = form.source.data
-            # quantity = form.quantity.data
-            # search_in = form.search_in.data
-            # date_from = form.date_from.data
-            # date_to = form.date_to.data
-            # language = form.language.data
-            # sort_by = form.sort_by.data
-            # default = form.default.data
-
             dict = {}
             dict['keyword'] = form.keyword.data
             dict['source'] = form.source.data
             dict['quantity'] = form.quantity.data
             dict['date_from'] = form.date_from.data
             dict['date_to'] = form.date_to.data
-            dict['search_in'] = form.search_in.data
             dict['language'] = form.language.data
             dict['sort_by'] = form.sort_by.data
             dict['default'] = form.default.data
@@ -144,22 +129,24 @@ def search_params():
             # if default == True:
             #     User.default_search = dict1
             #     db.session.commit()
-            print(dict['date_from'])
-            print("date2")
+        
             results = get_search_results(dict)
+            
             query = results
+            
             session["query"] = query
-         
+            print("WOO3")
+            
+            
             return redirect('/search/results')
 
         except:
-            print("LOL")
             flash("hmmmm. do this appear, or messages from form validators?", 'danger')
             return render_template('/users/search.html', form = form)
     
     
     else:
-        print("something went wrong")
+        print("something went wrong2")
         return render_template('/users/search.html', form = form)
         
 

@@ -14,13 +14,10 @@ def get_from_newsapi(query):
     if query != None:
         articles = query
     else:
-        print("didnt get nuttin1")
         data = newsapi.get_top_headlines(language="en")
         articles = data['articles']
     
-    print(articles)
-    print('articles1')
-    print("poop")
+  
     top_headlines = []
     for article in articles:
         headline = article['title']
@@ -50,31 +47,52 @@ def get_from_newsapi(query):
 def get_search_results(query):
     from_ = str(query['date_from'])
     to = str(query['date_to'])
-    print("555")
-    print(type(to))
-    print("date5")
-    results = newsapi.get_everything(q=f"{query['keyword']}"
-    ,sources = f"{query['source']}"
-    ,language=f"{query['language']}"
-    ,sort_by=f"{query['sort_by']}"
-    ,from_param=f"{from_}"
-    ,to=f"{to}"
-    )
     
-    
-                                      
-                                    #   to=f'{query.date_to}',
-                                
-                                    # #   sort_by=f'{query.sort_by}'
-                                    #   page_size= f'{query.quantity}'
-                                                                          #   search_in = f"{query['search_in']}")
+    #check if this is necessary
+    if to == 'None' and from_ == 'None':
+        results = newsapi.get_everything(q=f"{query['keyword']}"
+        ,sources = f"{query['source']}"
+        ,language=f"{query['language']}"
+        ,sort_by=f"{query['sort_by']}"
+        )
 
-                                      #searchIn and pageSize may be incorrect due to casing
+    elif to == 'None' and from_ != 'None':
+        results = newsapi.get_everything(q=f"{query['keyword']}"
+        ,sources = f"{query['source']}"
+        ,language=f"{query['language']}"
+        ,sort_by=f"{query['sort_by']}"
+        ,from_param=f"{from_}"
+        )
+        
+
+    elif to != 'None' and from_ == 'None':
+        results = newsapi.get_everything(q=f"{query['keyword']}"
+        ,sources = f"{query['source']}"
+        ,language=f"{query['language']}"
+        ,sort_by=f"{query['sort_by']}"
+        ,to=f"{to}"
+        )
+
+    else:
+    
+        results = newsapi.get_everything(q=f"{query['keyword']}"
+        ,sources = f"{query['source']}"
+        ,language=f"{query['language']}"
+        ,sort_by=f"{query['sort_by']}"
+        ,from_param=f"{from_}"
+        ,to=f"{to}"
+        )
+    
+    #api seems to not want to allow dates to be optional if specified
+
     #having trouble with the pageSize search parameter which represents # of stories to be returned
     #temporary solution to this is to extract that number from the query dict, and then splice the resulting
     #list of articles. 
-    print("success")
     quantity = int(query['quantity'])
+    
     articles = results['articles']
+    
     spliced = articles[:quantity]
+    print("really3")
+    print(spliced)
     return spliced
