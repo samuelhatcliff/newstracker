@@ -44,7 +44,7 @@ def get_from_newsapi(query):
 
     return top_headlines
 
-def get_search_results(query):
+def search_call(query):
     from_ = str(query['date_from'])
     to = str(query['date_to'])
     
@@ -89,10 +89,6 @@ def get_search_results(query):
     #temporary solution to this is to extract that number from the query dict, and then splice the resulting
     #list of articles. 
     quantity = int(query['quantity'])
-    
     articles = results['articles']
-    
     spliced = articles[:quantity]
-    print("really3")
-    print(spliced)
     return spliced

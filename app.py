@@ -3,7 +3,7 @@ from flask import Flask, request, render_template, flash, redirect, render_templ
 from models import connect_db, db, User, Story, Note, SavedStory
 
 from forms import RegisterForm, LoginForm, SearchForm
-from api_calls import get_from_newsapi, get_search_results
+from api_calls import get_from_newsapi, search_call
 from sent_analysis import parse, subjectize, tokenize, polarize, sa_sum
 
 
@@ -98,12 +98,27 @@ def order_stories_recent(stories):
 """View functions for application"""
 
 @app.route("/search/results")
-def test():
+def show_search_results():
     #write logic for if no results are found
-    if CURR_USER_KEY in session:
-        query = session.get("query")
-        headlines = get_from_newsapi(query)
-        return render_template('/home.html', headlines=headlines)
+    # if CURR_USER_KEY in session:
+    #     query = session.get("query")
+    #     headlines = get_from_newsapi(query)
+    #     if query.sort_by == 'polarity':
+    #         polarized = []
+    #         for headline in headlines:
+    #             polarized += polarize(headline)
+    #         ordered = sorted(polarized, key = lambda story : story['article_res']['avg_com'], reverse=True )
+    #             #next step match with story objects in database
+
+    #     elif query.sort_by == 'subjectivity':
+    #         subjectized = []
+    #         for headline in headlines:
+    #             subjectized += subjectize(headline)
+    #         ordered = sorted(subjectized, key = lambda story : story['score'], reverse=True)
+    #         #next step match with story objects in database
+            
+        
+    return render_template('/home.html', headlines=headlines)
 
 @app.route('/', methods= ['GET', 'POST'])
 def home_page():
@@ -130,13 +145,13 @@ def search_params():
             #     User.default_search = dict1
             #     db.session.commit()
         
-            results = get_search_results(dict)
+            results = search_call(dict)
             
             query = results
             
             session["query"] = query
             print("WOO3")
-            
+            # print(type(query['default']))
             
             return redirect('/search/results')
 
