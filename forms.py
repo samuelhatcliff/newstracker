@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, IntegerField, SelectField, DateField, BooleanField
+from wtforms import StringField, PasswordField, IntegerField, SelectField, DateTimeField, BooleanField
 from wtforms.validators import InputRequired, Optional, NumberRange
 
 class RegisterForm(FlaskForm):
@@ -34,8 +34,8 @@ class SearchForm(FlaskForm):
     #doesn't appear to be supported by python newsapi library. 
     #default from api: all fields are searched
 
-    date_from = DateField("Select a date range", validators= [Optional()])
-    date_to = DateField("Up until which date?", validators= [Optional()])
+    date_from = DateTimeField("Select a date range", validators= [Optional()])
+    date_to = DateTimeField("Up until which date?", default = datetime.today, validators= [Optional()])
    #API default if will be newest to oldest with no limit
 
     language = SelectField("Choose which language you want to see results from", choices = [

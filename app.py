@@ -45,7 +45,7 @@ bcrypt = Bcrypt()
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///nt'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///capstone'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 app.config['SECRET_KEY'] = "topsecret1"
@@ -61,7 +61,9 @@ debug = DebugToolbarExtension(app)
 
 
 connect_db(app)
+
 db.create_all()
+
 newsapi= NewsApiClient(api_key='b4f52eb738354e648912261c010632e7')
 
 @app.before_request
@@ -75,8 +77,6 @@ def add_user_to_g():
     else:
         g.user = None
         
-        
-
 
 def do_login(user):
     """Log in user."""
@@ -94,39 +94,56 @@ def order_stories_recent(stories):
     ordered = sorted(stories, key = lambda story : story.published_at, reverse=True )
     return ordered
         
-
 """View functions for application"""
 
-@app.route("/search/results")
+@app.route('/search/results')
 def show_search_results():
     #write logic for if no results are found
-    # if CURR_USER_KEY in session:
-    #     query = session.get("query")
-    #     headlines = get_from_newsapi(query)
-    #     if query.sort_by == 'polarity':
-    #         polarized = []
-    #         for headline in headlines:
-    #             polarized += polarize(headline)
-    #         ordered = sorted(polarized, key = lambda story : story['article_res']['avg_com'], reverse=True )
-    #             #next step match with story objects in database
+    if CURR_USER_KEY in session:
+        user = User.query.get(g.user.id)
+        query = session.get("query")
+        headlines = get_from_newsapi(query, g.user.id)
+        if query.sort_by == 'polarity':
+            #might have to be query['sort_by']
+            for headline in headlines:
+                score = str(polarize(headline))
+                headline.pol = score
+                db.session.commit()
 
-    #     elif query.sort_by == 'subjectivity':
-    #         subjectized = []
-    #         for headline in headlines:
-    #             subjectized += subjectize(headline)
-    #         ordered = sorted(subjectized, key = lambda story : story['score'], reverse=True)
-    #         #next step match with story objects in database
-            
+            headlines = user.queried_stories
+            ordered = sorted(headlines, key = lambda story : story['pol']['article_res']['avg_com'], reverse=True )
+            headlines = ordered
+                
+        elif query.sort_by == 'subjectivity':
+            for headline in headlines:
+                score = str(subjectize(headline))
+                headline.sub = score
+                db.session.commit()
+
+            headlines = user.queried_stories
+            ordered = sorted(headlines, key = lambda story : story['sub']['score'], reverse=True )
+            headlines = ordered
         
-    return render_template('/home.html', headlines=headlines)
+    return render_template('/show_stories.html', headlines=headlines)
+
 
 @app.route('/', methods= ['GET', 'POST'])
 def home_page():
+    if CURR_USER_KEY in session:
+        user = User.query.get(g.user.id)
+        search = user.default_search
+        search_dict = eval(search)
+        results = search_call(search_dict)
+        session["query"] = results
+        return redirect('/search/results')
+
     headlines = get_from_newsapi(None)
-    return render_template('/home.html', headlines=headlines)
+    return render_template('/show_stories.html', headlines=headlines)
+
 
 @app.route('/users/search', methods = ['GET', 'POST'])
 def search_params():
+    user = User.query.get(g.user.id)
     form = SearchForm()
     if form.validate_on_submit():
         try:
@@ -139,36 +156,31 @@ def search_params():
             dict['language'] = form.language.data
             dict['sort_by'] = form.sort_by.data
             dict['default'] = form.default.data
-            #check to see if this is a string of true or false, or the boolean type values
+            
+            if dict['default'] == True:
+                default_str = str(dict)
+                user.default_search = default_str
+                db.session.commit()
 
-            # if default == True:
-            #     User.default_search = dict1
-            #     db.session.commit()
-        
             results = search_call(dict)
-            
             query = results
-            
             session["query"] = query
-            print("WOO3")
-            # print(type(query['default']))
-            
             return redirect('/search/results')
 
         except:
             flash("hmmmm. do this appear, or messages from form validators?", 'danger')
             return render_template('/users/search.html', form = form)
     
-    
     else:
         print("something went wrong2")
         return render_template('/users/search.html', form = form)
-        
+
 
 @app.route('/show_story/<int:story_id>')
 def show_story(story_id):
     story = Story.query.get(story_id)
     return render_template('/users/story.html', story = story)
+
 
 @app.route('/user')
 def user():
@@ -180,18 +192,22 @@ def user():
         user = User.query.get(g.user.id)
         ordered = order_stories_recent(user.saved_stories)
         user.saved_stories = ordered
-        return render_template("/users/user.html", user = user)
+        is_empty = False
+        if len(user.saved_stories) == 0:
+            is_empty = True
+        return render_template("/users/user.html", user = user, is_empty = is_empty)
+
 
 @app.route('/story/<int:story_id>/open')
 def open_story_link(story_id):   
         story = Story.query.get(story_id)
         user = User.query.get(g.user.id)
         user.history.append(story)
-        # print(story.views)
         story.views += 1
         
         db.session.commit()
         return redirect (f"{story.url}")
+
 
 @app.route('/story/<int:story_id>/save_story', methods=["POST"])
 def save_story(story_id):
@@ -209,6 +225,7 @@ def save_story(story_id):
         db.session.commit()
         return redirect("/user")
 
+
 @app.route('/story/<int:story_id>/delete_story')
 def delete_story(story_id):
     if g.user.id != session[CURR_USER_KEY]:
@@ -221,6 +238,7 @@ def delete_story(story_id):
         user.saved_stories.remove(story)
         db.session.commit()
         return redirect("/user")
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register_user():
@@ -244,6 +262,7 @@ def register_user():
     
     return render_template('register.html', form=form)
 
+
 @app.route('/login', methods=['GET', 'POST'])
 def login_user():
     form = LoginForm()
@@ -259,6 +278,7 @@ def login_user():
             form.username.errors=["Invalid username or password. Please try again."]
 
     return render_template('login.html', form=form)
+
 
 @app.route('/logout')
 def logout():

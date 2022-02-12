@@ -1,5 +1,11 @@
 {% extends 'base.html' %}
 {% block content %}
+{% if is_empty == True%}
+<span>It looks like you don't have any stories saved yet. To find a story to save, you 
+    can either click the search button ontop of the navigation bar to enter a specific search,
+    or click the home page to see today's top headlines! 
+</span>
+{% endif %}
 {% for story in user.saved_stories%}
 
 <ul>

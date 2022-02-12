@@ -34,11 +34,13 @@ class User(db.Model):
     last_name = db.Column(db.String(30),
                      nullable=False)
     saved_stories = db.relationship('Story', secondary='saved_stories', backref= 'users')
+    queried_stories = db.relationship('Story', secondary= 'queried_stories', backref = 'users')
+    #this is used to easily group all stories in a selected search query by the user. Useful for adding 
+    #polarity and subjectivity when specified in searches, and for deleting each story from db to optimize space
     history = db.relationship('Story', secondary='user_history', backref= "viewed_by")
     notes = db.relationship('Note', backref= 'user') 
 
-    default_search = None
-    queries =  None
+    default_search = db.Column(db.Text)
     # user to get headlines on home page
 
     
@@ -87,6 +89,10 @@ class Story(db.Model):
     """information related to its interaction with app"""
     notes = db.relationship('Note', backref= 'story')
     views = db.Column(db.Integer)
+    sub = db.Column(db.Text)
+    pol = db.Column(db.Text)
+
+
 
    
 
@@ -104,6 +110,18 @@ class SavedStory(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = False)
     story_id = db.Column(db.Integer, db.ForeignKey('stories.id'), nullable = False)
     notes = db.Column(db.Text)
+
+    def __repr__(self):
+        return f"<ID: {self.id}, User ID#:{self.user_id}, Story ID#:{self.story_id}>"
+
+class QueriedStory(db.Model):
+    __tablename__ = "queried_stories"
+    id = db.Column(db.Integer,
+    primary_key=True,
+    autoincrement=True)
+
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = False)
+    story_id = db.Column(db.Integer, db.ForeignKey('stories.id'), nullable = False)
 
     def __repr__(self):
         return f"<ID: {self.id}, User ID#:{self.user_id}, Story ID#:{self.story_id}>"
@@ -136,5 +154,5 @@ class Note(db.Model):
 
 
     def __repr__(self):
-        return f"<ID: {self.id}, User ID#:{self.user_id}, Story ID#:{self.story_id}, Date: {self.date} Parent ID#:{self.parent_comment}>"
+        return f"<ID: {self.id}, User ID#:{self.user_id}, Story ID#:{self.story_id}>"
 

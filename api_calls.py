@@ -1,8 +1,6 @@
 from newsapi import NewsApiClient
-from flask import session, Flask
-from app import session 
 from dateutil import parser
-from models import Story, User
+from models import Story
 newsapi= NewsApiClient(api_key='b4f52eb738354e648912261c010632e7')
 import psycopg2
 from models import db
