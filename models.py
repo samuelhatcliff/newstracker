@@ -34,7 +34,7 @@ class User(db.Model):
     last_name = db.Column(db.String(30),
                      nullable=False)
     saved_stories = db.relationship('Story', secondary='saved_stories', backref= 'users')
-    queried_stories = db.relationship('Story', secondary= 'queried_stories', backref = 'users')
+    queried_stories = db.relationship('Story', secondary= 'queried_stories', backref = 'user_queries')
     #this is used to easily group all stories in a selected search query by the user. Useful for adding 
     #polarity and subjectivity when specified in searches, and for deleting each story from db to optimize space
     history = db.relationship('Story', secondary='user_history', backref= "viewed_by")
@@ -85,21 +85,14 @@ class Story(db.Model):
     image = db.Column(db.Text)
     published_at = db.Column(db.DateTime)
 
-
     """information related to its interaction with app"""
     notes = db.relationship('Note', backref= 'story')
     views = db.Column(db.Integer)
     sub = db.Column(db.Text)
     pol = db.Column(db.Text)
 
-
-
-   
-
     def __repr__(self):
         return f"<ID: {self.id}, H:{self.headline}, S:{self.source}>"
-
-
 
 class SavedStory(db.Model):
     __tablename__ = "saved_stories"

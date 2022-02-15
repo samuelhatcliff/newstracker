@@ -2,6 +2,7 @@ from re import L
 from flask import Flask, request, render_template, flash, redirect, render_template, jsonify, session, g
 from models import connect_db, db, User, Story, Note, SavedStory
 
+
 from forms import RegisterForm, LoginForm, SearchForm
 from api_calls import get_from_newsapi, search_call
 from sent_analysis import parse, subjectize, tokenize, polarize, sa_sum
@@ -49,7 +50,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///capstone'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 app.config['SECRET_KEY'] = "topsecret1"
-app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
+app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 debug = DebugToolbarExtension(app)
 
 
@@ -100,12 +101,20 @@ def order_stories_recent(stories):
 def show_search_results():
     #write logic for if no results are found
     if CURR_USER_KEY in session:
+        # query = session.get("query")
+        
+        dict = session['dict']
+        print(dict)
+        print('dict3x')
         user = User.query.get(g.user.id)
-        query = session.get("query")
-        headlines = get_from_newsapi(query, g.user.id)
-        if query.sort_by == 'polarity':
+        user_queried_stories = user.queried_stories
+        print(user_queried_stories)
+        print("qs")
+        headlines = user_queried_stories
+        
+        if dict['sort_by'] == 'polarity':
             #might have to be query['sort_by']
-            for headline in headlines:
+            for headline in user_queried_stories:
                 score = str(polarize(headline))
                 headline.pol = score
                 db.session.commit()
@@ -114,8 +123,8 @@ def show_search_results():
             ordered = sorted(headlines, key = lambda story : story['pol']['article_res']['avg_com'], reverse=True )
             headlines = ordered
                 
-        elif query.sort_by == 'subjectivity':
-            for headline in headlines:
+        elif dict['sort_by'] == 'subjectivity':
+            for headline in user_queried_stories:
                 score = str(subjectize(headline))
                 headline.sub = score
                 db.session.commit()
@@ -123,19 +132,21 @@ def show_search_results():
             headlines = user.queried_stories
             ordered = sorted(headlines, key = lambda story : story['sub']['score'], reverse=True )
             headlines = ordered
-        
+    else:
+        flash("Please log in to view search results.", "danger")
+
     return render_template('/show_stories.html', headlines=headlines)
 
 
 @app.route('/', methods= ['GET', 'POST'])
 def home_page():
-    if CURR_USER_KEY in session:
-        user = User.query.get(g.user.id)
-        search = user.default_search
-        search_dict = eval(search)
-        results = search_call(search_dict)
-        session["query"] = results
-        return redirect('/search/results')
+    # if CURR_USER_KEY in session:
+    #     user = User.query.get(g.user.id)
+    #     search = user.default_search
+    #     search_dict = eval(search)
+    #     results = search_call(search_dict)
+    #     session["query"] = results
+    #     return redirect('/search/results')
 
     headlines = get_from_newsapi(None)
     return render_template('/show_stories.html', headlines=headlines)
@@ -162,13 +173,14 @@ def search_params():
                 user.default_search = default_str
                 db.session.commit()
 
-            results = search_call(dict)
-            query = results
-            session["query"] = query
+            session['dict'] = dict
+            search_call(dict, g.user.id)
+           
+
             return redirect('/search/results')
 
         except:
-            flash("hmmmm. do this appear, or messages from form validators?", 'danger')
+            flash("hmmmm. does this appear, or messages from form validators?", 'danger')
             return render_template('/users/search.html', form = form)
     
     else:
@@ -254,10 +266,13 @@ def register_user():
             db.session.add(new_user)
             db.session.commit()
             do_login(new_user)
+            flash("Congratulations! You Have Successfully Created Your Account", "success")
             return redirect('/')
 
         except IntegrityError:
-            flash("Username already taken", 'danger')
+            form("Username already taken, please try again", 'danger')
+            # or form.username.errors.append('Username already taken. Please pick another')
+            #https://www.youtube.com/embed/iBYCoLhziX4?showinfo=0&controls=1&rel=0&autoplay=1
             return render_template('register.html', form=form)
     
     return render_template('register.html', form=form)
@@ -272,6 +287,7 @@ def login_user():
         user = User.authenticate(username, password)
         if user:
             do_login(user)
+            flash("Credentials verified. Logging in...", "success")
             return redirect('/')
 
         else:
@@ -283,6 +299,6 @@ def login_user():
 @app.route('/logout')
 def logout():
     """Handle logout of user."""
-    flash(f"You have successfully logged out.")
+    flash(f"You have successfully logged out.", "primary")
     do_logout()
     return redirect("/")

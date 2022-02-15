@@ -14,8 +14,11 @@
     <li>{{story.published_at}}</li>
     <span><a href="show_story/{{story.id}}">Show Full Story</a></span>
     <hr>
+    <button class= "btn btn-success btn-large">Get Polarity</button>
+    <button class= "btn btn-primary btn-large">Get Subjectivity</button>
+
     <form action='/story/{{story.id}}/delete_story' , method="DELETE">
-        <input type="submit" value="Remove Story">
+        <input type="submit" value="Remove Story" class="btn btn-danger">
         </form>
 </ul>
 {%endfor%}

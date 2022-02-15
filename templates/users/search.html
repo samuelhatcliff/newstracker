@@ -1,20 +1,29 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>Search</h1>
-<!-- <span>gadsfsfa</span> -->
-<form method="POST">
-    {{ form.hidden_tag() }}
-    {% for field in form
-    if field.widget.input_type != 'hidden' %}
-    <p>
-        {{field.label}}
-        {{field}}
+<div class="container">
+<h1 class="display-1 text-center">Search</h1>
 
-        {%for err in field.errors%}
-        {{err}}
-        {% endfor %}
-    </p>
-    {% endfor %}
-    <button type="Submit">Search</button>
-</form>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                {% for field in form
+                if field.widget.input_type != 'hidden' %}
+                <p>
+                    <div class="form-group">
+                    {{field.label}}
+                    {{field(class_="form-control")}}
+                    {%for err in field.errors%}
+                    <small class="form-text text-danger">
+                    {{err}}
+                    </small>
+                    {% endfor %}
+                    </div>
+                </p>
+                {% endfor %}
+                <button class= "btn btn-success btn-large" type="Submit">Search</button>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

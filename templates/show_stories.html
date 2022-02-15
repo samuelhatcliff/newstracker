@@ -3,15 +3,20 @@
 {% for story in headlines%}
 <div>
     <ul>
-        <li> <a href="story/{{story.id}}/open"> {{story.headline}}</a></li>
-        <li>{{story.content}}</li>
-        <li>{{story.published_at}}</li>
-        <span><a href="show_story/{{story.id}}">Show Full Story</a></span>
-        
-        <form action='/story/{{story.id}}/save_story', method="POST">
-            <input type="submit" value="Save Story">
-            </form>
-    </ul>
+        <div>
+            <div class="card my-4">
+                <div class="card-body">
+                <h4 class="card-title"> <a href="story/{{story.id}}/open"> {{story.headline}}</a></h4>
+                <p class= "card-text">{{story.content}}</p>
+                <h5 class="card-subtitle mb-2 text-muted">{{story.published_at}}</li>
+                <h6 class="card-subtitle mb-2 text-muted"><a href="show_story/{{story.id}}">Show Full Story</a></span>
+                
+                <form action='/story/{{story.id}}/save_story', method="POST">
+                    <input type="submit" value="Save Story" class="btn btn-success">
+                    </form>
+                </div>
+            </div>
+    </ul></div>
 </div>
 <hr>
 {%endfor%}

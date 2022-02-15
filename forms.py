@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, IntegerField, SelectField, DateTimeField, BooleanField
+from wtforms import StringField, PasswordField, IntegerField, SelectField, DateField, BooleanField, DateTimeField
 from wtforms.validators import InputRequired, Optional, NumberRange
+import datetime as dt
 
 class RegisterForm(FlaskForm):
     '''form to add a new user. Username, password, and email required'''
@@ -26,7 +27,7 @@ class SearchForm(FlaskForm):
     #A comma-seperated string of identifiers (maximum 20) for the news sources or blogs you want headlines from. Use the /sources 
     # endpoint to locate these programmatically or look at the sources index.
 
-    quantity = IntegerField("Enter of many articles you want returned (max 10)", validators = [NumberRange(min=1, max=10, message ="Please enter a number between 1 and 10")])
+    quantity = IntegerField("Enter of many articles you want returned (max 10)", default = 10, validators = [NumberRange(min=1, max=10, message ="Please enter a number between 1 and 10")])
     #this is represented by the "pageSize" parameter in the API. The default and max are both set to 100.
     #figure out how to change this default to 10
 
@@ -34,8 +35,8 @@ class SearchForm(FlaskForm):
     #doesn't appear to be supported by python newsapi library. 
     #default from api: all fields are searched
 
-    date_from = DateTimeField("Select a date range", validators= [Optional()])
-    date_to = DateTimeField("Up until which date?", default = datetime.today, validators= [Optional()])
+    date_from = DateField("Select a date range", validators= [Optional()])
+    date_to = DateField("Up until which date?", default = dt.datetime.today, validators= [Optional()])
    #API default if will be newest to oldest with no limit
 
     language = SelectField("Choose which language you want to see results from", choices = [
