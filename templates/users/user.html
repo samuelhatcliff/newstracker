@@ -14,7 +14,22 @@
     <li>{{story.published_at}}</li>
     <span><a href="show_story/{{story.id}}">Show Full Story</a></span>
     <hr>
-    <button class= "btn btn-success btn-large">Get Polarity</button>
+
+    {% if story.pol%}
+    <p>Polarity: {{score}}</p>
+    {% else %}
+    <form action = '/sacalls/{{story.id}}/polarity', method="POST">
+        <input type="submit" value="Get Polarity" class="btn btn-success">
+        </form>
+    </div>
+    {% endif %}
+
+
+
+
+
+
+    <!-- <button class= "btn btn-success btn-large">Get Polarity</button> -->
     <button class= "btn btn-primary btn-large">Get Subjectivity</button>
 
     <form action='/story/{{story.id}}/delete_story' , method="DELETE">

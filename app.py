@@ -70,7 +70,6 @@ newsapi= NewsApiClient(api_key='b4f52eb738354e648912261c010632e7')
 @app.before_request
 def add_user_to_g():
     """If we're logged in, add curr user to Flask global."""
-
        
     if CURR_USER_KEY in session:
         g.user = User.query.get(session[CURR_USER_KEY])
@@ -82,6 +81,7 @@ def add_user_to_g():
 def do_login(user):
     """Log in user."""
     session[CURR_USER_KEY] = user.id
+    print("logging in")
 
 
 def do_logout():
@@ -97,6 +97,19 @@ def order_stories_recent(stories):
         
 """View functions for application"""
 
+@app.route('/sacalls/<int:story_id>/polarity', methods =['POST'])
+def show_sa_calls(story_id):
+ 
+    story = Story.query.get(story_id)
+
+    score = polarize(story)
+    print(score)
+    print("type3")
+    user = User.query.get(g.user.id)
+    
+    db.session.commit()
+    return render_template('users/user.html', user=user, score = score )
+
 @app.route('/search/results')
 def show_search_results():
     #write logic for if no results are found
@@ -104,36 +117,35 @@ def show_search_results():
         # query = session.get("query")
         
         dict = session['dict']
-        print(dict)
-        print('dict3x')
+       
+
         user = User.query.get(g.user.id)
         user_queried_stories = user.queried_stories
-        print(user_queried_stories)
-        print("qs")
+      
         headlines = user_queried_stories
         
-        if dict['sort_by'] == 'polarity':
-            #might have to be query['sort_by']
-            for headline in user_queried_stories:
-                score = str(polarize(headline))
-                headline.pol = score
-                db.session.commit()
+        # if dict['sa'] == 'polarity':
+        #     #might have to be query['sort_by']
+        #     for headline in user_queried_stories:
+        #         score = str(polarize(headline))
+        #         headline.pol = score
+        #         db.session.commit()
 
-            headlines = user.queried_stories
-            ordered = sorted(headlines, key = lambda story : story['pol']['article_res']['avg_com'], reverse=True )
-            headlines = ordered
+        #     headlines = user.queried_stories
+        #     ordered = sorted(headlines, key = lambda story : story['pol']['article_res']['avg_com'], reverse=True )
+        #     headlines = ordered
                 
-        elif dict['sort_by'] == 'subjectivity':
-            for headline in user_queried_stories:
-                score = str(subjectize(headline))
-                headline.sub = score
-                db.session.commit()
+        # elif dict['sa'] == 'subjectivity':
+        #     for headline in user_queried_stories:
+        #         score = str(subjectize(headline))
+        #         headline.sub = score
+        #         db.session.commit()
 
-            headlines = user.queried_stories
-            ordered = sorted(headlines, key = lambda story : story['sub']['score'], reverse=True )
-            headlines = ordered
-    else:
-        flash("Please log in to view search results.", "danger")
+            # headlines = user.queried_stories
+            # ordered = sorted(headlines, key = lambda story : story['sub']['score'], reverse=True )
+            # headlines = ordered
+    # else:
+    #     flash("Please log in to view search results.", "danger")
 
     return render_template('/show_stories.html', headlines=headlines)
 
@@ -165,18 +177,25 @@ def search_params():
             dict['date_from'] = form.date_from.data
             dict['date_to'] = form.date_to.data
             dict['language'] = form.language.data
-            dict['sort_by'] = form.sort_by.data
+            
+            if form.sort_by.data == "subjectivity" or form.sort_by.data == "polarity":
+                print(form.sort_by.data)
+                print("hmm")
+                dict['sa'] = form.sort_by.data
+                dict['sort_by'] = 'relevancy'
+            else: 
+                dict['sort_by'] = form.sort_by.data
+                dict['sa'] = None
             dict['default'] = form.default.data
             
             if dict['default'] == True:
                 default_str = str(dict)
                 user.default_search = default_str
                 db.session.commit()
-
             session['dict'] = dict
             search_call(dict, g.user.id)
            
-
+            print("search1")
             return redirect('/search/results')
 
         except:

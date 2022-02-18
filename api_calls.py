@@ -66,11 +66,10 @@ def search_call(query, user_id):
     
     from_ = str(query['date_from'])
     to = str(query['date_to'])
-    print(to, from_)
-    print("dates1")
+   
     #check if this is necessary
     if to == 'None' and from_ == 'None':
-        print('here1')
+        
         results = newsapi.get_everything(q=f"{query['keyword']}"
         ,sources = f"{query['source']}"
         ,language=f"{query['language']}"
@@ -78,7 +77,7 @@ def search_call(query, user_id):
         )
 
     elif to == 'None' and from_ != 'None':
-        print('her1')
+       
         results = newsapi.get_everything(q=f"{query['keyword']}"
         ,sources = f"{query['source']}"
         ,language=f"{query['language']}"
@@ -106,6 +105,7 @@ def search_call(query, user_id):
         ,from_param=f"{from_}"
         ,to=f"{to}"
         )
+    print("nah")
     #api seems to not want to allow dates to be optional if specified
   
     #having trouble with the pageSize search parameter which represents # of stories to be returned

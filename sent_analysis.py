@@ -110,7 +110,9 @@ def polarize(headline):
         if res['compound']:
             #sometimes the composite will be zero for certain sentences. We don't want to include that data. 
             coms.append(res['compound'])
+        
 
+    
     avg_com = sum(coms) / len(coms)
     avg_pos = sum(pos) / len(pos)
     avg_neu = sum(neus) / len(neus)
@@ -154,6 +156,8 @@ def polarize(headline):
 
     pol_obj['headline_res'] = headline_res
     pol_obj['article_res'] = article_res
+    print(type(pol_obj))
+    print("type1")
     return pol_obj
 
 def sa_sum(headlines):
