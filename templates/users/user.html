@@ -15,7 +15,7 @@
     <span><a href="show_story/{{story.id}}">Show Full Story</a></span>
     <hr>
 
-    {% if story.pol%}
+    {% if story.score%}
     <p>Polarity: {{score}}</p>
     {% else %}
     <form action = '/sacalls/{{story.id}}/polarity', method="POST">

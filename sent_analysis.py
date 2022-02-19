@@ -1,5 +1,5 @@
 #libraries for parsing and sentiment analysis
-from bs4 import BeautifulSoup
+import math 
 from newspaper import Article
 from sqlalchemy.exc import IntegrityError
 import nltk
@@ -112,11 +112,13 @@ def polarize(headline):
             coms.append(res['compound'])
         
 
-    
-    avg_com = sum(coms) / len(coms)
-    avg_pos = sum(pos) / len(pos)
-    avg_neu = sum(neus) / len(neus)
-    avg_neg = sum(negs) / len(negs)
+    if len(coms) == 0:
+        error = "error"
+        return error
+    avg_com = round((sum(coms) / len(coms)), 2)
+    avg_pos = round((sum(pos) / len(pos)), 2)
+    avg_neu = round((sum(neus) / len(neus)), 2)
+    avg_neg = round((sum(negs) / len(negs)), 2)
 
     """Logic for polarity from headline text"""
 
@@ -135,10 +137,10 @@ def polarize(headline):
     else:
         headline_res['result'] = "Neutral"
 
-    article_res["avg_com"] = avg_com
-    article_res["avg_pos"] = avg_pos
-    article_res["avg_neg"] = avg_neg
-    article_res["avg_neu"] = avg_neu
+    article_res["avg_com"] = round(avg_com, 2)
+    article_res["avg_pos"] = round(avg_pos, 2)
+    article_res["avg_neg"] = round(avg_neg, 2)
+    article_res["avg_neu"] = round(avg_neu, 2)
 
     if avg_com >= 0.2 :
         article_res['result'] = "Positive"
@@ -149,11 +151,8 @@ def polarize(headline):
     else :
         article_res['result'] = "Neutral"
 
-    print(f"Average sentiment of each sentence in article: compound {avg_com}")
-    print(f"sentence was rated as , {avg_neg *100}, % Negative")
-    print(f"sentence was rated as , {avg_neu *100}, % Neutral")
-    print(f"sentence was rated as , {avg_pos *100}, % Positive")
-
+    article_res["message"] = f"The average sentiment of this article was rated as {article_res['result']}. {avg_neg *100} % Negative, {avg_neu *100} % Neutral, and {avg_pos *100} % Positive"
+  
     pol_obj['headline_res'] = headline_res
     pol_obj['article_res'] = article_res
     print(type(pol_obj))

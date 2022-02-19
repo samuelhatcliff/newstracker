@@ -101,11 +101,17 @@ def order_stories_recent(stories):
 def show_sa_calls(story_id):
  
     story = Story.query.get(story_id)
+    user = User.query.get(g.user.id)
 
     score = polarize(story)
-    print(score)
-    print("type3")
-    user = User.query.get(g.user.id)
+    if score == "error":
+        return render_template('users/user.html', user=user, score = score )
+    
+    story.score = score
+
+    score = score['article_res']['message']
+    print(story_id)
+    print("storyid1")
     
     db.session.commit()
     return render_template('users/user.html', user=user, score = score )
