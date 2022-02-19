@@ -5,14 +5,16 @@
     <ul>
         <div>
             <div class="card my-4">
-                <div class="card-body">
-                <h4 class="card-title"> <a href="story/{{story.id}}/open"> {{story.headline}}</a></h4>
-                <p class= "card-text">{{story.content}}</p>
-                <h5 class="card-subtitle mb-2 text-muted">{{story.published_at}}</li>
-                <h6 class="card-subtitle mb-2 text-muted"><a href="show_story/{{story.id}}">Show Full Story</a></span>
+                <div class="card-body text-center">
+                <img class="card-img-top" src="{{story.image}}" alt="{{story.headline}}" style="width: 300px; height: 225px; object-fit: contain;"/>
+                <h4 class="card-title text-center"> <a href="story/{{story.id}}/open"> {{story.headline}}</a></h4>
+                <h5 class="card-subtitle mb-2 text-muted text-center blockquote-footer">{{story.published_at}}</li>
+
+                <p class= "card-text text-center">{{story.content}}</p>
+                <!-- <h6 class="card-subtitle mb-2 text-muted text-center"><a href="show_story/{{story.id}}">Show Full Story</a></span> -->
                 
-                <form action='/story/{{story.id}}/save_story', method="POST">
-                    <input type="submit" value="Save Story" class="btn btn-success">
+                <form action='/story/{{story.id}}/save_story', method="POST" id="save">
+                    <input type="submit" value="Save Story" class="btn btn-outline-success btn-sm badge-pill" display: inline;>
                     </form>
                 </div>
             </div>

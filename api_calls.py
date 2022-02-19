@@ -34,9 +34,8 @@ def get_from_newsapi(query, user_id = None):
     for article in articles:
         headline = article['title']
         source = article["source"]["name"]
-        if type(article["content"]) == None:
-            print("ITS A NONE TYPE")
-            content = "Click the following link to view story."
+        if article["content"] is None:
+            content = "No content preview found. Click the link above to view full story."
         else:
             content=article['content']
         

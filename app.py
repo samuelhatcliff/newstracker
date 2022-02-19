@@ -20,24 +20,6 @@ from newsapi import NewsApiClient
 from flask_debugtoolbar import DebugToolbarExtension 
 from flask_bcrypt import Bcrypt
 
-
-#libraries for parsing and sentiment analysis
-# from bs4 import BeautifulSoup
-# from newspaper import Article
-# from sqlalchemy.exc import IntegrityError
-# import nltk
-# nltk.download('stopwords')
-# nltk.download('punkt')
-# from nltk.corpus import stopwords
-# from nltk.sentiment.vader import SentimentIntensityAnalyzer as SIA
-# sia = SIA()
-# from textblob import TextBlob
-
-# import spacy
-# nlp = spacy.load('en_core_web_sm', disable=["parser", "ner"])
-# import re
-
-
 CURR_USER_KEY = "curr_user"
 
 
@@ -56,6 +38,10 @@ debug = DebugToolbarExtension(app)
 
 
 
+# TODO: turn what is currently users/user.html into a template that is used for both the users saved stories, 
+#as well as returning search results and loading the home page. Add error handling for stories where SA doesn't work
+#then make sure the order functions are working (currently written under queries_stories model in db table, but proabably want)
+#to change this. look up the difference between class methd and a regular method on a class
 
 # def getHeadlines():
 #     key = 'b4f52eb738354e648912261c010632e7'
@@ -81,7 +67,6 @@ def add_user_to_g():
 def do_login(user):
     """Log in user."""
     session[CURR_USER_KEY] = user.id
-    print("logging in")
 
 
 def do_logout():
@@ -91,10 +76,6 @@ def do_logout():
         del session[CURR_USER_KEY]
 
 
-def order_stories_recent(stories):
-    ordered = sorted(stories, key = lambda story : story.published_at, reverse=True )
-    return ordered
-        
 """View functions for application"""
 
 @app.route('/sacalls/<int:story_id>/polarity', methods =['POST'])
@@ -111,13 +92,12 @@ def show_pol_calls(story_id):
     score = score['article_res']['message']
     story.pol = str(score)
  
-    
     db.session.commit()
     return render_template('users/user.html', user=user)
 
 @app.route('/sacalls/<int:story_id>/subjectivity', methods =['POST'])
 def show_sub_calls(story_id):
-    print("here1")
+    
     story = Story.query.get(story_id)
     user = User.query.get(g.user.id)
 
@@ -130,18 +110,12 @@ def show_sub_calls(story_id):
     
 
 
-
-
-
 @app.route('/search/results')
 def show_search_results():
     #write logic for if no results are found
     if CURR_USER_KEY in session:
         # query = session.get("query")
-        
         dict = session['dict']
-       
-
         user = User.query.get(g.user.id)
         user_queried_stories = user.queried_stories
       

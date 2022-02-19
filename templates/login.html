@@ -2,7 +2,8 @@
 {% block content %}
     <div class="container">
         <h1 class="display-1 text-center">Login</h1>
-        <span class= "display-5 text-center">Don't have an account? <a href="/register">Register here</a></span>
+        <div>
+        <span class= "display-5 text-center alert alert-success alert-dismissible fade">Don't have an account? <a href="/register" class ="alert-link">Register here</a></span>
             <div class="row justify-content-center">
                 <div class="col-md-8">
                     <form method="POST">
@@ -23,6 +24,7 @@
                         <button class= "btn btn-success btn-large" type="Submit">Login</button>
                     </form>
                 </div>
+            </div>
         </div>
     </div>
 {% endblock %}
