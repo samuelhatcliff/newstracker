@@ -98,7 +98,7 @@ def order_stories_recent(stories):
 """View functions for application"""
 
 @app.route('/sacalls/<int:story_id>/polarity', methods =['POST'])
-def show_sa_calls(story_id):
+def show_pol_calls(story_id):
  
     story = Story.query.get(story_id)
     user = User.query.get(g.user.id)
@@ -107,14 +107,31 @@ def show_sa_calls(story_id):
     if score == "error":
         return render_template('users/user.html', user=user, score = score )
     
-    story.score = score
 
     score = score['article_res']['message']
-    print(story_id)
-    print("storyid1")
+    story.pol = str(score)
+ 
     
     db.session.commit()
-    return render_template('users/user.html', user=user, score = score )
+    return render_template('users/user.html', user=user)
+
+@app.route('/sacalls/<int:story_id>/subjectivity', methods =['POST'])
+def show_sub_calls(story_id):
+    print("here1")
+    story = Story.query.get(story_id)
+    user = User.query.get(g.user.id)
+
+    score = subjectize(story)['measure']
+    story.sub = str(score)
+
+    db.session.commit()
+    return render_template('users/user.html', user=user)
+
+    
+
+
+
+
 
 @app.route('/search/results')
 def show_search_results():
@@ -185,8 +202,7 @@ def search_params():
             dict['language'] = form.language.data
             
             if form.sort_by.data == "subjectivity" or form.sort_by.data == "polarity":
-                print(form.sort_by.data)
-                print("hmm")
+              
                 dict['sa'] = form.sort_by.data
                 dict['sort_by'] = 'relevancy'
             else: 
@@ -201,7 +217,6 @@ def search_params():
             session['dict'] = dict
             search_call(dict, g.user.id)
            
-            print("search1")
             return redirect('/search/results')
 
         except:
