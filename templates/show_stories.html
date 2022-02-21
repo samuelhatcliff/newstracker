@@ -1,22 +1,32 @@
 {% extends 'base.html' %}
 {% block content %}
 {% for story in headlines%}
-<div>
+<div class="container">
     <ul>
-        <div>
+        <div class="row">
             <div class="card my-4">
                 <div class="card-body text-center">
-                <img class="card-img-top" src="{{story.image}}" alt="{{story.headline}}" style="width: 300px; height: 225px; object-fit: contain;"/>
-                <h4 class="card-title text-center"> <a href="story/{{story.id}}/open"> {{story.headline}}</a></h4>
-                <h5 class="card-subtitle mb-2 text-muted text-center blockquote-footer">{{story.published_at}}</li>
+                    <div class="row media" >
+                        
+                        <form class="col-sm my-auto order1 col-6 " id="left-b" action = '/sacalls/{{story.id}}/polarity', method="POST">
+                            <input type="submit" value="Get Polarity" class="btn btn-success badge-pill">
+                        </form>
 
-                <p class= "card-text text-center">{{story.content}}</p>
-                <!-- <h6 class="card-subtitle mb-2 text-muted text-center"><a href="show_story/{{story.id}}">Show Full Story</a></span> -->
+                        <img class="text-center col-md-6 col-12 rounded" id="image" src="{{story.image}}" alt="{{story.headline}}" style="width: 300px; height: 225px; object-fit: contain;"/>
                 
-                <form action='/story/{{story.id}}/save_story', method="POST" id="save">
-                    <input type="submit" value="Save Story" class="btn btn-outline-success btn-sm badge-pill" display: inline;>
-                    </form>
-                </div>
+                        <form class="col-sm my-auto col-6" action='/story/{{story.id}}/save_story' action = '/sacalls/{{story.id}}/subjectivity', method="POST">
+                            <input type="submit" value="Get Subjectivity" class="btn btn-primary badge-pill">
+                        </form>
+
+                    </div>
+
+                    <h4 class="card-title text-center"> <a href="story/{{story.id}}/open"> {{story.headline}}</a></h4>
+                    <h5 class="card-subtitle mb-2 text-muted text-center blockquote-footer">{{story.published_at}}</li>
+                    <p class= "card-text text-center">{{story.content}}</p>
+                    <form action='/story/{{story.id}}/save_story', method="POST" id="save">
+                        <input type="submit" value="Save Story" class="btn btn-outline-success btn-sm badge-pill" display: inline;>
+                        </form>
+                    </div>
             </div>
     </ul></div>
 </div>

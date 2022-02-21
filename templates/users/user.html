@@ -7,44 +7,43 @@
 </span>
 {% endif %}
 {% for story in user.saved_stories%}
+<div class="container">
+    <div class="row">
+        <div class="">
 
-<ul>
-    <a href="{{story.url}}"> {{story.headline}}</a>
-    <img src="{{story.image}}" alt="{{story.headline}}"   style="width: 300px; height: 337px; object-fit: contain;"
-    />
-    <li>{{story.content}}</li>
-    <li>{{story.published_at}}</li>
-    <span><a href="show_story/{{story.id}}">Show Full Story</a></span>
-    
+        </div>
+        <ul>
+            <a href="{{story.url}}"> {{story.headline}}</a>
+            <img src="{{story.image}}" alt="{{story.headline}}"   style="width: 300px; height: 337px; object-fit: contain;"
+            />
+            <li>{{story.content}}</li>
+            <li>{{story.published_at}}</li>
+            <span><a href="show_story/{{story.id}}">Show Full Story</a></span>
+            
 
-    {% if story.pol%}
-    <p>Polarity: {{story.pol}}</p>
-    {% else %}
-    <form action = '/sacalls/{{story.id}}/polarity', method="POST">
-        <input type="submit" value="Get Polarity" class="btn btn-success">
-        </form>
-  
-    {% endif %}
-    {% if story.sub%}
-    <p>Subjectivity: {{story.sub}}</p>
-    {% else %}
-    <form action = '/sacalls/{{story.id}}/subjectivity', method="POST">
-        <input type="submit" value="Get Subjectivity" class="btn btn-primary">
-        </form>
+            {% if story.pol%}
+            <p>Polarity: {{story.pol}}</p>
+            {% else %}
+            <form action = '/sacalls/{{story.id}}/polarity', method="POST">
+                <input type="submit" value="Get Polarity" class="btn btn-success">
+                </form>
+        
+            {% endif %}
+            {% if story.sub%}
+            <p>Subjectivity: {{story.sub}}</p>
+            {% else %}
+            <form action = '/sacalls/{{story.id}}/subjectivity', method="POST">
+                <input type="submit" value="Get Subjectivity" class="btn btn-primary">
+                </form>
 
-`   {% endif %}
-    
-
-
-
-    <!-- <button class= "btn btn-success btn-large">Get Polarity</button> -->
-    <!-- <button class= "btn btn-primary btn-large">Get Subjectivity</button> -->
-
-    <form action='/story/{{story.id}}/delete_story' , method="DELETE">
-        <input type="submit" value="Remove Story" class="btn btn-danger">
-        </form>
-    
-    <hr>
-</ul>
+        `   {% endif %}
+            <form action='/story/{{story.id}}/delete_story' , method="DELETE">
+                <input type="submit" value="Remove Story" class="btn btn-danger">
+                </form>
+            
+            <hr>
+        </ul>
+    </div>
+</div>
 {%endfor%}
 {% endblock %}

@@ -15,6 +15,7 @@ nlp = spacy.load('en_core_web_sm', disable=["parser", "ner"])
 import re
 
 
+    
 
 def parse(headline):
     article = Article(headline.url)
@@ -155,8 +156,7 @@ def polarize(headline):
   
     pol_obj['headline_res'] = headline_res
     pol_obj['article_res'] = article_res
-    print(type(pol_obj))
-    print("type1")
+  
     return pol_obj
 
 def sa_sum(headlines):

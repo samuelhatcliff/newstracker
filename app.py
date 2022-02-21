@@ -216,8 +216,8 @@ def user():
     
     else:
         user = User.query.get(g.user.id)
-        ordered = order_stories_recent(user.saved_stories)
-        user.saved_stories = ordered
+        # ordered = order_stories_recent(user.saved_stories)
+        # user.saved_stories = ordered
         is_empty = False
         if len(user.saved_stories) == 0:
             is_empty = True
