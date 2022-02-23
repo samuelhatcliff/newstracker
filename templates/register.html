@@ -1,27 +1,29 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container">
-    <h1 class="display-1 text-center">Register</h1>
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <form method="POST">
-                {{ form.hidden_tag() }}
-                {% for field in form
-                if field.widget.input_type != 'hidden' %}
-                <p>
-                    <div class="form-group">
-                    {{field.label}}
-                    {{field(class_="form-control")}}
-                    {%for err in field.errors%}
-                    <small class="form-text text-danger">
-                    {{err}}
-                    </small>
+    <h1 class="display-3 text-center">Register</h1>
+    <div class="text-center text-light">
+        <div class="row justify-content-center ">
+            <div class="col-md-8" >
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    {% for field in form
+                    if field.widget.input_type != 'hidden' %}
+                    <p>
+                        <div class="form-group">
+                        {{field.label}}
+                        {{field(class_="form-control")}}
+                        {%for err in field.errors%}
+                        <small class="form-text text-danger">
+                        {{err}}
+                        </small>
+                        {% endfor %}
+                        </div>
+                    </p>
                     {% endfor %}
-                    </div>
-                </p>
-                {% endfor %}
-                <button class= "btn btn-success btn-large" type="Submit">Register</button>
-            </form>
+                    <button class= "submit-b btn btn-success btn-large" type="Submit">Register</button>
+                </form>
+            </div>
         </div>
     </div>
 </div>

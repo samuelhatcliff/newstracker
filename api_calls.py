@@ -13,8 +13,9 @@ def get_from_newsapi(query, user_id = None):
     # if user_id == None:
     #     #catch error
     #     return None
+    user = User.query.get(user_id)
+
     if user_id != None:
-        user = User.query.get(user_id)
                 #deletes all previous instances of queried_stories to make room for new query
 
         for story in user.queried_stories:

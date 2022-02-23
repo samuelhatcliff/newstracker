@@ -149,16 +149,27 @@ def show_search_results():
 
 @app.route('/', methods= ['GET', 'POST'])
 def home_page():
-    # if CURR_USER_KEY in session:
-    #     user = User.query.get(g.user.id)
+    if CURR_USER_KEY in session:
+        user = User.query.get(g.user.id)
+        if not user.queried_stories:
+            headlines = get_from_newsapi(None)
+            return render_template('/show_stories.html', headlines=headlines)
+        user_queried_stories = user.queried_stories
+
+        headlines = user_queried_stories
+        return render_template('/show_stories.html', headlines=headlines)
+    else:
+        headlines = get_from_newsapi(None)
+        return render_template('/show_stories.html', headlines=headlines)
+
+
     #     search = user.default_search
     #     search_dict = eval(search)
     #     results = search_call(search_dict)
     #     session["query"] = results
     #     return redirect('/search/results')
 
-    headlines = get_from_newsapi(None)
-    return render_template('/show_stories.html', headlines=headlines)
+    
 
 
 @app.route('/users/search', methods = ['GET', 'POST'])
