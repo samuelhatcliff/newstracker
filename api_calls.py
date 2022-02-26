@@ -36,7 +36,7 @@ def get_from_newsapi(query, user_id = None):
         headline = article['title']
         source = article["source"]["name"]
         if article["content"] is None:
-            content = "No content preview found. Click the link above to view full story."
+            content = "No content preview found. Click the link above to access the full story."
         else:
             content=article['content']
         

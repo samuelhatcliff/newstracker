@@ -209,7 +209,11 @@ def search_params():
             return render_template('/users/search.html', form = form)
     
     else:
-        print("something went wrong2")
+        dict = {}
+        dict['keyword'] = request.form.data
+        session['dict'] = dict
+        search_call(dict, g.user.id)
+        # create class for search query and have a type called simple search which will be checked for in search call
         return render_template('/users/search.html', form = form)
 
 
