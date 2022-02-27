@@ -13,7 +13,7 @@
                                 <input sa-button type="submit" value="Get Polarity" class="btn btn-dark btn-sm badge-pill">
                             </form>
 
-                            <img class="text-center col-md-6 col-12 rounded" id="image" src="{{story.image}}" alt="{{story.headline}}" style="width: 300px; height: 225px; object-fit: contain;"/>
+                            <img class="text-center col-md-6 col-12" id="image" src="{{story.image}}" alt="{{story.headline}}" style="width: 300px; height: 225px; object-fit: contain;"/>
                     
                             <form class=" col-sm my-auto col-6" id="right-b" action='/story/{{story.id}}/save_story' action = '/sacalls/{{story.id}}/subjectivity', method="POST">
                                 <input sa-button type="submit" value="Get Subjectivity" class="btn btn-dark btn-sm badge-pill">
@@ -25,7 +25,7 @@
                         <h5 class="card-subtitle mb-2 text-center blockquote-footer" id="date">{{story.published_at}}</li>
                         <p class= "card-text text-center" id="content">{{story.content}}</p>
                         <form action='/story/{{story.id}}/save_story', method="POST" id="save">
-                            <input type="submit" value="Save Story" class="btn btn-outline-dark btn-sm badge-pill">
+                            <input type="submit" value="Save Story" class="btn btn-dark btn-sm badge-pill">
                             </form>
                         </div>
                 </div>
@@ -33,7 +33,7 @@
         </ul>
     </div>
 </section>
-<hr>
+
 {%endfor%}
 {% endblock %}
 

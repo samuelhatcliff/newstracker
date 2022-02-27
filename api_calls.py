@@ -5,6 +5,7 @@ newsapi= NewsApiClient(api_key='b4f52eb738354e648912261c010632e7')
 import psycopg2
 from models import db
 from sqlalchemy import delete
+import re;
 # from app import app
 
 
@@ -39,7 +40,7 @@ def get_from_newsapi(query, user_id = None):
             content = "No content preview found. Click the link above to access the full story."
         else:
             content=article['content']
-        
+   
         author =article['author']
         description = article['description']
         url = article['url']

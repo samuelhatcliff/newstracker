@@ -2,12 +2,17 @@
 body {
     padding: 0;
     margin: 0;
-    background: black;
+    background: black !important;
+    font-family: 'Abel', sans-serif !important;
+    /*possibly change nav font to this^^*/
 }
 ul {
     padding: 0;
     list-style-type: none;
     margin: auto;
+}
+p {
+    margin-bottom: 100px;
 }
 @media only screen and (max-width: 576px) {
     ul {
@@ -64,6 +69,7 @@ ul {
 
 #image {
     margin-bottom: 10px;
+    border-radius: 40px;
 }
 
 /* more specific card styles to adapt to the behavior of mobile devices*/
@@ -105,9 +111,11 @@ ul {
 .form {
     color: whitesmoke;
 }
+
 .form-alert {
         margin: 20px;
 }
+
 h1 {
     color:whitesmoke;
     font-family: 'Times New Roman', Times, serif;
@@ -135,38 +143,110 @@ h1 {
 
 /* navbar styles*/
 
+
+
+
+
 .navbar {
     background-color: black;
+    color:rgb(65, 65, 65);
     overflow: hidden;
-    margin:0px;
+    /* padding:0px; */
+    /* margin:100px; */
+}
+.navbar-toggler {
+    margin-right:10px;
 }
 
-nav-item {
-    margin: auto;
-    float: left;
-    color: #f2f2f2;
+.nav-item {
+    margin:auto;
+    color: #f2f2f2; 
     font-family: 'Times New Roman', Times, serif;
-    padding: 14px 16px;
+    padding-left: 0px;
     text-decoration: none;
     font-size: 17px;
-    justify-content: space-between;
     transition-duration: 0.25s;
+    font-size:16px;
 }
+
 .navbar-nav{
-    margin: auto;
+    margin:0px;
+    text-align: right !important;
+
+    /* WHY NO WORK??? I WANT TO SEARCH TO BE IN MIDDLE, THIS TO BE IN RIGHT UNTIL CERTAIN PIXEL RANGE */
 }
-nav-item:hover {
-    background-color:#ddd ;
+
+.nav-item:hover {
+    background-color:rgb(119, 119, 119) ;
     color: black;
     text-decoration: none;
 }
 
-@media only screen and (max-width: 838px) {
+#search{
+    margin-right: 20px;
+}
+
+@media only screen and (max-width: 768px) {
     #search{
         display:none;
+        order:0;
+    
     }
 }
 
 #nav-msg-spc {
 margin-top: 100px;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#slideshow {
+    margin:auto
+}
+
+/* h5 {
+    color:white;
+    display:none;
+} */
+
+.carousel-caption {
+    margin: auto;
+    vertical-align: text-top;
+}
+
+
+/**/
+
+
+.hedding h1{
+	color:#000;
+	font-weight: bold;
+	text-shadow: 0px 2px 3px #04fce7;
+    text-align: center;
+}
+.carousel-caption a{
+	color:#fff;
+	font-weight: bold;
+}
+
+.carousel-caption {
+    margin-top: 50px;
+	text-align:center;
+	padding:10px;
+	background:rgba(0,0,0,0.4);
+	text-shadow:none;
+    justify-content: center;
+}
+
+

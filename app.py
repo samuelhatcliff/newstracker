@@ -17,7 +17,7 @@ from newsapi import NewsApiClient
 
 
 
-from flask_debugtoolbar import DebugToolbarExtension 
+# from flask_debugtoolbar import DebugToolbarExtension 
 from flask_bcrypt import Bcrypt
 
 CURR_USER_KEY = "curr_user"
@@ -32,8 +32,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///capstone'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 app.config['SECRET_KEY'] = "topsecret1"
-app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
-debug = DebugToolbarExtension(app)
+# app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
+# debug = DebugToolbarExtension(app)
 
 
 
@@ -107,6 +107,27 @@ def show_sub_calls(story_id):
     db.session.commit()
     return render_template('users/user.html', user=user)
 
+    
+@app.route('/slideshow')
+def slideshow():
+
+    if CURR_USER_KEY in session:
+        user = User.query.get(g.user.id)
+        if not user.queried_stories:
+            headlines = get_from_newsapi(None)
+            top_story = headlines.pop(0)
+            return render_template('/homepage.html', headlines=headlines, top_story=top_story)
+        user_queried_stories = user.queried_stories
+
+        headlines = user_queried_stories
+        top_story = headlines.pop(0)
+        return render_template('/homepage.html', headlines=headlines, top_story=top_story)
+    else:
+        headlines = get_from_newsapi(None)
+        top_story = headlines.pop(0)
+        return render_template('/homepage.html', headlines=headlines, top_story=top_story)
+ 
+    
     
 
 
