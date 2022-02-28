@@ -11,9 +11,7 @@ import re;
 
 
 def get_from_newsapi(query, user_id = None):
-    # if user_id == None:
-    #     #catch error
-    #     return None
+
     user = User.query.get(user_id)
 
     if user_id != None:
@@ -32,6 +30,9 @@ def get_from_newsapi(query, user_id = None):
         data = newsapi.get_top_headlines(language="en")
         articles = data['articles']
     
+
+
+    """This part of the function saves each article to SQLalchemy DB"""
     top_headlines = []
     for article in articles:
         headline = article['title']
@@ -64,13 +65,19 @@ def get_from_newsapi(query, user_id = None):
     return top_headlines
 
 def search_call(query, user_id):
-    
+    if type(query) == str:
+        """The simple search from the search bar in the navbar only contains a string that is the keyword"""
+        results = newsapi.get_everything(q=f"{query['keyword']}")
+        articles = results['articles']
+        saved = get_from_newsapi(spliced, user_id )
+        return saved
+
+
     from_ = str(query['date_from'])
     to = str(query['date_to'])
    
     #check if this is necessary
     if to == 'None' and from_ == 'None':
-        
         results = newsapi.get_everything(q=f"{query['keyword']}"
         ,sources = f"{query['source']}"
         ,language=f"{query['language']}"
@@ -78,7 +85,6 @@ def search_call(query, user_id):
         )
 
     elif to == 'None' and from_ != 'None':
-       
         results = newsapi.get_everything(q=f"{query['keyword']}"
         ,sources = f"{query['source']}"
         ,language=f"{query['language']}"
@@ -98,7 +104,6 @@ def search_call(query, user_id):
         )
 
     else:
-        print('correct')
         results = newsapi.get_everything(q=f"{query['keyword']}"
         ,sources = f"{query['source']}"
         ,language=f"{query['language']}"
@@ -106,7 +111,6 @@ def search_call(query, user_id):
         ,from_param=f"{from_}"
         ,to=f"{to}"
         )
-    print("nah")
     #api seems to not want to allow dates to be optional if specified
   
     #having trouble with the pageSize search parameter which represents # of stories to be returned
@@ -116,6 +120,4 @@ def search_call(query, user_id):
     articles = results['articles']
     spliced = articles[:quantity]
     saved = get_from_newsapi(spliced, user_id )
-    print(saved)
-    print("saved1")
     return saved

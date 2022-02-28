@@ -11,7 +11,7 @@ ul {
     list-style-type: none;
     margin: auto;
 }
-p {
+#indentation {
     margin-bottom: 100px;
 }
 @media only screen and (max-width: 576px) {
@@ -35,7 +35,7 @@ p {
 .container {
     background: #242424;
     margin: auto;
-    border-radius: 15px;
+    border-radius: 30px;
 }
 
 .card {
@@ -63,6 +63,11 @@ p {
     background: rgb(65, 65, 65)
 }
 
+.results {
+    color:whitesmoke;
+    margin:auto;
+    }
+
 #date {
     color:gainsboro;
 }
@@ -71,6 +76,8 @@ p {
     margin-bottom: 10px;
     border-radius: 40px;
 }
+
+
 
 /* more specific card styles to adapt to the behavior of mobile devices*/
 
@@ -202,12 +209,7 @@ margin-top: 100px;
 
 
 
-
-
-
-
-
-
+/* Slideshow */
 
 
 

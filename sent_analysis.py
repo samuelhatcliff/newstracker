@@ -69,9 +69,14 @@ def tokenize(headline):
     #https://datascience.stackexchange.com/questions/39960/remove-special-character-in-a-list-or-string
 
 def subjectize(headline):
-    parsed = parse(headline)
+    try:
+        parsed = parse(headline)
+    except:
+        return None
     tblobbed = TextBlob(parsed)
     subjectivity = tblobbed.sentiment.subjectivity
+   
+
     sub_obj = {}
     if subjectivity > .80:
         sub_obj['measure'] = "Very Objective"
@@ -84,6 +89,9 @@ def subjectize(headline):
     else:
         sub_obj['measure'] = "Very Subjective"
     sub_obj['score'] = subjectivity
+ 
+    if sub_obj['score'] == 0.0:
+        return None 
     return sub_obj
 
 def polarize(headline):
@@ -94,7 +102,11 @@ def polarize(headline):
     article_res = {}
 
     """Logic for polarity from article text"""
-    parsed = parse(headline)
+    try:
+        parsed = parse(headline)
+    except:
+        return None
+
     sentenced = nltk.tokenize.sent_tokenize(parsed)
 
     coms = []
@@ -114,8 +126,7 @@ def polarize(headline):
         
 
     if len(coms) == 0:
-        error = "error"
-        return error
+        return None
     avg_com = round((sum(coms) / len(coms)), 2)
     avg_pos = round((sum(pos) / len(pos)), 2)
     avg_neu = round((sum(neus) / len(neus)), 2)
@@ -152,7 +163,7 @@ def polarize(headline):
     else :
         article_res['result'] = "Neutral"
 
-    article_res["message"] = f"The average sentiment of this article was rated as {article_res['result']}. {avg_neg *100} % Negative, {avg_neu *100} % Neutral, and {avg_pos *100} % Positive"
+    article_res["message"] = f"{article_res['result']}. {avg_neg *100}% Negative, {avg_neu *100}% Neutral, and {avg_pos *100}% Positive"
   
     pol_obj['headline_res'] = headline_res
     pol_obj['article_res'] = article_res

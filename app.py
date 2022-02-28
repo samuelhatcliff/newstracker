@@ -82,30 +82,38 @@ def do_logout():
 def show_pol_calls(story_id):
  
     story = Story.query.get(story_id)
-    user = User.query.get(g.user.id)
 
     score = polarize(story)
-    if score == "error":
-        return render_template('users/user.html', user=user, score = score )
+    if score == None:
+        story.pol = "No Data"
+        db.session.commit()
+        return redirect('/user')
     
 
-    score = score['article_res']['message']
+    score = score['article_res']['result']
     story.pol = str(score)
  
     db.session.commit()
-    return render_template('users/user.html', user=user)
+    return redirect('/user')
 
 @app.route('/sacalls/<int:story_id>/subjectivity', methods =['POST'])
 def show_sub_calls(story_id):
     
     story = Story.query.get(story_id)
-    user = User.query.get(g.user.id)
+    
+    score = subjectize(story)
+    if score == None:
+        story.sub = "No Data"
+        db.session.commit()
+        return redirect('/user')
 
-    score = subjectize(story)['measure']
+
+    else:
+        score = score['measure']
+
     story.sub = str(score)
-
     db.session.commit()
-    return render_template('users/user.html', user=user)
+    return redirect('/user')
 
     
 @app.route('/slideshow')
@@ -131,8 +139,8 @@ def slideshow():
     
 
 
-@app.route('/search/results')
-def show_search_results():
+@app.route('/results')
+def results():
     #write logic for if no results are found
     if CURR_USER_KEY in session:
         # query = session.get("query")
@@ -178,22 +186,15 @@ def home_page():
         user_queried_stories = user.queried_stories
 
         headlines = user_queried_stories
+        print("3333")
+        print(headlines)
         return render_template('/show_stories.html', headlines=headlines)
     else:
+        
         headlines = get_from_newsapi(None)
         return render_template('/show_stories.html', headlines=headlines)
 
-
-    #     search = user.default_search
-    #     search_dict = eval(search)
-    #     results = search_call(search_dict)
-    #     session["query"] = results
-    #     return redirect('/search/results')
-
-    
-
-
-@app.route('/users/search', methods = ['GET', 'POST'])
+@app.route('/search', methods= ['GET', 'POST'])
 def search_params():
     user = User.query.get(g.user.id)
     form = SearchForm()
@@ -223,19 +224,27 @@ def search_params():
             session['dict'] = dict
             search_call(dict, g.user.id)
            
-            return redirect('/search/results')
+            return redirect('/results')
 
         except:
             flash("hmmmm. does this appear, or messages from form validators?", 'danger')
             return render_template('/users/search.html', form = form)
-    
     else:
-        dict = {}
-        dict['keyword'] = request.form.data
-        session['dict'] = dict
-        search_call(dict, g.user.id)
-        # create class for search query and have a type called simple search which will be checked for in search call
         return render_template('/users/search.html', form = form)
+  
+
+ 
+@app.route('/users/search/simple', methods = ['GET'])
+def search_simple():
+    user = User.query.get(g.user.id)
+    return render_template('/users/user.html', user=user)
+
+    # user = User.query.get(g.user.id)
+
+    # keyword = request.form.data
+
+    # search_call(keyword, g.user.id)
+
 
 
 @app.route('/show_story/<int:story_id>')
@@ -352,3 +361,18 @@ def logout():
     flash(f"You have successfully logged out.", "primary")
     do_logout()
     return redirect("/")
+
+
+def sub(headlines):
+    for article in headlines:
+        result = subjectize(article)
+        print(headlines.index(article))
+        print(result)
+    return "all done"
+
+def pol(headlines):
+    for article in headlines:
+        result = polarize(article)
+        print(headlines.index(article))
+        print(result)
+    return "all done"
