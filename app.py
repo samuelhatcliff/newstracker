@@ -186,8 +186,7 @@ def home_page():
         user_queried_stories = user.queried_stories
 
         headlines = user_queried_stories
-        print("3333")
-        print(headlines)
+ 
         return render_template('/show_stories.html', headlines=headlines)
     else:
         
@@ -222,6 +221,7 @@ def search_params():
                 user.default_search = default_str
                 db.session.commit()
             session['dict'] = dict
+            #using the query information we make an api call and safe that data to user.searched_queries
             search_call(dict, g.user.id)
            
             return redirect('/results')
@@ -237,14 +237,12 @@ def search_params():
 @app.route('/users/search/simple', methods = ['GET'])
 def search_simple():
     user = User.query.get(g.user.id)
-    return render_template('/users/user.html', user=user)
-
-    # user = User.query.get(g.user.id)
-
-    # keyword = request.form.data
-
-    # search_call(keyword, g.user.id)
-
+    print("r44")
+    keyword = request.args.get("search")
+    print("4445")
+    print(keyword)
+    search_call(keyword, g.user.id)
+    return redirect('/results')
 
 
 @app.route('/show_story/<int:story_id>')

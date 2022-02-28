@@ -67,9 +67,9 @@ def get_from_newsapi(query, user_id = None):
 def search_call(query, user_id):
     if type(query) == str:
         """The simple search from the search bar in the navbar only contains a string that is the keyword"""
-        results = newsapi.get_everything(q=f"{query['keyword']}")
+        results = newsapi.get_everything(q=f"{query}")
         articles = results['articles']
-        saved = get_from_newsapi(spliced, user_id )
+        saved = get_from_newsapi(articles, user_id )
         return saved
 
 
