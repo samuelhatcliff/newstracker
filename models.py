@@ -94,6 +94,17 @@ class Story(db.Model):
     def __repr__(self):
         return f"<ID: {self.id}, H:{self.headline}, S:{self.source}>"
 
+# class CatStories(db.Model):
+#     __tablename__ = "cat_stories"
+#     id = db.Column(db.Integer,
+#     primary_key=True,
+#     autoincrement=True)
+#     story_id = db.Column(db.Integer, db.ForeignKey('stories.id'), nullable = False)
+#     cat_name = db.Column(db.String, nullable=False)
+
+    
+
+
 class SavedStory(db.Model):
     __tablename__ = "saved_stories"
     id = db.Column(db.Integer,
@@ -118,23 +129,6 @@ class QueriedStory(db.Model):
     def __repr__(self):
         return f"<ID: {self.id}, User ID#:{self.user_id}, Story ID#:{self.story_id}>"
     
-    def order_stories_date(self, stories):
-        ordered = sorted(stories, key = lambda story : story.published_at, reverse=True )
-        return ordered
-
-    def order_stories_pol(self, stories):
-        #TODO loop through storie. for stories that dont yet have pol, add pol. For articles that have come back as an error
-        #make sure their avgcom is set to 0 and appear last in the list
-        # db.session.commit()
-        ordered = sorted(stories, key = lambda story : story.article_res.avg_com, reverse=True )
-        return ordered
-    
-    def order_stories_sub(self, stories):
-        #TODO loop through storie. for stories that dont yet have sub, add sub. For articles that have come back as an error
-        #make sure their avgcom is set to 0 and appear last in the list
-        # db.session.commit()
-        ordered = sorted(stories, key = lambda story : story.subjectivity, reverse=True )
-        return ordered
 
 class UserHistory(db.Model):
     __tablename__ = "user_history"

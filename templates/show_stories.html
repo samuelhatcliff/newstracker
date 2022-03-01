@@ -8,17 +8,23 @@
                 <div class="card my-4 ">
                     <div class="card-body text-center">
                         <div class="row media" >
-                            
+                            {% if story.pol%}
+                             <p class="results">Polarity: {{story.pol}}</p>
+                            {% else %}
                             <form class="col-sm my-auto order1 col-6 " id="left-b" action = '/sacalls/{{story.id}}/polarity', method="POST">
                                 <input sa-button type="submit" value="Get Polarity" class="btn btn-dark btn-sm badge-pill">
                             </form>
+                            {% endif %}
 
                             <img class="text-center col-md-6 col-12" id="image" src="{{story.image}}" alt="{{story.headline}}" style="width: 300px; height: 225px; object-fit: contain;"/>
-                    
-                            <form class=" col-sm my-auto col-6" id="right-b" action='/story/{{story.id}}/save_story' action = '/sacalls/{{story.id}}/subjectivity', method="POST">
+                            
+                            {% if story.sub%}
+                            <p class="results">Subjectivity: {{story.sub}}</p>
+                            {% else %}
+                            <form class=" col-sm my-auto col-6" id="right-b" action='/story/{{story.id}}/subjectivity' action = '/sacalls/{{story.id}}/subjectivity', method="POST">
                                 <input sa-button type="submit" value="Get Subjectivity" class="btn btn-dark btn-sm badge-pill">
                             </form>
-
+                            {% endif %}
                         </div>
 
                         <h4 class="card-title text-center" > <a class= "headline" href="story/{{story.id}}/open"> {{story.headline}}</a></h4>
