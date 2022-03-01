@@ -2,27 +2,29 @@
 {% block content %}
 
 
-<div class="container">
-<div class="row">
+<div id= "home" class="container">
+<div id="row" class="row">
 
 
-  <div class = "col">
-    <h1 class="form display-5 text-center">What can you do with NewsTracker?</h1>
+  <div class = "col" id="column">
+    <h3 class="form display-5 text-center">What can you do with NewsTracker?</h3>
     <div class="container">
 
 
       <div class="row">
-        <h1>Non-Users</h1>
+        <div class=heading>
+        <h4 class ="form display-5 text-center">Non-Users</h4>
         <p>You don’t need to be a user to begin utilizing NewsTracker’s features. Here are some things you can do instantly, without even creating and account.</p>
-        <div class="col">
+        </div>
+        <div class="col announce ">
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title">-Get Headlines</h5>
+              <h5 class="card-title">Get Headlines</h5>
               <p class="card-text">Simply click "Headlines" to browse the latest news of the day.</p>
             </div>
           </div>
         </div>
-        <div class="col">
+        <div class="announce col">
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Search by Keyword</h5>
@@ -30,7 +32,7 @@
             </div>
           </div>
         </div>
-        <div class="col">
+        <div class="announce col">
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Browse by Category</h5>
@@ -41,9 +43,11 @@
       </div>
 
       <div class="row">
-        <h1>Users</h1>
-        <p>Through NewsTracker, Registered Users have access to a wide variety of tools that may assist them search for and organize various information. </p>
-        <div class="col">
+        <div class=heading>
+          <h4>Users</h4>
+          <p>Through NewsTracker, Registered Users have access to a wide variety of tools that may assist them search for and organize various information. </p>
+        </div>
+        <div class="announce col">
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Detailed Search</h5>
@@ -51,7 +55,7 @@
             </div>
           </div>
         </div>
-        <div class="col">
+        <div class="announce col">
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Sentiment Analysis Tools</h5>
@@ -59,7 +63,7 @@
             </div>
           </div>
         </div>
-        <div class="col">
+        <div class="announce col">
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Saved Stories</h5>
@@ -70,9 +74,11 @@
       </div>
 
       <div class="row">
-        <h1>Upcoming Features</h1>
-        <p>NewsTracker is an ongoing project that we will continuously be updating in order to give myself and other users ability to access and organize our world’s latest trends, insights, and information. Here are some upcoming features from our roadmap.</p>
-        <div class="col">
+        <div class=heading>
+          <h4>Upcoming Features</h4>
+          <p>NewsTracker is an ongoing project that we will continuously be updating in order to give myself and other users ability to access and organize our world’s latest trends, insights, and information. Here are some upcoming features from our roadmap.</p>
+          </div>
+        <div class="announce col">
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Amplified User Features</h5>
@@ -80,7 +86,7 @@
             </div>
           </div>
         </div>
-        <div class="col">
+        <div class="announce col">
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Integration of Twitter API</h5>
@@ -93,11 +99,11 @@
 
   </div>
 
-<div class = "col">
+<div id ="slideshows" class = "col">
    
 
 <div class="container">
-  <h1 class="form display-5 text-center">Current Events</h1>
+  <h3 class="form display-5 text-center">Current Events</h3>
   <div class ="row" >
     <div class="col-10" id ="slideshow">
       <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
@@ -105,7 +111,7 @@
           <div class="carousel-item active" data-interval="2000">
             <img class="d-block w-100" src="{{top_story.image}}" alt="First slide">
             <div class="carousel-caption d-md-block">
-                <h4>{{top_story.headline}}</h4>
+                <h4 class="caption">{{top_story.headline}}</h4>
               </div>
           </div>
           {%for story in headlines%}
@@ -137,7 +143,7 @@
 <p></p>
 
 <div class="container">
-  <h1 class="form display-5 text-center">Business</h1>
+  <h3 class="form display-5 text-center">Business</h3>
   <div class ="row" >
     <div class="col-10" id ="slideshow">
       <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
@@ -177,7 +183,7 @@
 <p></p>
 
 <div class="container">
-  <h1 class="form display-5 text-center">Entertainment</h1>
+  <h3 class="form display-5 text-center">Entertainment</h3>
   <div class ="row" >
     <div class="col-10" id ="slideshow">
       <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
@@ -217,7 +223,7 @@
 <p></p>
 
 <div class="container">
-  <h1 class="form display-5 text-center">Health</h1>
+  <h3 class="form display-5 text-center">Health</h3>
   <div class ="row" >
     <div class="col-10" id ="slideshow">
       <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
@@ -257,7 +263,7 @@
 <p></p>
 
 <div class="container">
-  <h1 class="form display-5 text-center">Science</h1>
+  <h3 class="form display-5 text-center">Science</h3>
   <div class ="row" >
     <div class="col-10" id ="slideshow">
       <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
@@ -297,7 +303,7 @@
 <p></p>
 
 <div class="container">
-  <h1 class="form display-5 text-center">Sports</h1>
+  <h3 class="form display-5 text-center">Sports</h3>
   <div class ="row" >
     <div class="col-10" id ="slideshow">
       <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
@@ -337,7 +343,7 @@
 <p></p>
 
 <div class="container">
-  <h1 class="form display-5 text-center">Technology</h1>
+  <h3 class="form display-5 text-center"><a href="/technology">Technology</a></h3>
   <div class ="row" >
     <div class="col-10" id ="slideshow">
       <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">

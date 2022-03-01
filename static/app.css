@@ -13,6 +13,7 @@ ul {
 }
 #indentation {
     margin-bottom: 100px;
+    margin-right:0px
 }
 @media only screen and (max-width: 576px) {
     ul {
@@ -32,11 +33,15 @@ ul {
     margin: auto;
 }
 
+
 .container {
     background: #242424;
     margin: auto;
     border-radius: 30px;
 }
+
+
+
 
 .card {
     justify-content: center;
@@ -211,32 +216,64 @@ margin-top: 100px;
 
 /* Slideshow */
 
+#home {
+    /* background:rgb(197, 77, 77); */
+    margin:0px;
+    margin-left: 0px;
+    margin-right: 0px ;
+    padding-right: 0px;
+}
 
+#slideshows {
+    text-align: right;
+    justify-content: right;
+}
 
 #slideshow {
     margin:auto
 }
 
-/* h5 {
+
+h4 {
     color:white;
-    display:none;
-} */
+    margin:auto
+}
+.heading {
+    margin: 10px;
+    text-align: center;
+}
+h5 {
+    color:white;
+    margin:auto
+}
 
 .carousel-caption {
-    margin: auto;
-    vertical-align: text-top;
+ 
+    justify-content: center;
+}
+
+.announce {
+    margin:10px;
+}
+
+
+
+#cat {
+    margin:10px;
 }
 
 
 /**/
-
-
-.hedding h1{
-	color:#000;
-	font-weight: bold;
-	text-shadow: 0px 2px 3px #04fce7;
-    text-align: center;
+p {
+    color:whitesmoke
 }
+
+/* #column {
+    margin:0px;
+} */
+
+
+
 .carousel-caption a{
 	color:#fff;
 	font-weight: bold;

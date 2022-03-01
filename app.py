@@ -241,6 +241,43 @@ def results():
 
 @app.route('/slideshow')
 def slideshow():
+    if CURR_USER_KEY in session:
+        #DELETE THIS. this is only to limit the number of api calls 
+        user = User.query.get(g.user.id)
+        user_queried_stories = user.queried_stories
+        first = user_queried_stories[0]
+        headlines = user_queried_stories
+        top_story = first
+        business = user_queried_stories
+        business1 = first
+        entertainment = user_queried_stories
+        entertainment1 = first
+        health =user_queried_stories
+        health1 = first
+        sports = user_queried_stories
+        sports1 = first
+        technology = user_queried_stories
+        technology1 = first
+        science = user_queried_stories
+        science1 = first
+
+        return render_template('/homepage.html',
+    headlines=headlines,
+    top_story=top_story, 
+    business= business, 
+    business1 = business1,
+    ent = entertainment,
+    ent1 = entertainment1,
+    health = health,
+    health1 = health1,
+    science = science,
+    science1 = science1,
+    sports = sports,
+    sports1 = sports1,
+    tech = technology, 
+    tech1 = technology1
+    )
+
     headlines = api_call(None)
     top_story = headlines.pop(0)
 
@@ -434,6 +471,13 @@ def logout():
 
 
 #test functions, remove when app ready
+
+@app.route(f'/<category>')
+def show_for_category(category):
+    results = cat_calls(category)
+    return render_template('show_stories.html', headlines = results)
+
+    """Display top headlines for given category based off of link clicked from homepage"""
 
 def sub(headlines):
     for article in headlines:
