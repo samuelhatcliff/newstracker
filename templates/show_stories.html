@@ -11,7 +11,7 @@
                             {% if story.pol%}
                              <p class="results">Polarity: {{story.pol}}</p>
                             {% else %}
-                            <form class="col-sm my-auto order1 col-6 " id="left-b" action = '/sacalls/{{story.id}}/polarity', method="POST">
+                            <form class="col-sm my-auto order1 col-6 " id="left-b" action = '/feed/{{story.id}}/polarity', method="POST">
                                 <input sa-button type="submit" value="Get Polarity" class="btn btn-dark btn-sm badge-pill">
                             </form>
                             {% endif %}
@@ -21,7 +21,7 @@
                             {% if story.sub%}
                             <p class="results">Subjectivity: {{story.sub}}</p>
                             {% else %}
-                            <form class=" col-sm my-auto col-6" id="right-b" action='/story/{{story.id}}/subjectivity' action = '/sacalls/{{story.id}}/subjectivity', method="POST">
+                            <form class=" col-sm my-auto col-6" id="right-b" action='/feed/{{story.id}}/subjectivity' action = '/sacalls/{{story.id}}/subjectivity', method="POST">
                                 <input sa-button type="submit" value="Get Subjectivity" class="btn btn-dark btn-sm badge-pill">
                             </form>
                             {% endif %}

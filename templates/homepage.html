@@ -1,12 +1,14 @@
 {% extends 'base.html' %}
 {% block content %}
-
-
+<script src="/static/newstracker.js"></script>
+<script>
+homeAdd(arg);
+  </script>
 <div id= "home" class="container">
 <div id="row" class="row">
 
 
-  <div class = "col" id="column">
+  <div class = "col-md-7 col-12">
     <h3 class="form display-5 text-center">What can you do with NewsTracker?</h3>
     <div class="container">
 
@@ -14,18 +16,18 @@
       <div class="row">
         <div class=heading>
         <h4 class ="form display-5 text-center">Non-Users</h4>
-        <p>You don’t need to be a user to begin utilizing NewsTracker’s features. Here are some things you can do instantly, without even creating and account.</p>
+        <p>You don’t need to be a user to begin utilizing NewsTracker’s features. Here are some things you can do instantly, without even creating an account.</p>
         </div>
-        <div class="col announce ">
+        <div class="col announce">
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Get Headlines</h5>
-              <p class="card-text">Simply click "Headlines" to browse the latest news of the day.</p>
+              <p class="card-text">Simply click "Headlines" to browse the latest news of the day featuring all categories.</p>
             </div>
           </div>
         </div>
         <div class="announce col">
-          <div class="card">
+          <div class="card" id="card2">
             <div class="card-body">
               <h5 class="card-title">Search by Keyword</h5>
               <p class="card-text">Use the nav-bar to search by keyword to get up-to-date results based off of whatever you’re looking for.</p>
@@ -57,7 +59,7 @@
         </div>
         <div class="announce col">
           <div class="card">
-            <div class="card-body">
+            <div class="card-body" id="card2">
               <h5 class="card-title">Sentiment Analysis Tools</h5>
               <p class="card-text">NewsTracker uses Python’s NLTK Library and Web-Scraping techniques to perform Sentimental Analysis on each article that we receive from out news-api at your request! Polarity and Subjectivity scores may be extracted from each article, or used to filter search results.</p>
             </div>
@@ -96,31 +98,32 @@
         </div>
       </div>
   </div>
+</div>
 
-  </div>
-
-<div id ="slideshows" class = "col">
+<div id ="slideshows" class = "col-md-5">
    
-
+<div class="container">
+  <div class="row">
+    <div class = "col-6 col-md-12">
 <div class="container">
   <h3 class="form display-5 text-center">Current Events</h3>
   <div class ="row" >
     <div class="col-10" id ="slideshow">
       <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
         <div class="carousel-inner">
-          <div class="carousel-item active" data-interval="2000">
-            <img class="d-block w-100" src="{{top_story.image}}" alt="First slide">
+          <div class="carousel-item active" data-interval="3500">
+            <img class="d-block w-100" src="{{top_story.image}}" alt="First slide";>
             <div class="carousel-caption d-md-block">
-                <h4 class="caption">{{top_story.headline}}</h4>
+                <span class="caption">{{top_story.headline}}</span>
               </div>
           </div>
           {%for story in headlines%}
           
-          <div class="carousel-item" data-interval="2200">
+          <div class="carousel-item" data-interval="3500">
             <a href="{{story.url}}">
             <img class="d-block w-100" src="{{story.image}}" alt="Third slide">
             <div class="carousel-caption d-md-block">
-                <h4>{{story.headline}}</h4>
+                <span class="caption">{{story.headline}}</span>
               </div>
             </a>
           </div>
@@ -140,7 +143,7 @@
   </div>
 </div>
 
-<p></p>
+<p class="spacing"></p>
 
 <div class="container">
   <h3 class="form display-5 text-center">Business</h3>
@@ -148,19 +151,19 @@
     <div class="col-10" id ="slideshow">
       <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
         <div class="carousel-inner">
-          <div class="carousel-item active" data-interval="2000">
+          <div class="carousel-item active" data-interval="3500">
             <img class="d-block w-100" src="{{business1.image}}" alt="First slide">
             <div class="carousel-caption d-md-block">
-                <h4>{{business1.headline}}</h4>
+                <span class="caption">{{business1.headline}}</span>
               </div>
           </div>
           {%for story in business%}
           
-          <div class="carousel-item" data-interval="2200">
+          <div class="carousel-item" data-interval="3500">
             <a href="{{story.url}}">
             <img class="d-block w-100" src="{{business1.image}}" alt="Third slide">
             <div class="carousel-caption d-md-block">
-                <h4>{{story.headline}}</h4>
+                <span class="caption">{{story.headline}}</span>
               </div>
             </a>
           </div>
@@ -180,27 +183,27 @@
   </div>
 </div>
 
-<p></p>
+<p class="spacing"></p>
 
 <div class="container">
   <h3 class="form display-5 text-center">Entertainment</h3>
-  <div class ="row" >
-    <div class="col-10" id ="slideshow">
+  <div class ="row">
+    <div class="col-10" id="slideshow">
       <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
         <div class="carousel-inner">
-          <div class="carousel-item active" data-interval="2000">
+          <div class="carousel-item active" data-interval="3500">
             <img class="d-block w-100" src="{{ent1.image}}" alt="First slide">
             <div class="carousel-caption d-md-block">
-                <h4>{{ent1.headline}}</h4>
+                <span class="caption">{{ent1.headline}}</span>
               </div>
           </div>
           {%for story in ent%}
           
-          <div class="carousel-item" data-interval="2200">
+          <div class="carousel-item" data-interval="3500">
             <a href="{{story.url}}">
             <img class="d-block w-100" src="{{story.image}}" alt="Third slide">
             <div class="carousel-caption d-md-block">
-                <h4>{{story.headline}}</h4>
+                <span class="caption">{{story.headline}}</span>
               </div>
             </a>
           </div>
@@ -220,7 +223,7 @@
   </div>
 </div>
 
-<p></p>
+<p class="spacing"></p>
 
 <div class="container">
   <h3 class="form display-5 text-center">Health</h3>
@@ -228,19 +231,19 @@
     <div class="col-10" id ="slideshow">
       <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
         <div class="carousel-inner">
-          <div class="carousel-item active" data-interval="2000">
+          <div class="carousel-item active" data-interval="3500">
             <img class="d-block w-100" src="{{health1.image}}" alt="First slide">
             <div class="carousel-caption d-md-block">
-                <h4>{{health1.headline}}</h4>
+                <span class="caption">{{health1.headline}}</span>
               </div>
           </div>
           {%for story in health%}
           
-          <div class="carousel-item" data-interval="2200">
+          <div class="carousel-item" data-interval="3500">
             <a href="{{story.url}}">
             <img class="d-block w-100" src="{{story.image}}" alt="Third slide">
             <div class="carousel-caption d-md-block">
-                <h4>{{story.headline}}</h4>
+                <span class="caption">{{story.headline}}</span>
               </div>
             </a>
           </div>
@@ -260,27 +263,29 @@
   </div>
 </div>
 
-<p></p>
 
+</div>
+<p class="spacing"></p>
+<div class = "col-md-12 col-6">
 <div class="container">
   <h3 class="form display-5 text-center">Science</h3>
   <div class ="row" >
     <div class="col-10" id ="slideshow">
       <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
         <div class="carousel-inner">
-          <div class="carousel-item active" data-interval="2000">
+          <div class="carousel-item active" data-interval="3500">
             <img class="d-block w-100" src="{{science1.image}}" alt="First slide">
             <div class="carousel-caption d-md-block">
-                <h4>{{science1.headline}}</h4>
+                <span class="caption">{{science1.headline}}</span>
               </div>
           </div>
           {%for story in science%}
           
-          <div class="carousel-item" data-interval="2200">
+          <div class="carousel-item" data-interval="3500">
             <a href="{{story.url}}">
             <img class="d-block w-100" src="{{story.image}}" alt="Third slide">
             <div class="carousel-caption d-md-block">
-                <h4>{{story.headline}}</h4>
+                <span class="caption">{{story.headline}}</span>
               </div>
             </a>
           </div>
@@ -300,7 +305,7 @@
   </div>
 </div>
 
-<p></p>
+<p class="spacing"></p>
 
 <div class="container">
   <h3 class="form display-5 text-center">Sports</h3>
@@ -308,19 +313,19 @@
     <div class="col-10" id ="slideshow">
       <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
         <div class="carousel-inner">
-          <div class="carousel-item active" data-interval="2000">
+          <div class="carousel-item active" data-interval="3500">
             <img class="d-block w-100" src="{{sports1.image}}" alt="First slide">
             <div class="carousel-caption d-md-block">
-                <h4>{{sports1.headline}}</h4>
+                <span class="caption">{{sports1.headline}}</span>
               </div>
           </div>
           {%for story in sports%}
           
-          <div class="carousel-item" data-interval="2200">
+          <div class="carousel-item" data-interval="3500">
             <a href="{{story.url}}">
             <img class="d-block w-100" src="{{story.image}}" alt="Third slide">
             <div class="carousel-caption d-md-block">
-                <h4>{{story.headline}}</h4>
+                <span class="caption">{{story.headline}}</span>
               </div>
             </a>
           </div>
@@ -340,7 +345,7 @@
   </div>
 </div>
 
-<p></p>
+<p class="spacing"></p>
 
 <div class="container">
   <h3 class="form display-5 text-center"><a href="/technology">Technology</a></h3>
@@ -348,19 +353,19 @@
     <div class="col-10" id ="slideshow">
       <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
         <div class="carousel-inner">
-          <div class="carousel-item active" data-interval="2000">
+          <div class="carousel-item active" data-interval="3500">
             <img class="d-block w-100" src="{{tech1.image}}" alt="First slide">
             <div class="carousel-caption d-md-block">
-                <h4>{{tech1.headline}}</h4>
+                <span class="caption">{{tech1.headline}}</span>
               </div>
           </div>
           {%for story in tech%}
           
-          <div class="carousel-item" data-interval="2200">
+          <div class="carousel-item" data-interval="3500">
             <a href="{{story.url}}">
             <img class="d-block w-100" src="{{story.image}}" alt="Third slide">
             <div class="carousel-caption d-md-block">
-                <h4>{{story.headline}}</h4>
+                <span class="caption">{{story.headline}}</span>
               </div>
             </a>
           </div>
@@ -380,6 +385,9 @@
   </div>
 </div>
 
+</div>
+</div>
+</div>
 <p></p>
 
 </div>

@@ -119,41 +119,41 @@ def math2():
 
 
 
-@app.route('/sacalls/<int:story_id>/polarity', methods =['POST'])
-def show_pol_calls(story_id):
- 
+@app.route('/<page>/<int:story_id>/polarity', methods =['POST'])
+def show_pol_calls(page, story_id):
     story = Story.query.get(story_id)
 
     score = polarize(story)
     if score == None:
         story.pol = "No Data"
-        db.session.commit()
-        return redirect('/user')
-    
-
-    score = score['article_res']['result']
-    story.pol = str(score)
+    else:
+        score = score['article_res']['result']
+        story.pol = str(score)
  
     db.session.commit()
+
+    if page == "feed":
+        return redirect('/')
+        # THIS ONLY WORKS ON HEADLINES FEED. WEWRITE WITH EVENT LISTENERS
     return redirect('/user')
 
-@app.route('/sacalls/<int:story_id>/subjectivity', methods =['POST'])
-def show_sub_calls(story_id):
+@app.route('/<page>/<int:story_id>/subjectivity', methods =['POST'])
+def show_sub_calls(page, story_id):
     
     story = Story.query.get(story_id)
     
     score = subjectize(story)
     if score == None:
         story.sub = "No Data"
-        db.session.commit()
-        return redirect('/user')
-
 
     else:
         score = score['measure']
+        story.sub = str(score)
 
-    story.sub = str(score)
     db.session.commit()
+    if page == "feed":
+            return redirect('/')
+    
     return redirect('/user')
 
 
