@@ -1,6 +1,6 @@
 from newsapi import NewsApiClient
 from dateutil import parser
-from models import QueriedStory, Story, User, QueriedStory
+from models import QueriedStory, Story, User, QueriedStory, TestQ
 newsapi= NewsApiClient(api_key='b4f52eb738354e648912261c010632e7')
 import psycopg2
 from models import db
@@ -45,10 +45,9 @@ def save_to_db(articles, user_id = None):
         image = article['urlToImage']
         api_date = article['publishedAt']
         published_at = parser.parse(api_date)
-        views = 0
         story = Story(headline=headline, source=source, content=content,
         author=author, description=description, url=url, image=image,
-        published_at= published_at, views=views)
+        published_at= published_at)
         results.append(story)
         db.session.add(story)
         db.session.commit()
@@ -63,6 +62,23 @@ def save_to_db(articles, user_id = None):
     return results
 
 def api_call(query = None, user_id = None):
+    print("str2")
+    # queries = TestQ.query.all()
+    # query = TestQ.pop()
+    # if query.type == "detailed_search":
+    #     results = advanced_search_call(query, user_id)
+    #     return results
+    # elif query.type == "simply_search":
+    #     results = simple_search_call(query)
+    #     return results
+    # elif query.type == "headlines":
+    #     results = top_headlines_call(query)
+    #     return results
+    # else: 
+    #     if query.type == "business":
+    #         results = cat_calls(query.type)
+    #         return results
+
     """Makes API call for top headlines"""
     if query == None:
         #in the context of this function, we determine that a request for headlines is being made if there is no search query given
@@ -86,6 +102,7 @@ def api_call(query = None, user_id = None):
         #in the context of this function, we determine that an advanced search call is being made if it hasn't been flagged as a simple search or headline call
 
     if user_id != None:
+        user = User.query.get(user_id)
         results = advanced_search_call(query, user_id)
     else:
         results = advanced_search_call(query)

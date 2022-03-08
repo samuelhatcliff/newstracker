@@ -9,16 +9,16 @@ homeAdd(arg);
 
 
   <div class = "col-md-7 col-12">
-    <h3 class="form display-5 text-center">What can you do with NewsTracker?</h3>
-    <div class="container">
+    <h3 class="form display-5 text-center">What can I do with NewsTracker?</h3>
+    <div id= "info-container" class="container">
 
 
       <div class="row">
-        <div class=heading>
+        <div class="heading">
         <h4 class ="form display-5 text-center">Non-Users</h4>
         <p>You don’t need to be a user to begin utilizing NewsTracker’s features. Here are some things you can do instantly, without even creating an account.</p>
         </div>
-        <div class="col announce">
+        <div class="announce col-lg">
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Get Headlines</h5>
@@ -26,7 +26,7 @@ homeAdd(arg);
             </div>
           </div>
         </div>
-        <div class="announce col">
+        <div class="announce col-md col-lg">
           <div class="card" id="card2">
             <div class="card-body">
               <h5 class="card-title">Search by Keyword</h5>
@@ -34,7 +34,7 @@ homeAdd(arg);
             </div>
           </div>
         </div>
-        <div class="announce col">
+        <div class="announce col-lg">
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Browse by Category</h5>
@@ -45,11 +45,11 @@ homeAdd(arg);
       </div>
 
       <div class="row">
-        <div class=heading>
+        <div class="heading">
           <h4>Users</h4>
           <p>Through NewsTracker, Registered Users have access to a wide variety of tools that may assist them search for and organize various information. </p>
         </div>
-        <div class="announce col">
+        <div class="announce col-lg">
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Detailed Search</h5>
@@ -57,7 +57,7 @@ homeAdd(arg);
             </div>
           </div>
         </div>
-        <div class="announce col">
+        <div class="announce col-md col-lg">
           <div class="card">
             <div class="card-body" id="card2">
               <h5 class="card-title">Sentiment Analysis Tools</h5>
@@ -65,7 +65,7 @@ homeAdd(arg);
             </div>
           </div>
         </div>
-        <div class="announce col">
+        <div class="announce col-lg">
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Saved Stories</h5>
@@ -76,7 +76,7 @@ homeAdd(arg);
       </div>
 
       <div class="row">
-        <div class=heading>
+        <div class="heading">
           <h4>Upcoming Features</h4>
           <p>NewsTracker is an ongoing project that we will continuously be updating in order to give myself and other users ability to access and organize our world’s latest trends, insights, and information. Here are some upcoming features from our roadmap.</p>
           </div>
@@ -100,26 +100,26 @@ homeAdd(arg);
   </div>
 </div>
 
-<div id ="slideshows" class = "col-md-5">
+<div id ="slideshows" class = "col-md-5 col-sm">
    
-<div class="container">
+<div class="container" id="slide-counter">
   <div class="row">
-    <div class = "col-6 col-md-12">
+{%for obj in data%}
 <div class="container">
-  <h3 class="form display-5 text-center">Current Events</h3>
+  <h3 class="category form display-5 text-center"><a href="/headlines/{{obj.name}}">{{obj.name}}</a></h3>
   <div class ="row" >
     <div class="col-10" id ="slideshow">
       <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
         <div class="carousel-inner">
           <div class="carousel-item active" data-interval="3500">
-            <img class="d-block w-100" src="{{top_story.image}}" alt="First slide";>
+            <img class="d-block w-100" src="{{obj.top_story.image}}" alt="First slide";>
             <div class="carousel-caption d-md-block">
-                <span class="caption">{{top_story.headline}}</span>
+                <span class="caption">{{obj.top_story.headline}}</span>
               </div>
           </div>
-          {%for story in headlines%}
+          {%for story in obj.results%}
           
-          <div class="carousel-item" data-interval="3500">
+          <div class="carousel-item" data-interval="4000">
             <a href="{{story.url}}">
             <img class="d-block w-100" src="{{story.image}}" alt="Third slide">
             <div class="carousel-caption d-md-block">
@@ -142,248 +142,10 @@ homeAdd(arg);
     </div>
   </div>
 </div>
-
-<p class="spacing"></p>
-
-<div class="container">
-  <h3 class="form display-5 text-center">Business</h3>
-  <div class ="row" >
-    <div class="col-10" id ="slideshow">
-      <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
-        <div class="carousel-inner">
-          <div class="carousel-item active" data-interval="3500">
-            <img class="d-block w-100" src="{{business1.image}}" alt="First slide">
-            <div class="carousel-caption d-md-block">
-                <span class="caption">{{business1.headline}}</span>
-              </div>
-          </div>
-          {%for story in business%}
-          
-          <div class="carousel-item" data-interval="3500">
-            <a href="{{story.url}}">
-            <img class="d-block w-100" src="{{business1.image}}" alt="Third slide">
-            <div class="carousel-caption d-md-block">
-                <span class="caption">{{story.headline}}</span>
-              </div>
-            </a>
-          </div>
-        
-          {%endfor%}
-        </div>
-        <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="sr-only">Previous</span>
-        </a>
-        <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="sr-only">Next</span>
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
-
-<p class="spacing"></p>
-
-<div class="container">
-  <h3 class="form display-5 text-center">Entertainment</h3>
-  <div class ="row">
-    <div class="col-10" id="slideshow">
-      <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
-        <div class="carousel-inner">
-          <div class="carousel-item active" data-interval="3500">
-            <img class="d-block w-100" src="{{ent1.image}}" alt="First slide">
-            <div class="carousel-caption d-md-block">
-                <span class="caption">{{ent1.headline}}</span>
-              </div>
-          </div>
-          {%for story in ent%}
-          
-          <div class="carousel-item" data-interval="3500">
-            <a href="{{story.url}}">
-            <img class="d-block w-100" src="{{story.image}}" alt="Third slide">
-            <div class="carousel-caption d-md-block">
-                <span class="caption">{{story.headline}}</span>
-              </div>
-            </a>
-          </div>
-        
-          {%endfor%}
-        </div>
-        <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="sr-only">Previous</span>
-        </a>
-        <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="sr-only">Next</span>
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
-
-<p class="spacing"></p>
-
-<div class="container">
-  <h3 class="form display-5 text-center">Health</h3>
-  <div class ="row" >
-    <div class="col-10" id ="slideshow">
-      <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
-        <div class="carousel-inner">
-          <div class="carousel-item active" data-interval="3500">
-            <img class="d-block w-100" src="{{health1.image}}" alt="First slide">
-            <div class="carousel-caption d-md-block">
-                <span class="caption">{{health1.headline}}</span>
-              </div>
-          </div>
-          {%for story in health%}
-          
-          <div class="carousel-item" data-interval="3500">
-            <a href="{{story.url}}">
-            <img class="d-block w-100" src="{{story.image}}" alt="Third slide">
-            <div class="carousel-caption d-md-block">
-                <span class="caption">{{story.headline}}</span>
-              </div>
-            </a>
-          </div>
-        
-          {%endfor%}
-        </div>
-        <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="sr-only">Previous</span>
-        </a>
-        <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="sr-only">Next</span>
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
+{%endfor%}
+      
 
 
-</div>
-<p class="spacing"></p>
-<div class = "col-md-12 col-6">
-<div class="container">
-  <h3 class="form display-5 text-center">Science</h3>
-  <div class ="row" >
-    <div class="col-10" id ="slideshow">
-      <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
-        <div class="carousel-inner">
-          <div class="carousel-item active" data-interval="3500">
-            <img class="d-block w-100" src="{{science1.image}}" alt="First slide">
-            <div class="carousel-caption d-md-block">
-                <span class="caption">{{science1.headline}}</span>
-              </div>
-          </div>
-          {%for story in science%}
-          
-          <div class="carousel-item" data-interval="3500">
-            <a href="{{story.url}}">
-            <img class="d-block w-100" src="{{story.image}}" alt="Third slide">
-            <div class="carousel-caption d-md-block">
-                <span class="caption">{{story.headline}}</span>
-              </div>
-            </a>
-          </div>
-        
-          {%endfor%}
-        </div>
-        <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="sr-only">Previous</span>
-        </a>
-        <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="sr-only">Next</span>
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
-
-<p class="spacing"></p>
-
-<div class="container">
-  <h3 class="form display-5 text-center">Sports</h3>
-  <div class ="row" >
-    <div class="col-10" id ="slideshow">
-      <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
-        <div class="carousel-inner">
-          <div class="carousel-item active" data-interval="3500">
-            <img class="d-block w-100" src="{{sports1.image}}" alt="First slide">
-            <div class="carousel-caption d-md-block">
-                <span class="caption">{{sports1.headline}}</span>
-              </div>
-          </div>
-          {%for story in sports%}
-          
-          <div class="carousel-item" data-interval="3500">
-            <a href="{{story.url}}">
-            <img class="d-block w-100" src="{{story.image}}" alt="Third slide">
-            <div class="carousel-caption d-md-block">
-                <span class="caption">{{story.headline}}</span>
-              </div>
-            </a>
-          </div>
-        
-          {%endfor%}
-        </div>
-        <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="sr-only">Previous</span>
-        </a>
-        <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="sr-only">Next</span>
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
-
-<p class="spacing"></p>
-
-<div class="container">
-  <h3 class="form display-5 text-center"><a href="/technology">Technology</a></h3>
-  <div class ="row" >
-    <div class="col-10" id ="slideshow">
-      <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
-        <div class="carousel-inner">
-          <div class="carousel-item active" data-interval="3500">
-            <img class="d-block w-100" src="{{tech1.image}}" alt="First slide">
-            <div class="carousel-caption d-md-block">
-                <span class="caption">{{tech1.headline}}</span>
-              </div>
-          </div>
-          {%for story in tech%}
-          
-          <div class="carousel-item" data-interval="3500">
-            <a href="{{story.url}}">
-            <img class="d-block w-100" src="{{story.image}}" alt="Third slide">
-            <div class="carousel-caption d-md-block">
-                <span class="caption">{{story.headline}}</span>
-              </div>
-            </a>
-          </div>
-        
-          {%endfor%}
-        </div>
-        <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="sr-only">Previous</span>
-        </a>
-        <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="sr-only">Next</span>
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
 
 </div>
 </div>
@@ -395,3 +157,4 @@ homeAdd(arg);
 </div>
 
 {% endblock %}
+

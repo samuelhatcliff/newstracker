@@ -2,9 +2,14 @@
 body {
     padding: 0;
     margin: 0;
-    background: black !important;
+    background: black;
     font-family: 'Abel', sans-serif !important;
-    /*possibly change nav font to this^^*/
+}
+
+ul {
+    padding: 0;
+    list-style-type: none;
+    margin: auto;
 }
 
 .home-body {
@@ -12,20 +17,14 @@ body {
     justify-content: center;
 }
 
-
-ul {
-    padding: 0;
-    list-style-type: none;
-    margin: auto;
-}
 #indentation {
     margin-bottom: 100px;
     margin-right:0px
 }
+
 @media only screen and (max-width: 576px) {
     ul {
     list-style-type: none;
-    /* margin-left:40px; */
     }
     #stories {
     margin-left:40px;
@@ -35,20 +34,14 @@ ul {
 
 /* card styles for each news story*/
 
-
 .row {
     margin: auto;
 }
 
-
 .container {
     background: #242424;
-    margin: auto;
     border-radius: 30px;
 }
-
-
-
 
 .card {
     justify-content: center;
@@ -90,7 +83,6 @@ ul {
 }
 
 
-
 /* more specific card styles to adapt to the behavior of mobile devices*/
 
 
@@ -111,7 +103,6 @@ ul {
 }
 @media only screen and (max-width: 576px) {
     .container {
-        margin-left: -20px;
         justify-content: center;
     }
     #image {
@@ -126,6 +117,10 @@ ul {
 
 /* form styling */
 
+h1 {
+    color:whitesmoke;
+    font-family: 'Times New Roman', Times, serif;
+}
 
 .form {
     color: whitesmoke;
@@ -133,11 +128,6 @@ ul {
 
 .form-alert {
         margin: 20px;
-}
-
-h1 {
-    color:whitesmoke;
-    font-family: 'Times New Roman', Times, serif;
 }
 
 .submit-b {
@@ -160,18 +150,14 @@ h1 {
     border-radius: 40px;
 }
 
+
 /* navbar styles*/
-
-
-
 
 
 .navbar {
     background-color: black;
     color:rgb(65, 65, 65);
     overflow: hidden;
-    /* padding:0px; */
-    /* margin:100px; */
 }
 .navbar-toggler {
     margin-right:10px;
@@ -188,17 +174,14 @@ h1 {
     font-size:16px;
 }
 
-.navbar-nav{
-    margin:0px;
-    text-align: right !important;
-
-    /* WHY NO WORK??? I WANT TO SEARCH TO BE IN MIDDLE, THIS TO BE IN RIGHT UNTIL CERTAIN PIXEL RANGE */
-}
-
 .nav-item:hover {
     background-color:rgb(119, 119, 119) ;
     color: black;
     text-decoration: none;
+}
+
+.navbar-nav{
+    margin:0px;
 }
 
 #search{
@@ -209,7 +192,6 @@ h1 {
     #search{
         display:none;
         order:0;
-    
     }
 }
 
@@ -218,82 +200,113 @@ margin-top: 100px;
 }
 
 
+/* Home-Page */
 
-
-
-/* Slideshow */
 
 #home {
     margin: auto;
     margin-top: 100px;
     padding-right: 0px;
     padding-left: 0px;
-}
-
-#slideshows {
-    text-align: right;
-    justify-content: right;
-    padding:0px;
-}
-
-#slideshow {
-    margin:auto
-}
-
-.d-block {
-    width: 250px;
-    height: 175px;
-    object-fit: contain
+    padding-top:2rem;
+    padding-bottom:2rem;
 }
 
 
 h4 {
+    /*used throughout app as headlines*/
     color:white;
     margin:auto
 }
-.heading {
-    margin: 10px;
-    text-align: center;
-}
+
 h5 {
     color:white;
     margin:auto
 }
 
+p {
+    color:whitesmoke
+}
+/* Right (category-slideshow)*/
 
 
+#slideshows {
+    padding:0px;
+}
 
+#slideshow {
+    margin:auto;
+    padding:0px;
+}
+
+.d-block {
+    /*image*/
+    width: 250px;
+    height: 175px;
+    object-fit: contain
+}
+
+#slide-counter {
+    padding:0px;
+ }
+
+h3 a{
+    text-decoration: none;
+    color:whitesmoke
+}
+
+/*Left*/
+
+.col-md-7 {
+    /* column left for overall container, contains info */
+    padding:0px;
+}
 
 .announce {
+    /*div for columns in cards*/
     padding:3px;
     margin:3px;
 }
 
-/* #cat {
-    margin:10px;
-} */
+.heading {
+    /*larger header div that includes descriptive text*/
+    margin: 10px;
+    text-align: center;
+}
 
-p {
-    color:whitesmoke
+.heading h4 {
+    /*eg, non-user, user, upcoming*/
+    font-size: 2rem;
+    padding-top: 1rem;
+    padding-bottom:.5rem;
 }
 
 .carousel-caption {
-    display:flex;
-    justify-content: center;
-    /* margin: auto; */
 	text-align:center;
 	padding:0px;
 	background:rgba(0,0,0,0.4);
     font-size: 1.25vw;
     margin-bottom:2rem;
 }
- 
+
 @media only screen and (max-width: 768px) {
     #slideshows{
-        display: none;
+        padding-top: 1.5rem;
     }
+    .category {
+        padding:12px;
+    }
+    .carousel-caption {
+        text-align:center;
+        padding:0px;
+        background:rgba(0,0,0,0.4);
+        font-size: 2vw;
+        margin-bottom:2rem;
     
- 
-    
+    }
 
 }
+
+
+
+

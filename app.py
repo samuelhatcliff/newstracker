@@ -1,6 +1,6 @@
 from re import L
 from flask import Flask, request, render_template, flash, redirect, render_template, jsonify, session, g
-from models import connect_db, db, User, Story, QueriedStory, Note, SavedStory
+from models import connect_db, db, User, Story, QueriedStory, Note, SavedStory, TestQ
 
 
 from forms import RegisterForm, LoginForm, SearchForm
@@ -80,18 +80,26 @@ def do_logout():
 def math():
     user = User.query.get(g.user.id)
     if user.queried_stories:
+        results = []
         for story in user.queried_stories:
-            story_id = story.id
+            id = story.id
             score = polarize(story)
      
             if score == None:
-                QueriedStory.query.filter_by(id=story_id).delete()
+                QueriedStory.query.filter_by(story_id =id).delete()
                 db.session.commit()
+  
             else:
                 result = score['article_res']['result']
                 story.pol = str(result)
                 db.session.commit()
-        ordered = sorted(user.queried_stories, key = lambda story : story.pol, reverse=True )
+        
+        for result in user.queried_stories:
+            results.append(result)
+
+        ordered = sorted(user.queried_stories,
+        key = lambda story : story.pol,
+        reverse=True )
       
         return ordered
         
@@ -133,7 +141,7 @@ def show_pol_calls(page, story_id):
     db.session.commit()
 
     if page == "feed":
-        return redirect('/')
+        return redirect('/headlines')
         # THIS ONLY WORKS ON HEADLINES FEED. WEWRITE WITH EVENT LISTENERS
     return redirect('/user')
 
@@ -152,27 +160,27 @@ def show_sub_calls(page, story_id):
 
     db.session.commit()
     if page == "feed":
-            return redirect('/')
+            return redirect('/headlines')
     
     return redirect('/user')
 
 
 
-@app.route('/', methods= ['GET', 'POST'])
+@app.route('/headlines', methods= ['GET', 'POST'])
 def home_page():
     if CURR_USER_KEY in session:
         user = User.query.get(g.user.id)
         if not user.queried_stories:
-            headlines = api_call(None)
-            return render_template('/show_stories.html', headlines=headlines)
+            results = api_call(None)
+            return render_template('/show_stories.html', results=results)
         user_queried_stories = user.queried_stories
 
-        headlines = user_queried_stories
+        results = user_queried_stories
  
-        return render_template('/show_stories.html', headlines=headlines)
+        return render_template('/show_stories.html', results=results)
     else:
-        headlines = api_call(None)
-        return render_template('/show_stories.html', headlines=headlines)
+        results = api_call(None)
+        return render_template('/show_stories.html', results=results)
 
 
 @app.route('/search', methods= ['GET', 'POST'])
@@ -180,6 +188,7 @@ def search_params():
     """This function creates a dictionary extracting data from the search form to be sent to the news-api"""
     user = User.query.get(g.user.id)
     form = SearchForm()
+    
     if form.validate_on_submit():
         try:
             dict = {}
@@ -189,21 +198,64 @@ def search_params():
             dict['date_from'] = form.date_from.data
             dict['date_to'] = form.date_to.data
             dict['language'] = form.language.data
+
+            # keyword = form.keyword.data
+            # source = form.source.data
+            # quantity = form.quantity.data
+            # date_from = form.date_from.data
+            # date_to = form.date_to.data
+            # language = form.language.data
+            # saved = form.saved.data
             
+            # query = TestQ(user_id = g.user.id,
+            # keyword=keyword,
+            # source=source,
+            # quantity=quantity,
+            # date_from = date_from,
+            # date_to = date_to,
+            # language = language,
+            # type = "detailed_search"
+            # )
+          
+            # db.session.add(query)
+            # print(query)
+            # print('x1')
+            
+            # db.session.commit()
+            # print(query)
+            # print('x2')
+            # user.saved_queries.append(query)
+            # print(user.saved_queries)
+            # print('x3')
+         
+            # db.session.commit()
+            # print(query)
+            # print('x4')
             if form.sort_by.data == "subjectivity" or form.sort_by.data == "polarity":
               
                 dict['sa'] = form.sort_by.data
+                # query.sa = form.sort_by.data
                 dict['sort_by'] = 'relevancy'
+                # query.sort_by = 'relevancy'
             else: 
                 dict['sort_by'] = form.sort_by.data
+                # query.sort_by = form.sort_by.data
                 dict['sa'] = None
-            dict['default'] = form.default.data
+                # query.sa = None
             
-            if dict['default'] == True:
-                default_str = str(dict)
-                user.default_search = default_str
-                db.session.commit()
+            # if form.default.data == True:
+            #     query.default = True
+                # user.default_search = default_str
+                # db.session.commit()
+            
+            # if form.saved.data == True:
+            #     query.saved_query = True
+            
+            # user.saved_queries.append(query)
+            
+            
             session['dict'] = dict
+            db.session.commit()
             #using the query information we make an api call and safe that data to user.searched_queries
             api_call(dict, g.user.id)
            
@@ -213,6 +265,7 @@ def search_params():
             flash("hmmmm. does this appear, or messages from form validators?", 'danger')
             return render_template('/users/search.html', form = form)
     else:
+        print('uhhhh')
         return render_template('/users/search.html', form = form)
   
 
@@ -224,97 +277,92 @@ def results():
         user = User.query.get(g.user.id)
         user_queried_stories = user.queried_stories
       
-        headlines = user_queried_stories
+        results = user_queried_stories
 
         if dict['sa'] == 'polarity':
-            headlines = math()
+            results = math()
         elif dict['sa'] == 'subjectivity':
-            headlines = math2()
+            results = math2()
         else:
-            return render_template('/show_stories.html', headlines=headlines)
+            return render_template('/show_stories.html', results=results)
 
-    return render_template('/show_stories.html', headlines=headlines)
+    return render_template('/show_stories.html', results=results)
 
 
 
  
 
-@app.route('/slideshow')
+@app.route('/')
 def slideshow():
-    if CURR_USER_KEY in session:
-        #DELETE THIS. this is only to limit the number of api calls 
-        user = User.query.get(g.user.id)
-        user_queried_stories = user.queried_stories
-        first = user_queried_stories[0]
-        headlines = user_queried_stories
-        top_story = first
-        business = user_queried_stories
-        business1 = first
-        entertainment = user_queried_stories
-        entertainment1 = first
-        health =user_queried_stories
-        health1 = first
-        sports = user_queried_stories
-        sports1 = first
-        technology = user_queried_stories
-        technology1 = first
-        science = user_queried_stories
-        science1 = first
+    # if CURR_USER_KEY in session:
+    #     #DELETE THIS. this is only to limit the number of api calls 
+    #     user = User.query.get(g.user.id)
+    #     user_queried_stories = user.queried_stories
+    #     first = user_queried_stories[0]
+    #     headlines = user_queried_stories
+    #     top_story = first
+    #     business = user_queried_stories
+    #     business1 = first
+    #     entertainment = user_queried_stories
+    #     entertainment1 = first
+    #     health =user_queried_stories
+    #     health1 = first
+    #     sports = user_queried_stories
+    #     sports1 = first
+    #     technology = user_queried_stories
+    #     technology1 = first
+    #     science = user_queried_stories
+    #     science1 = first
 
-        return render_template('/homepage.html',
-    headlines=headlines,
-    top_story=top_story, 
-    business= business, 
-    business1 = business1,
-    ent = entertainment,
-    ent1 = entertainment1,
-    health = health,
-    health1 = health1,
-    science = science,
-    science1 = science1,
-    sports = sports,
-    sports1 = sports1,
-    tech = technology, 
-    tech1 = technology1
-    )
+    #     return render_template('/homepage.html',
+    # headlines=headlines,
+    # top_story=top_story, 
+    # business= business, 
+    # business1 = business1,
+    # ent = entertainment,
+    # ent1 = entertainment1,
+    # health = health,
+    # health1 = health1,
+    # science = science,
+    # science1 = science1,
+    # sports = sports,
+    # sports1 = sports1,
+    # tech = technology, 
+    # tech1 = technology1
+    # )
 
-    headlines = api_call(None)
-    top_story = headlines.pop(0)
+    categories = ['business', 'entertainment', 'health', 'science', 'sports', 'technology']
+    data = []
+    for cat in categories:
+        obj = {}
+        obj['results'] = cat_calls(cat)
+        obj['top_story'] = obj['results'].pop(0)
+        obj['name'] = cat.capitalize()
+        data.append(obj)
+        
 
-    business = cat_calls('business')
-    business1 = business.pop(0)
+    # headlines = api_call(None)
+    # top_story = headlines.pop(0)
 
-    entertainment = cat_calls('entertainment')
-    entertainment1 = entertainment.pop(0)
+    # business = cat_calls('business')
+    # business1 = business.pop(0)
 
-    health = cat_calls('health')
-    health1 = health.pop(0)
+    # entertainment = cat_calls('entertainment')
+    # entertainment1 = entertainment.pop(0)
 
-    science = cat_calls('science')
-    science1 = science.pop(0)
+    # health = cat_calls('health')
+    # health1 = health.pop(0)
 
-    sports = cat_calls('sports')
-    sports1 = sports.pop(0)
+    # science = cat_calls('science')
+    # science1 = science.pop(0)
 
-    technology = cat_calls('technology')
-    technology1 = technology.pop(0)
+    # sports = cat_calls('sports')
+    # sports1 = sports.pop(0)
 
-    return render_template('/homepage.html',
-    headlines=headlines,
-    top_story=top_story, 
-    business= business, 
-    business1 = business1,
-    ent = entertainment,
-    ent1 = entertainment1,
-    health = health,
-    health1 = health1,
-    science = science,
-    science1 = science1,
-    sports = sports,
-    sports1 = sports1,
-    tech = technology, 
-    tech1 = technology1
-    )
+    # technology = cat_calls('technology')
+    # technology1 = technology.pop(0)
+
+    return render_template('/homepage.html', data = data)
 
 
     # if CURR_USER_KEY in session:
@@ -433,7 +481,7 @@ def register_user():
             db.session.commit()
             do_login(new_user)
             flash("Congratulations! You Have Successfully Created Your Account", "success")
-            return redirect('/')
+            return redirect('/headlines')
 
         except IntegrityError:
             form("Username already taken, please try again", 'danger')
@@ -454,7 +502,7 @@ def login_user():
         if user:
             do_login(user)
             flash("Credentials verified. Logging in...", "success")
-            return redirect('/')
+            return redirect('/headlines')
 
         else:
             form.username.errors=["Invalid username or password. Please try again."]
@@ -472,10 +520,10 @@ def logout():
 
 #test functions, remove when app ready
 
-@app.route(f'/<category>')
+@app.route(f'/headlines/<category>')
 def show_for_category(category):
     results = cat_calls(category)
-    return render_template('show_stories.html', headlines = results)
+    return render_template('show_stories.html', results = results)
 
     """Display top headlines for given category based off of link clicked from homepage"""
 
@@ -492,3 +540,5 @@ def pol(headlines):
         print(headlines.index(article))
         print(result)
     return "all done"
+
+    
