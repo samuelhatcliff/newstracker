@@ -5,7 +5,7 @@ from models import connect_db, db, User, Story, QueriedStory, Note, SavedStory, 
 
 from forms import RegisterForm, LoginForm, SearchForm
 from api_calls import api_call, cat_calls
-from sent_analysis import parse, subjectize, tokenize, polarize, sa_sum
+from sent_analysis import subjectize, polarize
 
 
 from langcodes import Language
@@ -36,12 +36,6 @@ app.config['SECRET_KEY'] = "topsecret1"
 # debug = DebugToolbarExtension(app)
 
 
-
-
-# TODO: turn what is currently users/user.html into a template that is used for both the users saved stories, 
-#as well as returning search results and loading the home page. Add error handling for stories where SA doesn't work
-#then make sure the order functions are working (currently written under queries_stories model in db table, but proabably want)
-#to change this. look up the difference between class methd and a regular method on a class
 
 # def getHeadlines():
 #     key = 'b4f52eb738354e648912261c010632e7'
@@ -77,220 +71,6 @@ def do_logout():
 
 
 """View functions for application"""
-def math():
-    user = User.query.get(g.user.id)
-    if user.queried_stories:
-        results = []
-        for story in user.queried_stories:
-            id = story.id
-            score = polarize(story)
-     
-            if score == None:
-                QueriedStory.query.filter_by(story_id =id).delete()
-                db.session.commit()
-  
-            else:
-                result = score['article_res']['result']
-                story.pol = str(result)
-                db.session.commit()
-        
-        for result in user.queried_stories:
-            results.append(result)
-
-        ordered = sorted(user.queried_stories,
-        key = lambda story : story.pol,
-        reverse=True )
-      
-        return ordered
-        
-def math2():
-    user = User.query.get(g.user.id)
-    if user.queried_stories:
-        for story in user.queried_stories:
-            id = story.id
-            score = subjectize(story)
-           
-            if score == None:
-   
-                QueriedStory.query.filter_by(story_id =id).delete()
-                db.session.commit()
-        
-            else:
-                story.sub = str(score['measure'])
-                db.session.commit()
-        ordered = sorted(user.queried_stories, key = lambda story : story.sub, reverse=True )
-        #CHANGE THESE SO THAT THEY SORT BY SUBJECTIVITY NUMBERS NOT RESULT SAME WITH POLARITY
-        #ASK TA IF THEY KNOW OF PROGRESS BAR
-        return ordered
-
-
-
-
-
-@app.route('/<page>/<int:story_id>/polarity', methods =['POST'])
-def show_pol_calls(page, story_id):
-    story = Story.query.get(story_id)
-
-    score = polarize(story)
-    if score == None:
-        story.pol = "No Data"
-    else:
-        score = score['article_res']['result']
-        story.pol = str(score)
- 
-    db.session.commit()
-
-    if page == "feed":
-        return redirect('/headlines')
-        # THIS ONLY WORKS ON HEADLINES FEED. WEWRITE WITH EVENT LISTENERS
-    return redirect('/user')
-
-@app.route('/<page>/<int:story_id>/subjectivity', methods =['POST'])
-def show_sub_calls(page, story_id):
-    
-    story = Story.query.get(story_id)
-    
-    score = subjectize(story)
-    if score == None:
-        story.sub = "No Data"
-
-    else:
-        score = score['measure']
-        story.sub = str(score)
-
-    db.session.commit()
-    if page == "feed":
-            return redirect('/headlines')
-    
-    return redirect('/user')
-
-
-
-@app.route('/headlines', methods= ['GET', 'POST'])
-def home_page():
-    if CURR_USER_KEY in session:
-        user = User.query.get(g.user.id)
-        if not user.queried_stories:
-            results = api_call(None)
-            return render_template('/show_stories.html', results=results)
-        user_queried_stories = user.queried_stories
-
-        results = user_queried_stories
- 
-        return render_template('/show_stories.html', results=results)
-    else:
-        results = api_call(None)
-        return render_template('/show_stories.html', results=results)
-
-
-@app.route('/search', methods= ['GET', 'POST'])
-def search_params():
-    """This function creates a dictionary extracting data from the search form to be sent to the news-api"""
-    user = User.query.get(g.user.id)
-    form = SearchForm()
-    
-    if form.validate_on_submit():
-        try:
-            dict = {}
-            dict['keyword'] = form.keyword.data
-            dict['source'] = form.source.data
-            dict['quantity'] = form.quantity.data
-            dict['date_from'] = form.date_from.data
-            dict['date_to'] = form.date_to.data
-            dict['language'] = form.language.data
-
-            # keyword = form.keyword.data
-            # source = form.source.data
-            # quantity = form.quantity.data
-            # date_from = form.date_from.data
-            # date_to = form.date_to.data
-            # language = form.language.data
-            # saved = form.saved.data
-            
-            # query = TestQ(user_id = g.user.id,
-            # keyword=keyword,
-            # source=source,
-            # quantity=quantity,
-            # date_from = date_from,
-            # date_to = date_to,
-            # language = language,
-            # type = "detailed_search"
-            # )
-          
-            # db.session.add(query)
-            # print(query)
-            # print('x1')
-            
-            # db.session.commit()
-            # print(query)
-            # print('x2')
-            # user.saved_queries.append(query)
-            # print(user.saved_queries)
-            # print('x3')
-         
-            # db.session.commit()
-            # print(query)
-            # print('x4')
-            if form.sort_by.data == "subjectivity" or form.sort_by.data == "polarity":
-              
-                dict['sa'] = form.sort_by.data
-                # query.sa = form.sort_by.data
-                dict['sort_by'] = 'relevancy'
-                # query.sort_by = 'relevancy'
-            else: 
-                dict['sort_by'] = form.sort_by.data
-                # query.sort_by = form.sort_by.data
-                dict['sa'] = None
-                # query.sa = None
-            
-            # if form.default.data == True:
-            #     query.default = True
-                # user.default_search = default_str
-                # db.session.commit()
-            
-            # if form.saved.data == True:
-            #     query.saved_query = True
-            
-            # user.saved_queries.append(query)
-            
-            
-            session['dict'] = dict
-            db.session.commit()
-            #using the query information we make an api call and safe that data to user.searched_queries
-            api_call(dict, g.user.id)
-           
-            return redirect('/results')
-
-        except:
-            flash("hmmmm. does this appear, or messages from form validators?", 'danger')
-            return render_template('/users/search.html', form = form)
-    else:
-        print('uhhhh')
-        return render_template('/users/search.html', form = form)
-  
-
-@app.route('/results')
-def results():
-    #write logic for if no results are found
-    if CURR_USER_KEY in session:
-        dict = session['dict']
-        user = User.query.get(g.user.id)
-        user_queried_stories = user.queried_stories
-      
-        results = user_queried_stories
-
-        if dict['sa'] == 'polarity':
-            results = math()
-        elif dict['sa'] == 'subjectivity':
-            results = math2()
-        else:
-            return render_template('/show_stories.html', results=results)
-
-    return render_template('/show_stories.html', results=results)
-
-
-
- 
 
 @app.route('/')
 def slideshow():
@@ -381,31 +161,148 @@ def slideshow():
     #     top_story = headlines.pop(0)
     #     return render_template('/homepage.html', headlines=headlines, top_story=top_story)
  
+
+@app.route('/headlines', methods= ['GET', 'POST'])
+def home_page():
+    if CURR_USER_KEY in session:
+        user = User.query.get(g.user.id)
+        if not user.queried_stories:
+            results = api_call(None)
+            return render_template('/show_stories.html', results=results)
+        user_queried_stories = user.queried_stories
+
+        results = user_queried_stories
+ 
+        return render_template('/show_stories.html', results=results)
+    else:
+        results = api_call(None)
+        return render_template('/show_stories.html', results=results)
     
-    
-
-
-
-
 @app.route('/simple', methods = ['GET'])
 def search_simple():
     keyword = request.args.get("search")
     if CURR_USER_KEY in session:
         user = User.query.get(g.user.id)
-        
         api_call(keyword, g.user.id)
-        headlines = user.queried_stories
+        results = user.queried_stories
     else:
         results = api_call(keyword)
-        headlines = results
-
-    return render_template('/show_stories.html', headlines=headlines)
 
 
-@app.route('/show_story/<int:story_id>')
-def show_story(story_id):
-    story = Story.query.get(story_id)
-    return render_template('/users/story.html', story = story)
+    return render_template('/show_stories.html', results=results)
+
+@app.route('/search', methods= ['GET', 'POST'])
+def search_params():
+    """This function creates a dictionary extracting data from the search form to be sent to the news-api"""
+    user = User.query.get(g.user.id)
+    form = SearchForm()
+    
+    if form.validate_on_submit():
+        try:
+            dict = {}
+            dict['keyword'] = form.keyword.data
+            dict['source'] = form.source.data
+            dict['quantity'] = form.quantity.data
+            dict['date_from'] = form.date_from.data
+            dict['date_to'] = form.date_to.data
+            dict['language'] = form.language.data
+
+            # keyword = form.keyword.data
+            # source = form.source.data
+            # quantity = form.quantity.data
+            # date_from = form.date_from.data
+            # date_to = form.date_to.data
+            # language = form.language.data
+            # saved = form.saved.data
+            
+            # query = TestQ(user_id = g.user.id,
+            # keyword=keyword,
+            # source=source,
+            # quantity=quantity,
+            # date_from = date_from,
+            # date_to = date_to,
+            # language = language,
+            # type = "detailed_search"
+            # )
+          
+            # db.session.add(query)
+            # print(query)
+            # print('x1')
+            
+            # db.session.commit()
+            # print(query)
+            # print('x2')
+            # user.saved_queries.append(query)
+            # print(user.saved_queries)
+            # print('x3')
+         
+            # db.session.commit()
+            # print(query)
+            # print('x4')
+            if form.sort_by.data == "subjectivity" or form.sort_by.data == "polarity":
+              
+                dict['sa'] = form.sort_by.data
+                # query.sa = form.sort_by.data
+                dict['sort_by'] = 'relevancy'
+                # query.sort_by = 'relevancy'
+            else: 
+                dict['sort_by'] = form.sort_by.data
+                # query.sort_by = form.sort_by.data
+                dict['sa'] = None
+                # query.sa = None
+            
+            # if form.default.data == True:
+            #     query.default = True
+                # user.default_search = default_str
+                # db.session.commit()
+            
+            # if form.saved.data == True:
+            #     query.saved_query = True
+            
+            # user.saved_queries.append(query)
+            
+            
+            session['dict'] = dict
+            db.session.commit()
+            #using the query information we make an api call and safe that data to user.searched_queries
+            api_call(dict, g.user.id)
+           
+            return redirect('/results')
+
+        except:
+            flash("hmmmm. does this appear, or messages from form validators?", 'danger')
+            return render_template('/users/search.html', form = form)
+    else:
+        return render_template('/users/search.html', form = form)
+  
+
+@app.route('/results')
+def results():
+    #write logic for if no results are found
+    if CURR_USER_KEY in session:
+        dict = session['dict']
+        user = User.query.get(g.user.id)
+        user_queried_stories = user.queried_stories
+      
+        results = user_queried_stories
+
+        if dict['sa'] == 'polarity':
+            results = order_pol()
+        elif dict['sa'] == 'subjectivity':
+            results = order_sub()
+        else:
+            return render_template('/show_stories.html', results=results)
+
+    return render_template('/show_stories.html', results=results)
+
+
+
+@app.route(f'/headlines/<category>')
+def show_for_category(category):
+    """Display top headlines for given category based off of link clicked from homepage"""
+    category = category.lower()
+    results = cat_calls(category)
+    return render_template('show_stories.html', results = results)
 
 
 @app.route('/user')
@@ -425,12 +322,11 @@ def user():
 
 
 @app.route('/story/<int:story_id>/open')
-def open_story_link(story_id):   
+def open_story_link(story_id): 
+        #FINISH THIS  
         story = Story.query.get(story_id)
         user = User.query.get(g.user.id)
         user.history.append(story)
-        story.views += 1
-        
         db.session.commit()
         return redirect (f"{story.url}")
 
@@ -518,14 +414,94 @@ def logout():
     return redirect("/")
 
 
+"""Sentimental Analysis Functions"""
+
+def order_pol():
+    user = User.query.get(g.user.id)
+    if user.queried_stories:
+        results = []
+        for story in user.queried_stories:
+            id = story.id
+            score = polarize(story)
+     
+            if score == None:
+                QueriedStory.query.filter_by(story_id =id).delete()
+                db.session.commit()
+  
+            else:
+                result = score['article_res']['result']
+                story.pol = str(result)
+                db.session.commit()
+        
+        for result in user.queried_stories:
+            results.append(result)
+
+        ordered = sorted(user.queried_stories,
+        key = lambda story : story.pol,
+        reverse=True )
+      
+        return ordered
+        
+def order_sub():
+    user = User.query.get(g.user.id)
+    if user.queried_stories:
+        for story in user.queried_stories:
+            id = story.id
+            score = subjectize(story)
+           
+            if score == None:
+   
+                QueriedStory.query.filter_by(story_id =id).delete()
+                db.session.commit()
+        
+            else:
+                story.sub = str(score['measure'])
+                db.session.commit()
+        ordered = sorted(user.queried_stories, key = lambda story : story.sub, reverse=True )
+        #CHANGE THESE SO THAT THEY SORT BY SUBJECTIVITY NUMBERS NOT RESULT SAME WITH POLARITY
+        #ASK TA IF THEY KNOW OF PROGRESS BAR
+        return ordered
+
+
+@app.route('/<int:story_id>/polarity', methods =['POST'])
+def show_pol_calls(story_id):
+    story = Story.query.get(story_id)
+
+    score = polarize(story)
+    if score == None:
+        story.pol = "No Data"
+    else:
+        score = score['article_res']['result']
+        story.pol = str(score)
+ 
+    db.session.commit()
+
+    '''we need to make sure the response is in json for axios to retrieve it'''
+    
+    return jsonify({'response': story.pol})
+
+
+
+@app.route('/<int:story_id>/subjectivity', methods =['POST'])
+def show_sub_calls(story_id):
+    
+    story = Story.query.get(story_id)
+    
+    score = subjectize(story)
+    if score == None:
+        story.sub = "No Data"
+
+    else:
+        score = score['measure']
+        story.sub = str(score)
+
+    db.session.commit()
+
+    return jsonify({'response': story.sub})
+
+
 #test functions, remove when app ready
 
-@app.route(f'/headlines/<category>')
-def show_for_category(category):
-    results = cat_calls(category)
-    return render_template('show_stories.html', results = results)
-
-    """Display top headlines for given category based off of link clicked from homepage"""
 
 def sub(headlines):
     for article in headlines:

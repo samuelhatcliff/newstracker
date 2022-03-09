@@ -62,7 +62,7 @@ def save_to_db(articles, user_id = None):
     return results
 
 def api_call(query = None, user_id = None):
-    print("str2")
+    print("str3")
     # queries = TestQ.query.all()
     # query = TestQ.pop()
     # if query.type == "detailed_search":

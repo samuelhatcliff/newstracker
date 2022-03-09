@@ -54,7 +54,6 @@ ul {
     background: #ade7ff;
     margin: auto;
     box-shadow: 1px 1px 10px 10px #95eeee;
-    
 }
 
 .card-body {
@@ -227,8 +226,8 @@ h5 {
 p {
     color:whitesmoke
 }
-/* Right (category-slideshow)*/
 
+/* Right (category-slideshow)*/
 
 #slideshows {
     padding:0px;
@@ -252,7 +251,7 @@ p {
 
 h3 a{
     text-decoration: none;
-    color:whitesmoke
+    color:white
 }
 
 /*Left*/
@@ -289,12 +288,19 @@ h3 a{
     margin-bottom:2rem;
 }
 
+.category {
+    padding:0.5rem;
+    color:white;
+}
+
+.category:hover {
+    text-decoration: none;
+    color: #a3a3a3;
+}
+
 @media only screen and (max-width: 768px) {
     #slideshows{
-        padding-top: 1.5rem;
-    }
-    .category {
-        padding:12px;
+        padding-top: 1rem;
     }
     .carousel-caption {
         text-align:center;
@@ -302,9 +308,7 @@ h3 a{
         background:rgba(0,0,0,0.4);
         font-size: 2vw;
         margin-bottom:2rem;
-    
     }
-
 }
 
 
