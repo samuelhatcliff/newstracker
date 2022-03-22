@@ -20,9 +20,9 @@ Python, Flask, SQLAlchemy, NewsAPI, WTForms, CSS, Bootstrap, AJAX, JSON, NLTK, S
   anyone wanting to keep up with current events and/or investment opportunities. Getting Sentimental Analysis prior to reading a story has a variety of potential 
   benefits. Imagine the following scenarios:
 
-    1) An investor is trying to assess the pros and cons of owning stock in a particular company. Using the subjectivity feature to identify 
-    degrees of subjectivity, they may choose to filter out articles that are marked as highly subjective, which allows them to save researching time and 
-    become better informed.
+    1) An investor is trying to assess the pros and cons of owning stock in a particular company. Using the
+    subjectivity feature to identify degrees of subjectivity, they may choose to filter out articles that are
+    marked as highly subjective, which allows them to save researching time and become better informed.
 
     2) Someone wanting to become more politically informed about a particular issue may use the subjectivity feature to identify news sources and types of 
     stories that may not be worth reading due to the degree to which the author's tone skews from being objective. 
