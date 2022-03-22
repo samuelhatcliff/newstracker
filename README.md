@@ -24,13 +24,16 @@ Python, Flask, SQLAlchemy, NewsAPI, WTForms, CSS, Bootstrap, AJAX, JSON, NLTK, S
     subjectivity feature to identify degrees of subjectivity, they may choose to filter out articles that are
     marked as highly subjective, which allows them to save researching time and become better informed.
 
-    2) Someone wanting to become more politically informed about a particular issue may use the subjectivity feature to identify news sources and types of 
-    stories that may not be worth reading due to the degree to which the author's tone skews from being objective. 
+    2) Someone wanting to become more politically informed about a particular issue may use the subjectivity 
+    feature to identify news sources and types of stories that may not be worth reading due to the degree to
+    which the author's tone skews from being objective. 
 
-    3) A day/swing trader may want to use the polarity feature to evaluate the overall market sentiment of a particular stock, crypto, or geo-political region. 
+    3) A day/swing trader may want to use the polarity feature to evaluate the overall market sentiment of a
+    particular stock, crypto, or geo-political region. 
 
-    4) An individual has been feeling that the amount of negative news they've been consuming has taken a toll on their mental health, and want to expose themselves
-    to more positive and uplifting news may use the polarity feature to filter out negative stories. 
+    4) An individual has been feeling that the amount of negative news they've been consuming has taken a toll
+    on their mental health, and want to expose themselves to more positive and uplifting news may use the polarity 
+    feature to filter out negative stories. 
 
   As you can see, there are many potential use-cases for NewsTracker that will only continue to increase as more features are added. I would note, however, 
   that NLTK's Sentimental Analysis features are not perfect, and a user should not expect to get accurate results or insights 100% of the time. 
