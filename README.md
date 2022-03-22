@@ -72,7 +72,7 @@ Python, Flask, SQLAlchemy, NewsAPI, WTForms, CSS, Bootstrap, AJAX, JSON, NLTK, S
   These stories will be deleted from user.queried_stories the next time the function as called, which avoids unwanted stories from being attached to our 
   search results and saves us space in our own database. No story is permanently saved to our own database unless added to `user.saved_stories` by the user saving the story.
   
-  SA data functions can be found in the `sent_analysis.py` module. The result of passing a particular story in to one of these functions is then committed to each story in our database.
+  SA data functions can be found in the `sent_analysis` module. The result of passing a particular story in to one of these functions is then committed to each story in our database.
   
   
 ## Challenges: 
