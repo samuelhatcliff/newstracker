@@ -1,9 +1,10 @@
 # newstracker
 
-Technology/Tools: Python, Flask, SQLAlchemy, NewsAPI, WTForms, CSS, Bootstrap, AJAX, JSON, NLTK, Spacy, Newspaper.
+## Technology/Tools: 
+Python, Flask, SQLAlchemy, NewsAPI, WTForms, CSS, Bootstrap, AJAX, JSON, NLTK, Spacy, Newspaper.
 
 
-Summary: 
+## Summary: 
   NewsTracker is an application designed to enhance and optimize the way that a user interacts with news stories. 
   This is achieved primarily using a search engine that connects to NewsAPI which allows the user to narrow-down the content of their results.  
   Additional search parameters such as "Polarity" and "Subjectivity" use Natural Language Processing through Python's NLTK library to parse through 
@@ -14,7 +15,7 @@ Summary:
   to save and title multiple search queries and folders containing saved stories, as well as visual representations of data gleaned from the app's SA features. 
 
 
-Purpose: 
+## Purpose: 
   The ability to run an advanced search query to display a specific type of story and store it permanently in a user's account should be beneficial for 
   anyone wanting to keep up with current events and/or investment opportunities. Getting Sentimental Analysis prior to reading a story has a variety of potential 
   benefits. Imagine the following scenarios:
@@ -35,7 +36,7 @@ Purpose:
   that NLTK's Sentimental Analysis features are not perfect, and a user should not expect to get accurate results or insights 100% of the time. 
 
 
-User-Flow: 
+## User-Flow: 
   The homepage of NewsTracker contains cards on the left side explaining various features of the app, while the right side contains multiple Bootstrap carousels
   that represent each category that NewsApi allows to passed as an argument to its' "Top Headlines" endpoint. Clicking on each story as they pass through the carousel results 
   in said story opening up in a new window, while clicking the category name itself returns a feed of headlines containing the stories displayed in the carousel.
@@ -49,7 +50,7 @@ User-Flow:
   Along with the option of filtering one's search results by polarity or subjectivity, a user may choose to get such sentimental analysis data on any individual story
   wherever it appears, with the exception of the category-carousels on the home-page. 
  
-Data-Flows: 
+## Data-Flows: 
   When NewsTracker loads its homepage, it automatically makes several API get requests to NewsAPI using the "Top Headlines" endpoint. This API only accepts one
   optional parameter, which is the category of top headlines requested by us to the API. The "Headlines" link in the navbar will make an API call to the same endpoint with no
   additional parameters aside from setting "language" to "en" (unless switched to a user's default search query, see below).
@@ -71,7 +72,7 @@ Data-Flows:
   SA data functions can be found in the sent_analysis.py file. The result of passing a particular story in to one of these functions is then committed to each story in our database.
   
   
-Challenges: 
+## Challenges: 
   The free version of news API is only limited to 100 requests per day, and does not allow developers to access the entirety of a story's content. As a work-around, I've used the "Newspaper"
   parsing library in python to extract the actual content of a story by making a request to the story's URL given to us by the NewsAPI. As a downside, each time sentimental analysis data
   is being parsed, a separate HTTP request is made. This is not so problematic when SA data is being requested by the user for one particular story, but does cause less than ideal waiting
