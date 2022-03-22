@@ -41,14 +41,14 @@ Python, Flask, SQLAlchemy, NewsAPI, WTForms, CSS, Bootstrap, AJAX, JSON, NLTK, S
 
 ## User-Flow: 
   The homepage of NewsTracker contains cards on the left side explaining various features of the app, while the right side contains multiple Bootstrap carousels
-  that represent each category that NewsApi allows to passed as an argument to its' "Top Headlines" endpoint. Clicking on each story as they pass through the carousel results 
+  that represent each category that NewsApi allows to passed as an argument to its "Top Headlines" endpoint. Clicking on each story as they pass through the carousel results 
   in said story opening up in a new window, while clicking the category name itself returns a feed of headlines containing the stories displayed in the carousel.
   
-  A user can use the links in the navbar to log-in or register. After which, they will be redirected to a feed of headlines (referred to as "Headlines" in the navbar)
+  A user can use the links in the navbar to log-in or register. After which, they will be redirected to a feed of headlines (*referred to as "Headlines" in the navbar*)
   or a feed displaying results from their default search query, if previously selected. 
   
-  Now that a user is logged in, they may want to user features of the application only available to users, such as the Advanced Search feature ("Detailed Search" in 
-  the navbar) or refer to previous saved stories ("My Stories" in the navbar).
+  Now that a user is logged in, they may want to user features of the application only available to users, such as the Advanced Search feature (*"Detailed Search" in 
+  the navbar*) or refer to previous saved stories (*"My Stories" in the navbar*).
   
   Along with the option of filtering one's search results by polarity or subjectivity, a user may choose to get such sentimental analysis data on any individual story
   wherever it appears, with the exception of the category-carousels on the home-page. 
@@ -64,15 +64,15 @@ Python, Flask, SQLAlchemy, NewsAPI, WTForms, CSS, Bootstrap, AJAX, JSON, NLTK, S
   session or to be constantly passing the data into various routes as an argument. Another positive effect of storing the query data this way, is that it allows us to link queries
   to specific users, which will be useful in the future when the ability for a user to save various search queries that they have set themselves is implemented. 
   
-  In every circumstance where we need to make a get request to NewsAPI, we use the function "api_call", which can be found in the "api_calls".py file. As you can imagine,
-  this is where all of our logic related to our interactions with NewsAPI is located. Our "api_call" function determines the type of API call being made on our end (ie simple search,
+  In every circumstance where we need to make a get request to NewsAPI, we use the function `api_call`, which can be found in the `api_calls` module. As you can imagine,
+  this is where all of our logic related to our interactions with NewsAPI is located. Our `api_call` function determines the type of API call being made on our end (ie simple search,
   advanced search, top headlines), calls one of the functions that we have written below designated to specific types of requests on our end, and proceeds to call the 
-  "save_to_db" function. This function uses our QueriedStory table (not to be confused with the table representing the query data itself) to save the data returned by NewsAPI as stories
+  `save_to_db` function. This function uses our QueriedStory table (not to be confused with the table representing the query data itself) to save the data returned by NewsAPI as stories
   assigned to a particular user. This allows the results of these types of search queries to be retrieved globally and to be manipulated by SA results after they've been saved to our database. 
   These stories will be deleted from user.queried_stories the next time the function as called, which avoids unwanted stories from being attached to our 
-  search results and saves us space in our own database. No story is permanently saved to our own database unless added to user.saved_stories by the user saving the story.
+  search results and saves us space in our own database. No story is permanently saved to our own database unless added to `user.saved_stories` by the user saving the story.
   
-  SA data functions can be found in the sent_analysis.py file. The result of passing a particular story in to one of these functions is then committed to each story in our database.
+  SA data functions can be found in the `sent_analysis.py` module. The result of passing a particular story in to one of these functions is then committed to each story in our database.
   
   
 ## Challenges: 
