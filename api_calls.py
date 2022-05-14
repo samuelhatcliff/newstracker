@@ -137,7 +137,8 @@ def top_headlines_call(user_id=None):
 def advanced_search_call(query, user_id = None):
     from_ = str(query['date_from'])
     to = str(query['date_to'])
-   
+    print("source1", query['source'])
+
     #check if this is necessary
     if to == 'None' and from_ == 'None':
         data = newsapi.get_everything(q=f"{query['keyword']}"

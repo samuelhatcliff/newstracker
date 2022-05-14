@@ -4,6 +4,7 @@ const homeAdd = function (arg) {
     arg.classList.add("home-body");
 }
 
+//axios requests that reach our server to run SA on said story and show result inside button
 const saButtons = document.querySelectorAll(".sa-button");
 for (let button of saButtons) {
     button.addEventListener("click", async function (evt) {
@@ -29,3 +30,19 @@ for (let button of saButtons) {
         }
     })
 }
+
+
+//Replace broken images with default image
+
+const default_avatar = 'https://secure.gravatar.com/avatar?d=wavatar';
+
+window.addEventListener("load", event => {
+    let images = document.querySelectorAll('img');
+    for (let image of images) {
+        let isLoaded = image.complete && image.naturalHeight !== 0;
+        if (!isLoaded) {
+            image.src = default_avatar;
+        }
+    }
+});
+// Source: https://www.techiedelight.com/replace-broken-images-with-javascript/

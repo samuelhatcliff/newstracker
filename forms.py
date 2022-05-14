@@ -31,8 +31,8 @@ class SearchForm(FlaskForm):
     # endpoint to locate these programmatically or look at the sources index.
 
     source = SelectField("Choose source", choices=[
-        ('abc-news', 'ABC News'), ('al-jazeera-english',
-                                   'Al Jazeera'), ('associated-press', 'Associated Press'), ('axios', 'Axios'),
+        ('', 'All'), ('abc-news', 'ABC News'), ('al-jazeera-english',
+                                                'Al Jazeera'), ('associated-press', 'Associated Press'), ('axios', 'Axios'),
         ('bbc-news', 'BBC News'), ('bloomberg', 'Bloomberg'), ('cbc-news',
                                                                'CBC News'), ('cbs-news', 'CBS News'), ('cnn', 'CNN'), ('fox-news', 'Fox News'),
         ('google-news', 'Google News'), ('independent', 'Independent'), ('msnbc',
