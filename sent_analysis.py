@@ -1,48 +1,75 @@
-#libraries for parsing and sentiment analysis
-import math 
+# libraries for parsing and sentiment analysis
+import re
+import spacy
+import aiohttp
+import asyncio
+from textblob import TextBlob
+from nltk.sentiment.vader import SentimentIntensityAnalyzer as SIA
+from nltk.corpus import stopwords
+import math
 from newspaper import Article
-from sqlalchemy.exc import IntegrityError
 import nltk
 nltk.download('stopwords')
 nltk.download('punkt')
-from nltk.corpus import stopwords
-from nltk.sentiment.vader import SentimentIntensityAnalyzer as SIA
 sia = SIA()
-from textblob import TextBlob
 
-import spacy
+
 nlp = spacy.load('en_core_web_sm', disable=["parser", "ner"])
-import re
 
 
-    
+# async def get(
+#     session: aiohttp.ClientSession,
+#     url = url
+# ) -> dict:
+#     url = f"{url}/"
+#     print(f"Requesting {url}")
+#     article = await Article(url)
+# parsed = await article.text
+#     # Note that this may raise an exception for non-2xx responses
+#     # You can either handle that here, or pass the exception through
+#     return parsed
+# source:
+# https://stackoverflow.com/questions/53021448/multiple-async-requests-simultaneously
+# https://realpython.com/async-io-python/
+# https://stackoverflow.com/questions/57126286/fastest-parallel-requests-in-python
 
-def parse(headline):
-    article = Article(headline.url)
+# if type(headlines) == list:
+#     async with aiohttp.ClientSession() as session:
+#         tasks = []
+#         for headline in headlines:
+#             url = headline.url
+#             tasks.append(get(session=session, url=url))
+#     htmls = await asyncio.gather(*tasks, return_exceptions=True)
+
+# examine the process here in greater detail to understand how to put it in async function
+
+def parse(headlines):
+    article = Article(headlines.url)
     article.download()
     article.parse()
     parsed = article.text
     return parsed
 
+
 def tokenize(headline):
     parsed = parse(headline)
-    #tokenization from spacy and remove punctuations, convert to set to remove duplicates
+    # tokenization from spacy and remove punctuations, convert to set to remove duplicates
     words = set([str(token) for token in nlp(parsed) if not token.is_punct])
     print("Below is length upon tokenization")
     print(len(words))
     # remove digits and other symbols except "@"--used to remove email
     words = list(words)
     words = [re.sub(r"[^A-Za-z@]", "", word) for word in words]
-     #remove special characters
+    # remove special characters
     words = [re.sub(r'\W+', '', word) for word in words]
-    #remove websites and email addresses 
+    # remove websites and email addresses
     words = [re.sub(r'\S+@\S+', "", word) for word in words]
-    #remove empty spaces 
-    words = [word for word in words if word!=""]
-    
+    # remove empty spaces
+    words = [word for word in words if word != ""]
+
     print("Below is length before stopwords")
     print(len(words))
-    #import lists of stopwords from NLTK
+    # import lists of stopwords from NLTK
     stop_words = set(stopwords.words('english'))
     words = [w for w in words if not w.lower() in stop_words]
 
@@ -54,19 +81,20 @@ def tokenize(headline):
     print("Below is length after Lemmatization")
     print(len(words))
 
-    vowels = ['a','e','i','o','u']
+    vowels = ['a', 'e', 'i', 'o', 'u']
     words = [word for word in words if any(v in word for v in vowels)]
     print("Below is length after words with no vowels removed")
-    print(len(words))  
-    
-    #eliminate duplicate words by turning list into a set
+    print(len(words))
+
+    # eliminate duplicate words by turning list into a set
     words_set = set(words)
     print("Below is length after converted to set")
-    print(len(words_set)) 
+    print(len(words_set))
 
     return words_set
     # sources: https://towardsdatascience.com/a-step-by-step-tutorial-for-conducting-sentiment-analysis-a7190a444366
-    #https://datascience.stackexchange.com/questions/39960/remove-special-character-in-a-list-or-string
+    # https://datascience.stackexchange.com/questions/39960/remove-special-character-in-a-list-or-string
+
 
 def subjectize(headline):
     try:
@@ -74,36 +102,46 @@ def subjectize(headline):
     except:
         return None
     tblobbed = TextBlob(parsed)
-    subjectivity = tblobbed.sentiment.subjectivity
-   
+    # separate this logic out into separate function
+    subjectivity = round(tblobbed.sentiment.subjectivity, 2)
+    subjectivity = str(subjectivity)
+    subjectivity = subjectivity[-2:]
+    print("pppp", subjectivity)
+    if subjectivity == ".":
+        subjectivity = f"{subjectivity}0"
+    if subjectivity == ".0":
+        return None
+    subjectivity = round(float(subjectivity))
 
     sub_obj = {}
-    if subjectivity > .80:
-        sub_obj['measure'] = "Very Objective"
-    elif subjectivity > .60:
-        sub_obj['measure'] = "Moderately Objective"
-    elif subjectivity > .40:
-        sub_obj['measure'] = "Neutral"
-    elif subjectivity > .20:
-        sub_obj['measure'] = "Moderately Subjective"
+    if subjectivity > 80:
+        sub_obj['measure'] = f"{subjectivity}% (Very Objective)"
+    elif subjectivity > 60:
+        sub_obj['measure'] = f"{subjectivity}% (Objective)"
+    elif subjectivity > 40:
+        sub_obj['measure'] = f"{subjectivity}% (Neutral)"
+    elif subjectivity > 20:
+        sub_obj['measure'] = f"{subjectivity}% (Subjective)"
     else:
-        sub_obj['measure'] = "Very Subjective"
+        sub_obj['measure'] = f"{subjectivity}% (Very Subjective)"
     sub_obj['score'] = subjectivity
- 
+
     if sub_obj['score'] == 0.0:
-        return None 
+        return None
     return sub_obj
 
+
 def polarize(headline):
-    #function returns an object of two sepearate polarity scores; one based off the text of the article and the other
-    #from just the headline alone. Each of these are represented in their own respective objects. 
+    # function returns an object of two sepearate polarity scores; one based off the text of the article and the other
+    # from just the headline alone. Each of these are represented in their own respective objects.
     pol_obj = {}
     headline_res = {}
     article_res = {}
 
-    """Logic for polarity from article text"""
+    """Extracting polarity from article text"""
     try:
         parsed = parse(headline)
+
     except:
         return None
 
@@ -121,9 +159,8 @@ def polarize(headline):
         negs.append(res["neg"])
         neus.append(res["neu"])
         if res['compound']:
-            #sometimes the composite will be zero for certain sentences. We don't want to include that data. 
+            # sometimes the composite will be zero for certain sentences. We don't want to include that data.
             coms.append(res['compound'])
-        
 
     if len(coms) == 0:
         return None
@@ -132,7 +169,29 @@ def polarize(headline):
     avg_neu = round((sum(neus) / len(neus)), 2)
     avg_neg = round((sum(negs) / len(negs)), 2)
 
-    """Logic for polarity from headline text"""
+    article_res["avg_com"] = round(avg_com, 2)
+    article_res["avg_pos"] = round(avg_pos, 2)
+    article_res["avg_neg"] = round(avg_neg, 2)
+    article_res["avg_neu"] = round(avg_neu, 2)
+
+    if avg_com >= 0.4:
+        article_res['result'] = f"{avg_com} (Very Positive)"
+
+    elif avg_com >= 0.2:
+        article_res['result'] = f"{avg_com} (Positive)"
+
+    elif avg_com <= - 0.2:
+        article_res['result'] = f"{avg_com} (Negative)"
+
+    elif avg_com <= - 0.2:
+        article_res['result'] = f"{avg_com} (Very Negative)"
+
+    else:
+        article_res['result'] = f"{avg_com} (Neutral)"
+
+    article_res["message"] = f"{article_res['result']}. {avg_neg *100}% Negative, {avg_neu *100}% Neutral, and {avg_pos *100}% Positive"
+
+    """Extracting polarity from headline text"""
 
     headline = sia.polarity_scores(headline.headline)
     headline_res["com"] = headline['compound']
@@ -140,40 +199,29 @@ def polarize(headline):
     headline_res["neg"] = headline['neg']
     headline_res["neu"] = headline['neu']
 
-    if headline_res['com'] >= 0.2 :
+    if headline_res['com'] >= 0.2:
         headline_res['result'] = "Positive"
- 
-    elif headline_res['com'] <= - 0.2 :
+
+    elif headline_res['com'] >= 0.4:
+        headline_res['result'] = "Very Positive"
+    elif headline_res['com'] <= - 0.2:
         headline_res['result'] = "Negative"
- 
+    elif headline_res['com'] <= - 0.4:
+        headline_res['result'] = "Very Negative"
+
     else:
         headline_res['result'] = "Neutral"
 
-    article_res["avg_com"] = round(avg_com, 2)
-    article_res["avg_pos"] = round(avg_pos, 2)
-    article_res["avg_neg"] = round(avg_neg, 2)
-    article_res["avg_neu"] = round(avg_neu, 2)
-
-    if avg_com >= 0.2 :
-        article_res['result'] = "Positive"
- 
-    elif avg_com <= - 0.2 :
-        article_res['result'] = "Negative"
- 
-    else :
-        article_res['result'] = "Neutral"
-
-    article_res["message"] = f"{article_res['result']}. {avg_neg *100}% Negative, {avg_neu *100}% Neutral, and {avg_pos *100}% Positive"
-  
     pol_obj['headline_res'] = headline_res
     pol_obj['article_res'] = article_res
-  
+
     return pol_obj
+
 
 def sa_sum(headlines):
     for headline in headlines:
         sum = {}
-        sum['parsed']  = parse(headline)
+        sum['parsed'] = parse(headline)
         sum['tokenized'] = tokenize(headline)
         sum['subjectivity'] = subjectize(headline)
         sum['polarity'] = polarize(headline)

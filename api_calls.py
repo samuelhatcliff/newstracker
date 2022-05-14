@@ -75,7 +75,7 @@ def api_call(query = None, user_id = None):
     #     results = top_headlines_call(query)
     #     return results
     # else: 
-    #     if query.type == "business":
+    #     if query.type == "category":
     #         results = cat_calls(query.type)
     #         return results
 

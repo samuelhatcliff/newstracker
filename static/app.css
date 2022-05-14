@@ -12,6 +12,10 @@ ul {
     margin: auto;
 }
 
+span {
+    color:whitesmoke
+}
+
 .home-body {
     display: flex;
     justify-content: center;
@@ -78,7 +82,6 @@ ul {
 
 #image {
     margin-bottom: 10px;
-    border-radius: 40px;
 }
 
 
@@ -89,6 +92,7 @@ ul {
     #left-b{
         margin-bottom: 10px;
         order: 1;
+        padding-right: 0px;
     }
     #image {
         order: 0;
@@ -97,6 +101,7 @@ ul {
     #right-b{
         margin-bottom: 10px;
         order: 1;
+        padding-left:0px;
     }
     
 }
