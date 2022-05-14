@@ -25,10 +25,22 @@ class SearchForm(FlaskForm):
     keyword = StringField("Enter a search term:", validators=[Optional()])
     # if this field is empty, the get_top_headlines function should be called instead
 
-    source = StringField("Enter name of source:", validators=[Optional()])
+    # source = StringField("Enter name of source:", validators=[Optional()])
     # could potentially allow for multiple sources to be searched later. From API docs:
     # A comma-seperated string of identifiers (maximum 20) for the news sources or blogs you want headlines from. Use the /sources
     # endpoint to locate these programmatically or look at the sources index.
+
+    source = SelectField("Choose source", choices=[
+        ('abc-news', 'ABC News'), ('al-jazeera-english',
+                                   'Al Jazeera'), ('associated-press', 'Associated Press'), ('axios', 'Axios'),
+        ('bbc-news', 'BBC News'), ('bloomberg', 'Bloomberg'), ('cbc-news',
+                                                               'CBC News'), ('cbs-news', 'CBS News'), ('cnn', 'CNN'), ('fox-news', 'Fox News'),
+        ('google-news', 'Google News'), ('independent', 'Independent'), ('msnbc',
+                                                                         'MSNBC'), ('nbc-news', 'NBC News'), ('politico', 'Politico'),
+        ('reuters', 'Reuters'), ('the-hill', 'The Hill'), ('the-huffington-post',
+                                                           'The Huffington Post'), ('the-wall-street-journal', 'The Wall Street Journal'),
+        ('the-washington-post', "The Washington Post"), ('time', 'Time'), ('usa-today', 'USA Today'), ('vice-news', 'Vice News')],
+        validators=[Optional()])
 
     quantity = IntegerField("Enter of many articles you want returned (max 10):", default=10, validators=[
                             NumberRange(min=1, max=10, message="Please enter a number between 1 and 10")])
