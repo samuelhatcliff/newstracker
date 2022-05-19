@@ -472,7 +472,6 @@ def order_sub():
 @app.route('/<int:story_id>/polarity', methods=['POST'])
 def show_pol_calls(story_id):
     story = Story.query.get(story_id)
-    print("1222")
     score = polarize(story)
 
     if score == None:
