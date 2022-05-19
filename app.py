@@ -16,6 +16,7 @@ from dateutil import parser
 from newsapi import NewsApiClient
 import asyncio
 
+# https://www.youtube.com/watch?v=Lf3DYRvCPFo
 
 # from flask_debugtoolbar import DebugToolbarExtension
 from flask_bcrypt import Bcrypt
