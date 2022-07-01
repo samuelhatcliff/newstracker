@@ -1,7 +1,5 @@
-import re
 from sqlalchemy import delete
 from models import db
-import psycopg2
 from newsapi import NewsApiClient
 from dateutil import parser
 from models import QueriedStory, Story, User, QueriedStory, TestQ

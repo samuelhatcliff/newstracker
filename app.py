@@ -9,13 +9,7 @@ from api_calls import api_call, cat_calls
 from sent_analysis import subjectize, polarize
 
 
-from langcodes import Language
-import psycopg2
-import datetime as dt
-import requests
-from dateutil import parser
 from newsapi import NewsApiClient
-import asyncio
 
 
 # from flask_debugtoolbar import DebugToolbarExtension

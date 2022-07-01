@@ -1,8 +1,6 @@
 # libraries for parsing and sentiment analysis
 import re
 import spacy
-import aiohttp
-import asyncio
 from textblob import TextBlob
 from nltk.sentiment.vader import SentimentIntensityAnalyzer as SIA
 from nltk.corpus import stopwords
