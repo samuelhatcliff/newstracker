@@ -1,11 +1,12 @@
 # libraries for parsing and sentiment analysis
+from newspaper import Article
+from nltk.corpus import stopwords
+from nltk.sentiment.vader import SentimentIntensityAnalyzer as SIA
 import re
 import spacy
 from textblob import TextBlob
-from nltk.sentiment.vader import SentimentIntensityAnalyzer as SIA
-from nltk.corpus import stopwords
-from newspaper import Article
 import nltk
+nltk.download('vader_lexicon')
 nltk.download('stopwords')
 nltk.download('punkt')
 sia = SIA()
