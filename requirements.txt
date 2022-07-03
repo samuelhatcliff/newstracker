@@ -4,6 +4,7 @@ Flask_SQLAlchemy==2.5.1
 Flask_WTF==1.0.0
 newsapi==0.1.1
 newsapi_python==0.2.6
+newspaper==0.1.0.7
 newspaper3k==0.2.8
 nltk==3.6.7
 python_dateutil==2.8.2
@@ -11,3 +12,7 @@ spacy==3.2.1
 SQLAlchemy==1.4.31
 textblob==0.17.1
 WTForms==3.0.1
+psycopg==3.0.15
+psycopg2==2.9.3
+psycopg2-binary==2.9.3
+SQLAlchemy==1.4.31
