@@ -4,7 +4,6 @@ import spacy
 from textblob import TextBlob
 from nltk.sentiment.vader import SentimentIntensityAnalyzer as SIA
 from nltk.corpus import stopwords
-import math
 from newspaper import Article
 import nltk
 nltk.download('stopwords')

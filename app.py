@@ -1,7 +1,7 @@
 from re import L
 import os
 from flask import Flask, request, render_template, flash, redirect, render_template, jsonify, session, g
-from models import connect_db, db, User, Story, QueriedStory, Note, SavedStory, TestQ
+from models import connect_db, db, User, Story, QueriedStory
 
 
 from forms import RegisterForm, LoginForm, SearchForm
