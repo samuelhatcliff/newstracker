@@ -12,3 +12,9 @@ SQLAlchemy==1.4.31
 textblob==0.17.1
 WTForms==3.0.1
 en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.2.0/en_core_web_sm-3.2.0-py3-none-any.whl
+psycopg==3.0.15
+psycopg2==2.9.3
+psycopg2-binary==2.9.3
+jinja2==3.0.3
+SQLAlchemy==1.4.31
+gunicorn==20.1.0
