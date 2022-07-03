@@ -1,6 +1,7 @@
 from sqlalchemy import delete
 from models import db
-from newsapi import NewsApiClient
+# from newsapi import NewsApiClient
+from newsapi.newsapi_client import NewsApiClient
 from dateutil import parser
 from models import QueriedStory, Story, User, QueriedStory, TestQ
 newsapi = NewsApiClient(api_key='b4f52eb738354e648912261c010632e7')

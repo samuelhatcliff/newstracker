@@ -9,7 +9,8 @@ from api_calls import api_call, cat_calls
 from sent_analysis import subjectize, polarize
 
 
-from newsapi import NewsApiClient
+# from newsapi import NewsApiClient
+from newsapi.newsapi_client import NewsApiClient
 
 
 # from flask_debugtoolbar import DebugToolbarExtension
