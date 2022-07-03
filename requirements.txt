@@ -11,5 +11,4 @@ spacy==3.2.1
 SQLAlchemy==1.4.31
 textblob==0.17.1
 WTForms==3.0.1
-en-core-web-lg @ https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.2.0/en_core_web_lg-3.2.0-py3-none-any.whl
 en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.2.0/en_core_web_sm-3.2.0-py3-none-any.whl
