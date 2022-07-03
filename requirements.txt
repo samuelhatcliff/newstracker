@@ -4,7 +4,6 @@ Flask_SQLAlchemy==2.5.1
 Flask_WTF==1.0.0
 newsapi==0.1.1
 newsapi_python==0.2.6
-newspaper==0.1.0.7
 newspaper3k==0.2.8
 nltk==3.6.7
 python_dateutil==2.8.2
