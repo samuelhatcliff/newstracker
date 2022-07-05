@@ -87,19 +87,19 @@ def do_logout():
 """View functions for application"""
 
 
-# @app.route('/')
-# def slideshow():
-#     categories = ['business', 'entertainment',
-#                   'health', 'science', 'sports', 'technology']
-#     data = []
-#     for cat in categories:
-#         obj = {}
-#         obj['results'] = cat_calls(cat)
-#         obj['top_story'] = obj['results'].pop(0)
-#         obj['name'] = cat.capitalize()
-#         data.append(obj)
+@app.route('/')
+def slideshow():
+    categories = ['business', 'entertainment',
+                  'health', 'science', 'sports', 'technology']
+    data = []
+    for cat in categories:
+        obj = {}
+        obj['results'] = cat_calls(cat)
+        obj['top_story'] = obj['results'].pop(0)
+        obj['name'] = cat.capitalize()
+        data.append(obj)
 
-#     return render_template('/homepage.html', data=data)
+    return render_template('/homepage.html', data=data)
 
 
 @app.route('/headlines', methods=['GET', 'POST'])
@@ -179,7 +179,7 @@ def handle_results():
     return render_template('/show_stories.html', results=results)
 
 
-@app.route(f'/headlines/<category>')
+@app.route(f'/<category>')
 def show_for_category(category):
     """Display top headlines for given category based off of link clicked from homepage"""
     category = category.lower()
@@ -474,41 +474,41 @@ def show_sub_calls(story_id):
 #     return "all done"
 
 
-@app.route('/')
-def slideshow():
-    if CURR_USER_KEY in session:
-        # DELETE THIS. this is only to limit the number of api calls
-        user = User.query.get(g.user.id)
-        user_queried_stories = user.queried_stories
-        first = user_queried_stories[0]
-        headlines = user_queried_stories
-        top_story = first
-        business = user_queried_stories
-        business1 = first
-        entertainment = user_queried_stories
-        entertainment1 = first
-        health = user_queried_stories
-        health1 = first
-        sports = user_queried_stories
-        sports1 = first
-        technology = user_queried_stories
-        technology1 = first
-        science = user_queried_stories
-        science1 = first
+# @app.route('/')
+# def slideshow():
+#     if CURR_USER_KEY in session:
+#         # DELETE THIS. this is only to limit the number of api calls
+#         user = User.query.get(g.user.id)
+#         user_queried_stories = user.queried_stories
+#         first = user_queried_stories[0]
+#         headlines = user_queried_stories
+#         top_story = first
+#         business = user_queried_stories
+#         business1 = first
+#         entertainment = user_queried_stories
+#         entertainment1 = first
+#         health = user_queried_stories
+#         health1 = first
+#         sports = user_queried_stories
+#         sports1 = first
+#         technology = user_queried_stories
+#         technology1 = first
+#         science = user_queried_stories
+#         science1 = first
 
-        return render_template('/homepage.html',
-                               headlines=headlines,
-                               top_story=top_story,
-                               business=business,
-                               business1=business1,
-                               ent=entertainment,
-                               ent1=entertainment1,
-                               health=health,
-                               health1=health1,
-                               science=science,
-                               science1=science1,
-                               sports=sports,
-                               sports1=sports1,
-                               tech=technology,
-                               tech1=technology1
-                               )
+#         return render_template('/homepage.html',
+#                                headlines=headlines,
+#                                top_story=top_story,
+#                                business=business,
+#                                business1=business1,
+#                                ent=entertainment,
+#                                ent1=entertainment1,
+#                                health=health,
+#                                health1=health1,
+#                                science=science,
+#                                science1=science1,
+#                                sports=sports,
+#                                sports1=sports1,
+#                                tech=technology,
+#                                tech1=technology1
+#                                )

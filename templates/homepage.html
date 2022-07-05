@@ -2,25 +2,27 @@
 {% block content %}
 <script src="/static/newstracker.js"></script>
 <script>
-homeAdd(arg);
-  </script>
-<div id= "home" class="container">
+  homeAdd(arg);
+</script>
+<div id="home" class="container">
   <div id="row" class="row">
 
-    <div class = "col-md-7 col-12">
+    <div class="col-md-7 col-12">
       <h3 class="form display-5 text-center">What can I do with NewsTracker?</h3>
-      <div id= "info-container" class="container">
+      <div id="info-container" class="container">
 
         <div class="row">
           <div class="heading">
-          <h4 class ="form display-5 text-center">Non-Users</h4>
-          <p>You don’t need to be a user to begin utilizing NewsTracker’s features. Here are some things you can do instantly, without even creating an account.</p>
+            <h4 class="form display-5 text-center">Non-Users</h4>
+            <p>You don’t need to be a user to begin utilizing NewsTracker’s features. Here are some things you can do
+              instantly, without even creating an account.</p>
           </div>
           <div class="announce col-lg">
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title">Get Headlines</h5>
-                <p class="card-text">Simply click "Headlines" to browse the latest news of the day featuring all categories.</p>
+                <p class="card-text">Simply click "Headlines" to browse the latest news of the day featuring all
+                  categories.</p>
               </div>
             </div>
           </div>
@@ -28,7 +30,8 @@ homeAdd(arg);
             <div class="card" id="card2">
               <div class="card-body">
                 <h5 class="card-title">Search by Keyword</h5>
-                <p class="card-text">Use the nav-bar to search by keyword to get up-to-date results based off of whatever you’re looking for.</p>
+                <p class="card-text">Use the nav-bar to search by keyword to get up-to-date results based off of
+                  whatever you’re looking for.</p>
               </div>
             </div>
           </div>
@@ -36,7 +39,8 @@ homeAdd(arg);
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title">Browse by Category</h5>
-                <p class="card-text">Click the category title of any category on the right to view headlines from each category, or click on the story headline as it slides through to view each story directly.</p>
+                <p class="card-text">Click the category title of any category on the right to view headlines from each
+                  category, or click on the story headline as it slides through to view each story directly.</p>
               </div>
             </div>
           </div>
@@ -45,13 +49,16 @@ homeAdd(arg);
         <div class="row">
           <div class="heading">
             <h4>Users</h4>
-            <p>Through NewsTracker, Registered Users have access to a wide variety of tools that may assist them search for and organize various information. </p>
+            <p>Through NewsTracker, Registered Users have access to a wide variety of tools that may assist them search
+              for and organize various information. </p>
           </div>
           <div class="announce col-lg">
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title">Detailed Search</h5>
-                <p class="card-text">Use our Detailed Search feature to further customize your search query by source, date-range, language, and more! You can save this search query to be your default news feed each time you log in. </p>
+                <p class="card-text">Use our Detailed Search feature to further customize your search query by source,
+                  date-range, language, and more! You can save this search query to be your default news feed each time
+                  you log in. </p>
               </div>
             </div>
           </div>
@@ -59,7 +66,9 @@ homeAdd(arg);
             <div class="card">
               <div class="card-body" id="card2">
                 <h5 class="card-title">Sentiment Analysis Tools</h5>
-                <p class="card-text">NewsTracker uses Python’s NLTK Library and Web-Scraping techniques to perform Sentimental Analysis on each article that we receive from out news-api at your request! Polarity and Subjectivity scores may be extracted from each article, or used to filter search results.</p>
+                <p class="card-text">NewsTracker uses Python’s NLTK Library and Web-Scraping techniques to perform
+                  Sentimental Analysis on each article that we receive from out news-api at your request! Polarity and
+                  Subjectivity scores may be extracted from each article, or used to filter search results.</p>
               </div>
             </div>
           </div>
@@ -67,7 +76,8 @@ homeAdd(arg);
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title">Saved Stories</h5>
-                <p class="card-text">Never lose track of the information you read by using our “Saved Stories” feature to keep all of your most important stories in one place.</p>
+                <p class="card-text">Never lose track of the information you read by using our “Saved Stories” feature
+                  to keep all of your most important stories in one place.</p>
               </div>
             </div>
           </div>
@@ -76,13 +86,17 @@ homeAdd(arg);
         <div class="row">
           <div class="heading">
             <h4>Upcoming Features</h4>
-            <p>NewsTracker is an ongoing project that we will continuously be updating in order to give myself and other users ability to access and organize our world’s latest trends, insights, and information. Here are some upcoming features from our roadmap.</p>
-            </div>
+            <p>NewsTracker is an ongoing project that we will continuously be updating in order to give myself and other
+              users ability to access and organize our world’s latest trends, insights, and information. Here are some
+              upcoming features from our roadmap.</p>
+          </div>
           <div class="announce col">
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title">Amplified User Features</h5>
-                <p class="card-text">Users will be able to better organize their saved content by being able to categorize them into separate folders named by their choosing, have access to multiple saved search queries, and will be able to write notes for each individual saved story or category.</p>
+                <p class="card-text">Users will be able to better organize their saved content by being able to
+                  categorize them into separate folders named by their choosing, have access to multiple saved search
+                  queries, and will be able to write notes for each individual saved story or category.</p>
               </div>
             </div>
           </div>
@@ -90,46 +104,49 @@ homeAdd(arg);
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title">Integration of Twitter API</h5>
-                <p class="card-text">Not only will the integration of the Twitter API be useful for those who wish to digest their information in more bite-sized pieces, it will also allow users to receive more precise and recent Sentiment Analysis Data. Automatic, visual representations of such insights should be useful to investors, marketers, etc.</p>
+                <p class="card-text">Not only will the integration of the Twitter API be useful for those who wish to
+                  digest their information in more bite-sized pieces, it will also allow users to receive more precise
+                  and recent Sentiment Analysis Data. Automatic, visual representations of such insights should be
+                  useful to investors, marketers, etc.</p>
               </div>
             </div>
           </div>
         </div>
+      </div>
     </div>
-  </div>
 
-    <div id ="slideshows" class = "col-md-5 col-sm">
+    <div id="slideshows" class="col-md-5 col-sm">
       <div class="container" id="slide-counter">
         <div class="row">
-        {%for obj in data%}
+          {%for obj in data%}
           <div class="container">
-          <h3 class="form display-5 text-center"><a href="/headlines/{{obj.name}}" class="category">{{obj.name}}</a></h3>
-            <div class ="row" >
-              <div class="col-10" id ="slideshow">
+            <h3 class="form display-5 text-center"><a href="/{{obj.name}}" class="category">{{obj.name}}</a></h3>
+            <div class="row">
+              <div class="col-10" id="slideshow">
                 <div class="carousel slide" data-ride="carousel">
                   <div class="carousel-inner">
                     <div class="carousel-item active" data-interval="3500">
-                    <img class="d-block w-100" src="{{obj.top_story.image}}" alt="First slide";>
+                      <img class="d-block w-100" src="{{obj.top_story.image}}" alt="First slide" ;>
                       <div class="carousel-caption d-md-block">
                         <span class="caption">{{obj.top_story.headline}}</span>
+                      </div>
                     </div>
-                  </div>
-                  {%for story in obj.results%}
-                  <div class="carousel-item" data-interval="4000">
-                    <a href="{{story.url}}">
-                    <img class="d-block w-100" src="{{story.image}}" alt="Third slide">
-                    <div class="carousel-caption d-md-block">
-                        <span class="caption">{{story.headline}}</span>
+                    {%for story in obj.results%}
+                    <div class="carousel-item" data-interval="4000">
+                      <a href="{{story.url}}">
+                        <img class="d-block w-100" src="{{story.image}}" alt="Third slide">
+                        <div class="carousel-caption d-md-block">
+                          <span class="caption">{{story.headline}}</span>
+                        </div>
+                      </a>
                     </div>
-                    </a>
+                    {%endfor%}
                   </div>
-                  {%endfor%}
-                </div>
                   <a class="carousel-control-prev" role="button" data-slide="prev">
-                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                  <span class="sr-only">Previous</span>
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
                   </a>
-                  <a class="carousel-control-next"role="button" data-slide="next">
+                  <a class="carousel-control-next" role="button" data-slide="next">
                     <span class="carousel-control-next-icon" aria-hidden="true"></span>
                     <span class="sr-only">Next</span>
                   </a>
@@ -137,7 +154,7 @@ homeAdd(arg);
               </div>
             </div>
           </div>
-        {%endfor%}
+          {%endfor%}
         </div>
       </div>
     </div>
@@ -145,4 +162,3 @@ homeAdd(arg);
 </div>
 
 {% endblock %}
-
