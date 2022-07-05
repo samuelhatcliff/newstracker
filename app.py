@@ -43,8 +43,7 @@ db.create_all()
 newsapi = NewsApiClient(api_key='b4f52eb738354e648912261c010632e7')
 
 # Todo:
-# change headlines/category route to just name of category (this should work), see if bootstrap problem still exists
-# fix bootstrap problem
+# fix bootstrap problem (routes that have an additional separator don't work)
 # fix slideshow problem
 # hide api key
 # make demo user
@@ -116,12 +115,8 @@ def home_page():
             return render_template('/show_stories.html', results=results)
 
         """Search Results From User"""
+        # this is just for development. get rid of this as well as if not user.queried stories statement
         results = user.queried_stories
-        # if session['dict']['sa'] == 'polarity':
-        #     results = order_pol()
-        # elif session['dict']['sa'] == 'subjectivity':
-        #     results = order_sub()
-
         return render_template('/show_stories.html', results=results)
     else:
         """Generic Headlines without user logged in"""
@@ -187,7 +182,7 @@ def show_for_category(category):
     return render_template('show_stories.html', results=results)
 
 
-@app.route('/user')
+@app.route('/user/saved')
 def user():
     if g.user.id != session[CURR_USER_KEY]:
         flash("Please log-in and try again.", "danger")
@@ -225,7 +220,7 @@ def save_story(story_id):
             return redirect("/")
         user.saved_stories.append(story)
         db.session.commit()
-        return redirect("/user")
+        return redirect("/user/saved")
 
 
 @app.route('/story/<int:story_id>/delete_story')
@@ -239,7 +234,7 @@ def delete_story(story_id):
         user = User.query.get(g.user.id)
         user.saved_stories.remove(story)
         db.session.commit()
-        return redirect("/user")
+        return redirect("/user/saved")
 
 
 @app.route('/register', methods=['GET', 'POST'])
