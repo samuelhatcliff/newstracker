@@ -43,9 +43,6 @@ db.create_all()
 newsapi = NewsApiClient(api_key='b4f52eb738354e648912261c010632e7')
 
 # Todo:
-# move logic from 'results' to headlines/home_page. try adding in lines at 115, and redirecting in search view function to headlines instead of results
-# change name of headlines to results or feed-results
-# reduce length of search by insterting in new functions
 # change headlines/category route to just name of category (this should work), see if bootstrap problem still exists
 # fix bootstrap problem
 # fix slideshow problem
@@ -69,9 +66,9 @@ newsapi = NewsApiClient(api_key='b4f52eb738354e648912261c010632e7')
 @app.before_request
 def add_user_to_g():
     """If we're logged in, add curr user to Flask global."""
-    print
     if CURR_USER_KEY in session:
         g.user = User.query.get(session[CURR_USER_KEY])
+        print("***saved queries", g.user.saved_queries)
     else:
         g.user = None
 
@@ -90,19 +87,19 @@ def do_logout():
 """View functions for application"""
 
 
-@app.route('/')
-def slideshow():
-    categories = ['business', 'entertainment',
-                  'health', 'science', 'sports', 'technology']
-    data = []
-    for cat in categories:
-        obj = {}
-        obj['results'] = cat_calls(cat)
-        obj['top_story'] = obj['results'].pop(0)
-        obj['name'] = cat.capitalize()
-        data.append(obj)
+# @app.route('/')
+# def slideshow():
+#     categories = ['business', 'entertainment',
+#                   'health', 'science', 'sports', 'technology']
+#     data = []
+#     for cat in categories:
+#         obj = {}
+#         obj['results'] = cat_calls(cat)
+#         obj['top_story'] = obj['results'].pop(0)
+#         obj['name'] = cat.capitalize()
+#         data.append(obj)
 
-    return render_template('/homepage.html', data=data)
+#     return render_template('/homepage.html', data=data)
 
 
 @app.route('/headlines', methods=['GET', 'POST'])
@@ -149,82 +146,29 @@ def search_simple():
 @app.route('/search', methods=['GET', 'POST'])
 def search_params():
     """This function creates a dictionary extracting data from the search form to be sent to the news-api"""
-    user = User.query.get(g.user.id)
-    form = SearchForm()
-
-    if form.validate_on_submit():
-        try:
-            # make_session_query(form) try this
-            dict = {}
-            dict['keyword'] = form.keyword.data
-            dict['source'] = form.source.data
-            dict['quantity'] = form.quantity.data
-            dict['date_from'] = form.date_from.data
-            dict['date_to'] = form.date_to.data
-            dict['language'] = form.language.data
-
-            if form.sort_by.data == "subjectivity" or form.sort_by.data == "polarity":
-                dict['sa'] = form.sort_by.data
-                dict['sort_by'] = 'relevancy'
-            else:
-                dict['sort_by'] = form.sort_by.data
-                dict['sa'] = None
-
-            session['dict'] = dict
-
-            savedQuery = form.default.data
-            if savedQuery:
-                # add_saved_query(user.id, form) try this
-                keyword = form.keyword.data
-                source = form.source.data
-                quantity = form.quantity.data
-                date_from = form.date_from.data
-                date_to = form.date_to.data
-                language = form.language.data
-                if form.sort_by.data == "subjectivity" or form.sort_by.data == "polarity":
-                    sa = form.sort_by.data
-                    sort_by = 'relevancy'
-                else:
-                    sort_by = form.sort_by.data
-                    sa = None
-                query = TestQ(user_id=g.user.id,
-                              keyword=keyword,
-                              source=source,
-                              quantity=quantity,
-                              date_from=date_from,
-                              date_to=date_to,
-                              language=language,
-                              type="detailed_search",
-                              sa=sa,
-                              sort_by=sort_by
-                              )
-
-                db.session.add(query)
-                db.session.commit()
-                user.saved_queries.append(query)
-                db.session.commit()
-
-            api_call(dict, g.user.id)
-
-            return redirect('/results')
-
-        except:
-            flash("hmmmm. does this appear, or messages from form validators?", 'danger')
+    if CURR_USER_KEY in session:
+        form = SearchForm()
+        if form.validate_on_submit():
+            try:
+                make_session_query(form)
+                if form.saved_query.data:
+                    add_saved_query(g.user.id, form)
+                api_call(session['dict'], g.user.id)
+                return redirect('/search_results')
+            except:
+                return render_template('/users/search.html', form=form)
+        else:
             return render_template('/users/search.html', form=form)
-    else:
-        return render_template('/users/search.html', form=form)
 
 
-@app.route('/results')
-def results():
+@app.route('/search_results')
+def handle_results():
     # write logic for if no results are found
     if CURR_USER_KEY in session:
         dict = session['dict']
         user = User.query.get(g.user.id)
         user_queried_stories = user.queried_stories
-
         results = user_queried_stories
-
         if dict['sa'] == 'polarity':
             results = order_pol()
         elif dict['sa'] == 'subjectivity':
@@ -337,7 +281,6 @@ def login_user():
             do_login(user)
             flash("Credentials verified. Logging in...", "success")
             return redirect('/headlines')
-
         else:
             form.username.errors = [
                 "Invalid username or password. Please try again."]
@@ -429,13 +372,22 @@ def make_session_query(form):
     dict['date_from'] = form.date_from.data
     dict['date_to'] = form.date_to.data
     dict['language'] = form.language.data
+
+    if form.sort_by.data == "subjectivity" or form.sort_by.data == "polarity":
+        dict['sa'] = form.sort_by.data
+        dict['sort_by'] = 'relevancy'
+    else:
+        dict['sort_by'] = form.sort_by.data
+        dict['sa'] = None
     session['dict'] = dict
+
     return dict
 
 
 def add_saved_query(user_id, form):
     """Adds saved query to associated user in db"""
     user = User.query.get(user_id)
+    print('got userid')
     keyword = form.keyword.data
     source = form.source.data
     quantity = form.quantity.data
@@ -522,41 +474,41 @@ def show_sub_calls(story_id):
 #     return "all done"
 
 
-# @app.route('/')
-# def slideshow():
-#     if CURR_USER_KEY in session:
-#         # DELETE THIS. this is only to limit the number of api calls
-#         user = User.query.get(g.user.id)
-#         user_queried_stories = user.queried_stories
-#         first = user_queried_stories[0]
-#         headlines = user_queried_stories
-#         top_story = first
-#         business = user_queried_stories
-#         business1 = first
-#         entertainment = user_queried_stories
-#         entertainment1 = first
-#         health = user_queried_stories
-#         health1 = first
-#         sports = user_queried_stories
-#         sports1 = first
-#         technology = user_queried_stories
-#         technology1 = first
-#         science = user_queried_stories
-#         science1 = first
+@app.route('/')
+def slideshow():
+    if CURR_USER_KEY in session:
+        # DELETE THIS. this is only to limit the number of api calls
+        user = User.query.get(g.user.id)
+        user_queried_stories = user.queried_stories
+        first = user_queried_stories[0]
+        headlines = user_queried_stories
+        top_story = first
+        business = user_queried_stories
+        business1 = first
+        entertainment = user_queried_stories
+        entertainment1 = first
+        health = user_queried_stories
+        health1 = first
+        sports = user_queried_stories
+        sports1 = first
+        technology = user_queried_stories
+        technology1 = first
+        science = user_queried_stories
+        science1 = first
 
-#         return render_template('/homepage.html',
-#                                headlines=headlines,
-#                                top_story=top_story,
-#                                business=business,
-#                                business1=business1,
-#                                ent=entertainment,
-#                                ent1=entertainment1,
-#                                health=health,
-#                                health1=health1,
-#                                science=science,
-#                                science1=science1,
-#                                sports=sports,
-#                                sports1=sports1,
-#                                tech=technology,
-#                                tech1=technology1
-#                                )
+        return render_template('/homepage.html',
+                               headlines=headlines,
+                               top_story=top_story,
+                               business=business,
+                               business1=business1,
+                               ent=entertainment,
+                               ent1=entertainment1,
+                               health=health,
+                               health1=health1,
+                               science=science,
+                               science1=science1,
+                               sports=sports,
+                               sports1=sports1,
+                               tech=technology,
+                               tech1=technology1
+                               )

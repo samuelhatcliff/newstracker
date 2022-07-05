@@ -117,7 +117,6 @@ def top_headlines_call(user_id=None):
 def advanced_search_call(query, user_id=None):
     from_ = str(query['date_from'])
     to = str(query['date_to'])
-
     if to == 'None' and from_ == 'None':
         data = newsapi.get_everything(q=f"{query['keyword']}", sources=f"{query['source']}", language=f"{query['language']}", sort_by=f"{query['sort_by']}"
                                       )
@@ -127,7 +126,6 @@ def advanced_search_call(query, user_id=None):
                                       )
 
     elif to != 'None' and from_ == 'None':
-
         data = newsapi.get_everything(q=f"{query['keyword']}", sources=f"{query['source']}", language=f"{query['language']}", sort_by=f"{query['sort_by']}", to=f"{to}"
                                       )
 
@@ -142,6 +140,7 @@ def advanced_search_call(query, user_id=None):
     quantity = int(query['quantity'])
     articles = data['articles']
     spliced = articles[:quantity]
+
     if user_id != None:
         saved = save_to_db(spliced, user_id)
     else:
