@@ -1,5 +1,4 @@
 # flask, local, and system imports
-from re import L
 import os
 from flask import Flask, request, render_template, flash, redirect, render_template, jsonify, session, g
 from models import connect_db, db, User, Story, QueriedStory, TestQ
@@ -13,10 +12,9 @@ from sent_analysis import subjectize, polarize
 from sqlalchemy import exc
 from psycopg2.errors import UniqueViolation
 
-
 # newsApi import
 from newsapi.newsapi_client import NewsApiClient
-
+import creds
 
 # from flask_debugtoolbar import DebugToolbarExtension
 from flask_bcrypt import Bcrypt
@@ -25,27 +23,34 @@ from flask_bcrypt import Bcrypt
 CURR_USER_KEY = "curr_user"
 bcrypt = Bcrypt()
 app = Flask(__name__)
+production = False
+if production:
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+        'DATABASE_URL', 'postgresql:///capstone').replace("://", "ql://", 1)
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+        'DATABASE_URL', 'postgresql:///capstone')
+
 # app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 # debug = DebugToolbarExtension(app)
-# FOR HEROKU:
-# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-#     'DATABASE_URL', 'postgresql:///capstone').replace("://", "ql://", 1)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-    'DATABASE_URL', 'postgresql:///capstone')
+
+# looks for heroku config variable first
+my_api_key = os.environ.get("API_KEY", creds.api_key)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY", "nevertell")
+
+newsapi = NewsApiClient(api_key=my_api_key)
+
 
 connect_db(app)
 # db.drop_all()
 db.create_all()
 
-newsapi = NewsApiClient(api_key='b4f52eb738354e648912261c010632e7')
 
 # Todo:
-# fix bootstrap problem (routes that have an additional separator don't work)
+
 # fix slideshow problem
-# hide api key
 # make demo user
 # make sure im using proper RESTful terminology
 # revisit show_pol_calls, show_sub_calls, understand what they're doing
@@ -60,6 +65,11 @@ newsapi = NewsApiClient(api_key='b4f52eb738354e648912261c010632e7')
 # write parallel requests or loading progress bar
 # add security
 # add error handling, testing
+
+# When deploying:
+# watch out for <link rel="stylesheet" href="http://127.0.0.1:5000/static/app.css"> that links css file. the absolute
+# path of the local route was included to fix nested routes bootstrap bug. figure out how to fix this in production
+# make sure api key is hidden and works
 
 
 @app.before_request
