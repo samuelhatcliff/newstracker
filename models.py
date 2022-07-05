@@ -171,7 +171,6 @@ class UserHistory(db.Model):
 
 
 class Note(db.Model):
-    # originally used as comments
     __tablename__ = "notes"
     id = db.Column(db.Integer,
                    primary_key=True,

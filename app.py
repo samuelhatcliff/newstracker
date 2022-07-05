@@ -76,7 +76,6 @@ def add_user_to_g():
     """If we're logged in, add curr user to Flask global."""
     if CURR_USER_KEY in session:
         g.user = User.query.get(session[CURR_USER_KEY])
-        print("***saved queries", g.user.saved_queries)
     else:
         g.user = None
 
@@ -304,7 +303,7 @@ def logout():
 
 def order_pol():
     """Loops over a User's Queried Stories results, orders by polarity,
-    and filters stories with no results"""
+    then filters out stories with no SA results"""
     user = User.query.get(g.user.id)
     if user.queried_stories:
         results = []
@@ -313,7 +312,7 @@ def order_pol():
             id = story.id
             score = polarize(story)
 
-            if score == None:
+            if not score:
                 QueriedStory.query.filter_by(story_id=id).delete()
                 db.session.commit()
 
@@ -334,7 +333,7 @@ def order_pol():
 
 def order_sub():
     """Loops over a User's Queried Stories results, orders by subjectivity,
-    and filters stories with no results"""
+    then filters out stories with no SA results"""
     user = User.query.get(g.user.id)
     if user.queried_stories:
         for story in user.queried_stories:

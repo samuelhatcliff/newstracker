@@ -14,7 +14,7 @@ def save_to_db(articles, user_id=None):
     # A temporary query is used (user.queried_stories) to keep track of the data from each api call so that we may
     # easily extract this data globally.
 
-    if user_id != None:
+    if user_id:
         user = User.query.get(user_id)
         # deletes all previous instances of queried_stories to make room for new query
         for story in user.queried_stories:
@@ -28,7 +28,7 @@ def save_to_db(articles, user_id=None):
         """This section converts each story from API data to our own SQLalchemy objects"""
         headline = article['title']
         source = article["source"]["name"]
-        if article["content"] is None:
+        if not article["content"]:
             # sometimes Newsapi is unable to provide content for each story
             content = "No content preview found. Click the link above to access the full story."
         else:
@@ -47,7 +47,7 @@ def save_to_db(articles, user_id=None):
         db.session.add(story)
         db.session.commit()
 
-        if user_id != None:
+        if user_id:
             user = User.query.get(user_id)
             user.queried_stories.append(story)
             db.session.commit()
@@ -59,7 +59,7 @@ def api_call(query=None, user_id=None):
     """Makes API call for top headlines"""
     if query == None:
         # in the context of this function, we determine that a request for headlines is being made if there is no search query given
-        if user_id != None:
+        if user_id:
             results = top_headlines_call(query, user_id)
         else:
             results = top_headlines_call(query)
@@ -68,7 +68,7 @@ def api_call(query=None, user_id=None):
     """Makes API call for simple search from search bar in navbar (keyword only)"""
     if type(query) == str:
         # if this function is called via simple_search view function, the query will be a string
-        if user_id != None:
+        if user_id:
             results = simple_search_call(query, user_id)
         else:
             results = simple_search_call(query)
@@ -96,7 +96,7 @@ def simple_search_call(query, user_id=None):
     """Gets results from simple search """
     data = newsapi.get_everything(q=f"{query}")
     articles = data['articles']
-    if user_id != None:
+    if user_id:
         saved = save_to_db(articles, user_id)
     else:
         saved = save_to_db(articles)
@@ -107,7 +107,7 @@ def top_headlines_call(user_id=None):
     """Gets Generic top headlines"""
     data = newsapi.get_top_headlines(language="en")
     articles = data['articles']
-    if user_id != None:
+    if user_id:
         saved = save_to_db(articles, user_id)
         return saved
     saved = save_to_db(articles)
@@ -141,7 +141,7 @@ def advanced_search_call(query, user_id=None):
     articles = data['articles']
     spliced = articles[:quantity]
 
-    if user_id != None:
+    if user_id:
         saved = save_to_db(spliced, user_id)
     else:
         saved = save_to_db(spliced)
