@@ -1,9 +1,6 @@
-from sqlalchemy import delete
-from models import db
-# from newsapi import NewsApiClient
 from newsapi.newsapi_client import NewsApiClient
 from dateutil import parser
-from models import QueriedStory, Story, User, QueriedStory, TestQ
+from models import db, QueriedStory, Story, User, QueriedStory, TestQ
 newsapi = NewsApiClient(api_key='b4f52eb738354e648912261c010632e7')
 # from app import app
 
@@ -57,7 +54,7 @@ def save_to_db(articles, user_id=None):
 
 def api_call(query=None, user_id=None):
     """Makes API call for top headlines"""
-    if query == None:
+    if not query:
         # in the context of this function, we determine that a request for headlines is being made if there is no search query given
         if user_id:
             results = top_headlines_call(query, user_id)
