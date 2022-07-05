@@ -1,5 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
+{% if not results%}
+<span>We weren't able to find anything. Try checking your spelling or widening your search query.
+</span>
+{% endif %}
+
 {% for story in results%}
 <section id="stories">
     <div class="container">

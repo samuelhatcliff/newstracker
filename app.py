@@ -168,7 +168,6 @@ def search_params():
 
 @app.route('/search_results')
 def handle_results():
-    # write logic for if no results are found
     if CURR_USER_KEY in session:
         dict = session['dict']
         user = User.query.get(g.user.id)
@@ -233,7 +232,7 @@ def save_story(story_id):
         return redirect("/user/saved")
 
 
-@app.route('/story/<int:story_id>/delete_story')
+@app.route('/story/<int:story_id>/delete_story', methods=["POST"])
 def delete_story(story_id):
     if g.user.id != session[CURR_USER_KEY]:
         flash("Please log-in and try again.", "danger")

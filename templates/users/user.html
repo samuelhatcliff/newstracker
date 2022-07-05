@@ -3,9 +3,9 @@
 <!-- <script src="/static/newstracker.js"></script> -->
 
 {% if is_empty == True%}
-<span>It looks like you don't have any stories saved yet. To find a story to save, you 
+<span>It looks like you don't have any stories saved yet. To find a story to save, you
     can either click the search button ontop of the navigation bar to enter a specific search,
-    or click the home page to see today's top headlines! 
+    or click the home page to see today's top headlines!
 </span>
 {% endif %}
 {% for story in user.saved_stories%}
@@ -17,40 +17,48 @@
             <div class="row justify-content-center">
                 <div class="card my-4 ">
                     <div class="card-body text-center">
-                        <div class="row media" >
+                        <div class="row media">
                             {% if story.pol%}
-                            <form data-story = "{{story.id}}" class="sa-button col-sm my-auto order1 col-6" id="left-b" action = '/user/{{story.id}}/polarity', method="POST">
+                            <form data-story="{{story.id}}" class="sa-button col-sm my-auto order1 col-6" id="left-b"
+                                action='/user/{{story.id}}/polarity' , method="POST">
                                 <input type="submit" value="{{story.pol}}" class="btn btn-dark btn-sm badge-pill">
                             </form>
-  
+
                             {% else %}
-                            <form data-story = "{{story.id}}" class="sa-button col-sm my-auto order1 col-6" id="left-b" action = '/user/{{story.id}}/polarity', method="POST">
+                            <form data-story="{{story.id}}" class="sa-button col-sm my-auto order1 col-6" id="left-b"
+                                action='/user/{{story.id}}/polarity' , method="POST">
                                 <input type="submit" value="Get Polarity" class="btn btn-dark btn-sm badge-pill">
                             </form>
                             {% endif %}
 
-                            <img class="text-center col-md-6 col-12" id="image" src="{{story.image}}" alt="{{story.headline}}" style="width: 300px; height: 225px; object-fit: contain;"/>
-                    
+                            <img class="text-center col-md-6 col-12" id="image" src="{{story.image}}"
+                                alt="{{story.headline}}" style="width: 300px; height: 225px; object-fit: contain;" />
+
                             {% if story.sub%}
-                            <form data-story = "{{story.id}}" class="sa-button col-sm my-auto col-6" id="right-b" action='/user/{{story.id}}/subjectivity' action = '/sacalls/{{story.id}}/subjectivity', method="POST">
+                            <form data-story="{{story.id}}" class="sa-button col-sm my-auto col-6" id="right-b"
+                                action='/user/{{story.id}}/subjectivity' action='/sacalls/{{story.id}}/subjectivity' ,
+                                method="POST">
                                 <input type="submit" value="{{story.sub}}" class="btn btn-dark btn-sm badge-pill">
                             </form>
                             {% else %}
 
-                            <form data-story = "{{story.id}}" class="sa-button col-sm my-auto col-6" id="right-b" action='/user/{{story.id}}/subjectivity' action = '/sacalls/{{story.id}}/subjectivity', method="POST">
+                            <form data-story="{{story.id}}" class="sa-button col-sm my-auto col-6" id="right-b"
+                                action='/user/{{story.id}}/subjectivity' action='/sacalls/{{story.id}}/subjectivity' ,
+                                method="POST">
                                 <input type="submit" value="Get Subjectivity" class="btn btn-dark btn-sm badge-pill">
                             </form>
                             {% endif %}
                         </div>
 
-                        <h4 class="card-title text-center"> 
-                            <a class= "headline" href="story/{{story.id}}/open"> {{story.headline}}</a>
+                        <h4 class="card-title text-center">
+                            <a class="headline" href="story/{{story.id}}/open"> {{story.headline}}</a>
                         </h4>
-                        <li class="card-subtitle mb-2 text-center blockquote-footer" id="date">{{story.published_at}}</li>
-                        <p class= "card-text text-center" id="content">{{story.content}}</p>
-                        <form action='/story/{{story.id}}/delete_story', method="DELETE" id="save">
+                        <li class="card-subtitle mb-2 text-center blockquote-footer" id="date">{{story.published_at}}
+                        </li>
+                        <p class="card-text text-center" id="content">{{story.content}}</p>
+                        <form action='/story/{{story.id}}/delete_story' , method="POST" id="save">
                             <input type="submit" value="Remove Story" class="btn btn-danger btn-sm badge-pill">
-                            </form>
+                        </form>
                     </div>
                 </div>
             </div>
