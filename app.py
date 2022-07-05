@@ -52,7 +52,6 @@ db.create_all()
 
 # fix slideshow problem
 # make demo user
-# make sure im using proper RESTful terminology
 # revisit show_pol_calls, show_sub_calls, understand what they're doing
 # Figure out how to associate default query search with user. start by figuring out if migrations are neccessary
 # Instead of changing current search query to sqlobject instead of session[dict],
@@ -183,7 +182,7 @@ def handle_results():
     return render_template('/show_stories.html', results=results)
 
 
-@app.route(f'/<category>')
+@app.route(f'/headlines/<category>')
 def show_for_category(category):
     """Display top headlines for given category based off of link clicked from homepage"""
     category = category.lower()
@@ -391,7 +390,6 @@ def make_session_query(form):
 def add_saved_query(user_id, form):
     """Adds saved query to associated user in db"""
     user = User.query.get(user_id)
-    print('got userid')
     keyword = form.keyword.data
     source = form.source.data
     quantity = form.quantity.data
@@ -423,6 +421,9 @@ def add_saved_query(user_id, form):
         user.saved_queries.append(query)
 
 
+"""Sentiment Analysis API for individual stories"""
+
+
 @app.route('/<int:story_id>/polarity', methods=['POST'])
 def show_pol_calls(story_id):
     story = Story.query.get(story_id)
@@ -435,8 +436,6 @@ def show_pol_calls(story_id):
         story.pol = str(score)
 
     db.session.commit()
-
-    '''we need to make sure the response is in json for axios to retrieve it'''
 
     return jsonify({'response': story.pol})
 
