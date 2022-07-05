@@ -72,3 +72,6 @@ class SearchForm(FlaskForm):
 
     default = BooleanField(
         "Make this your default search settings for your home page feed?")
+
+    saved_query = BooleanField(
+        "Would you like to add this to your saved search queries?")

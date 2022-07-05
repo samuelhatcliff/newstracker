@@ -12,8 +12,7 @@ def save_to_db(articles, user_id=None):
     """This function saves each article to SQLalchemy DB and returns a list of SQLalchemy story objects to be rendered"""
 
     # A temporary query is used (user.queried_stories) to keep track of the data from each api call so that we may
-    # easily extract this data globally, as well as save space in our own data base by deleting this temporary query
-    # each time a new api call occurs.
+    # easily extract this data globally.
 
     if user_id != None:
         user = User.query.get(user_id)
@@ -57,21 +56,6 @@ def save_to_db(articles, user_id=None):
 
 
 def api_call(query=None, user_id=None):
-    # queries = TestQ.query.all()
-    # query = TestQ.pop()
-    # if query.type == "detailed_search":
-    #     results = advanced_search_call(query, user_id)
-    #     return results
-    # elif query.type == "simply_search":
-    #     results = simple_search_call(query)
-    #     return results
-    # elif query.type == "headlines":
-    #     results = top_headlines_call(query)
-    #     return results
-    # else:
-    #     if query.type == "category":
-    #         results = cat_calls(query.type)
-    #         return results
     """Makes API call for top headlines"""
     if query == None:
         # in the context of this function, we determine that a request for headlines is being made if there is no search query given
@@ -83,7 +67,7 @@ def api_call(query=None, user_id=None):
 
     """Makes API call for simple search from search bar in navbar (keyword only)"""
     if type(query) == str:
-        # in the context of this function, we determine the type of search being made by the argument passed being a string of the keyword entered in the navbar
+        # if this function is called via simple_search view function, the query will be a string
         if user_id != None:
             results = simple_search_call(query, user_id)
         else:
@@ -93,11 +77,7 @@ def api_call(query=None, user_id=None):
     """Makes API call for advanced search"""
     # in the context of this function, we determine that an advanced search call is being made if it hasn't been flagged as a simple search or headline call
 
-    if user_id != None:
-        user = User.query.get(user_id)
-        results = advanced_search_call(query, user_id)
-    else:
-        results = advanced_search_call(query)
+    results = advanced_search_call(query, user_id)
     return results
 
 
@@ -105,6 +85,7 @@ def api_call(query=None, user_id=None):
 
 
 def cat_calls(query):
+    """Gets generalized headlines for a specific catagory"""
     data = newsapi.get_top_headlines(language="en", category=f"{query}")
     articles = data['articles']
     saved = save_to_db(articles)
@@ -112,6 +93,7 @@ def cat_calls(query):
 
 
 def simple_search_call(query, user_id=None):
+    """Gets results from simple search """
     data = newsapi.get_everything(q=f"{query}")
     articles = data['articles']
     if user_id != None:
@@ -122,8 +104,12 @@ def simple_search_call(query, user_id=None):
 
 
 def top_headlines_call(user_id=None):
+    """Gets Generic top headlines"""
     data = newsapi.get_top_headlines(language="en")
     articles = data['articles']
+    if user_id != None:
+        saved = save_to_db(articles, user_id)
+        return saved
     saved = save_to_db(articles)
     return saved
 
@@ -131,9 +117,7 @@ def top_headlines_call(user_id=None):
 def advanced_search_call(query, user_id=None):
     from_ = str(query['date_from'])
     to = str(query['date_to'])
-    print("source1", query['source'])
 
-    # check if this is necessary
     if to == 'None' and from_ == 'None':
         data = newsapi.get_everything(q=f"{query['keyword']}", sources=f"{query['source']}", language=f"{query['language']}", sort_by=f"{query['sort_by']}"
                                       )

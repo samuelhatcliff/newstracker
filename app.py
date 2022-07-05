@@ -1,56 +1,77 @@
+# flask, local, and system imports
 from re import L
 import os
 from flask import Flask, request, render_template, flash, redirect, render_template, jsonify, session, g
-from models import connect_db, db, User, Story, QueriedStory
+from models import connect_db, db, User, Story, QueriedStory, TestQ
 
-
+# external libraries
 from forms import RegisterForm, LoginForm, SearchForm
 from api_calls import api_call, cat_calls
 from sent_analysis import subjectize, polarize
 
+# sqlalchemy imports
+from sqlalchemy import exc
+from psycopg2.errors import UniqueViolation
 
-# from newsapi import NewsApiClient
+
+# newsApi import
 from newsapi.newsapi_client import NewsApiClient
 
 
 # from flask_debugtoolbar import DebugToolbarExtension
 from flask_bcrypt import Bcrypt
 
+# set-up app
 CURR_USER_KEY = "curr_user"
-
-
 bcrypt = Bcrypt()
-
-
 app = Flask(__name__)
-
+# app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
+# debug = DebugToolbarExtension(app)
+# FOR HEROKU:
+# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+#     'DATABASE_URL', 'postgresql:///capstone').replace("://", "ql://", 1)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-    'DATABASE_URL', 'postgresql:///capstone').replace("://", "ql://", 1)
+    'DATABASE_URL', 'postgresql:///capstone')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY", "nevertell")
-# app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
-# debug = DebugToolbarExtension(app)
-
-
-# def getHeadlines():
-#     key = 'b4f52eb738354e648912261c010632e7'
-
 
 connect_db(app)
-
+# db.drop_all()
 db.create_all()
 
 newsapi = NewsApiClient(api_key='b4f52eb738354e648912261c010632e7')
+
+# Todo:
+# move logic from 'results' to headlines/home_page. try adding in lines at 115, and redirecting in search view function to headlines instead of results
+# change name of headlines to results or feed-results
+# reduce length of search by insterting in new functions
+# change headlines/category route to just name of category (this should work), see if bootstrap problem still exists
+# fix bootstrap problem
+# fix slideshow problem
+# hide api key
+# make demo user
+# make sure im using proper RESTful terminology
+# revisit show_pol_calls, show_sub_calls, understand what they're doing
+# Figure out how to associate default query search with user. start by figuring out if migrations are neccessary
+# Instead of changing current search query to sqlobject instead of session[dict],
+# convert sqlobject to session[dict] when the time comes to incorporate that feature
+# look up many to one relationships in sqlalchemy. saved_queries is a many to many relationship, but should be accessible as many to 1 with a simple foreign key. use user.filter to get foreign key
+# implement saved queries (quick queries feauture)
+# remove user history and notes from models and add to v2 branch
+# change TestQ to "Query"
+# change "QueriedStories" to "ReturnedStories" or "Call Results" or "Query Results"
+# write parallel requests or loading progress bar
+# add security
+# add error handling, testing
 
 
 @app.before_request
 def add_user_to_g():
     """If we're logged in, add curr user to Flask global."""
-
+    print
     if CURR_USER_KEY in session:
         g.user = User.query.get(session[CURR_USER_KEY])
-
     else:
         g.user = None
 
@@ -62,7 +83,6 @@ def do_login(user):
 
 def do_logout():
     """Logout user."""
-
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
 
@@ -72,43 +92,6 @@ def do_logout():
 
 @app.route('/')
 def slideshow():
-    # if CURR_USER_KEY in session:
-    #     #DELETE THIS. this is only to limit the number of api calls
-    #     user = User.query.get(g.user.id)
-    #     user_queried_stories = user.queried_stories
-    #     first = user_queried_stories[0]
-    #     headlines = user_queried_stories
-    #     top_story = first
-    #     business = user_queried_stories
-    #     business1 = first
-    #     entertainment = user_queried_stories
-    #     entertainment1 = first
-    #     health =user_queried_stories
-    #     health1 = first
-    #     sports = user_queried_stories
-    #     sports1 = first
-    #     technology = user_queried_stories
-    #     technology1 = first
-    #     science = user_queried_stories
-    #     science1 = first
-
-    #     return render_template('/homepage.html',
-    # headlines=headlines,
-    # top_story=top_story,
-    # business= business,
-    # business1 = business1,
-    # ent = entertainment,
-    # ent1 = entertainment1,
-    # health = health,
-    # health1 = health1,
-    # science = science,
-    # science1 = science1,
-    # sports = sports,
-    # sports1 = sports1,
-    # tech = technology,
-    # tech1 = technology1
-    # )
-
     categories = ['business', 'entertainment',
                   'health', 'science', 'sports', 'technology']
     data = []
@@ -119,65 +102,39 @@ def slideshow():
         obj['name'] = cat.capitalize()
         data.append(obj)
 
-    # headlines = api_call(None)
-    # top_story = headlines.pop(0)
-
-    # business = cat_calls('business')
-    # business1 = business.pop(0)
-
-    # entertainment = cat_calls('entertainment')
-    # entertainment1 = entertainment.pop(0)
-
-    # health = cat_calls('health')
-    # health1 = health.pop(0)
-
-    # science = cat_calls('science')
-    # science1 = science.pop(0)
-
-    # sports = cat_calls('sports')
-    # sports1 = sports.pop(0)
-
-    # technology = cat_calls('technology')
-    # technology1 = technology.pop(0)
-
     return render_template('/homepage.html', data=data)
-
-    # if CURR_USER_KEY in session:
-    #     user = User.query.get(g.user.id)
-    #     if not user.queried_stories:
-    #         headlines = api_call(None)
-    #         top_story = headlines.pop(0)
-    #         return render_template('/homepage.html', headlines=headlines, top_story=top_story)
-    #     user_queried_stories = user.queried_stories
-
-    #     headlines = user_queried_stories
-    #     top_story = headlines.pop(0)
-    #     return render_template('/homepage.html', headlines=headlines, top_story=top_story)
-    # else:
-    #     headlines = api_call(None)
-    #     top_story = headlines.pop(0)
-    #     return render_template('/homepage.html', headlines=headlines, top_story=top_story)
 
 
 @app.route('/headlines', methods=['GET', 'POST'])
 def home_page():
+    """View function for all results"""
+    # todo: after changing all queries to database queries, combine route with "results" view function
     if CURR_USER_KEY in session:
         user = User.query.get(g.user.id)
         if not user.queried_stories:
+            """Generic Headlines with user logged in"""
+            # if user does not have queried_stories, user hasn't arrived at route through search.
+            # therefore, we want to make an api call requesting general headlines
             results = api_call(None)
             return render_template('/show_stories.html', results=results)
-        user_queried_stories = user.queried_stories
 
-        results = user_queried_stories
+        """Search Results From User"""
+        results = user.queried_stories
+        # if session['dict']['sa'] == 'polarity':
+        #     results = order_pol()
+        # elif session['dict']['sa'] == 'subjectivity':
+        #     results = order_sub()
 
         return render_template('/show_stories.html', results=results)
     else:
+        """Generic Headlines without user logged in"""
         results = api_call(None)
         return render_template('/show_stories.html', results=results)
 
 
 @app.route('/simple', methods=['GET'])
 def search_simple():
+    """API Call and Results for Simple Search"""
     keyword = request.args.get("search")
     if CURR_USER_KEY in session:
         user = User.query.get(g.user.id)
@@ -197,6 +154,7 @@ def search_params():
 
     if form.validate_on_submit():
         try:
+            # make_session_query(form) try this
             dict = {}
             dict['keyword'] = form.keyword.data
             dict['source'] = form.source.data
@@ -205,63 +163,47 @@ def search_params():
             dict['date_to'] = form.date_to.data
             dict['language'] = form.language.data
 
-            # keyword = form.keyword.data
-            # source = form.source.data
-            # quantity = form.quantity.data
-            # date_from = form.date_from.data
-            # date_to = form.date_to.data
-            # language = form.language.data
-            # saved = form.saved.data
-
-            # query = TestQ(user_id = g.user.id,
-            # keyword=keyword,
-            # source=source,
-            # quantity=quantity,
-            # date_from = date_from,
-            # date_to = date_to,
-            # language = language,
-            # type = "detailed_search"
-            # )
-
-            # db.session.add(query)
-            # print(query)
-            # print('x1')
-
-            # db.session.commit()
-            # print(query)
-            # print('x2')
-            # user.saved_queries.append(query)
-            # print(user.saved_queries)
-            # print('x3')
-
-            # db.session.commit()
-            # print(query)
-            # print('x4')
             if form.sort_by.data == "subjectivity" or form.sort_by.data == "polarity":
-
                 dict['sa'] = form.sort_by.data
-                # query.sa = form.sort_by.data
                 dict['sort_by'] = 'relevancy'
-                # query.sort_by = 'relevancy'
             else:
                 dict['sort_by'] = form.sort_by.data
-                # query.sort_by = form.sort_by.data
                 dict['sa'] = None
-                # query.sa = None
-
-            # if form.default.data == True:
-            #     query.default = True
-                # user.default_search = default_str
-                # db.session.commit()
-
-            # if form.saved.data == True:
-            #     query.saved_query = True
-
-            # user.saved_queries.append(query)
 
             session['dict'] = dict
-            db.session.commit()
-            # using the query information we make an api call and safe that data to user.searched_queries
+
+            savedQuery = form.default.data
+            if savedQuery:
+                # add_saved_query(user.id, form) try this
+                keyword = form.keyword.data
+                source = form.source.data
+                quantity = form.quantity.data
+                date_from = form.date_from.data
+                date_to = form.date_to.data
+                language = form.language.data
+                if form.sort_by.data == "subjectivity" or form.sort_by.data == "polarity":
+                    sa = form.sort_by.data
+                    sort_by = 'relevancy'
+                else:
+                    sort_by = form.sort_by.data
+                    sa = None
+                query = TestQ(user_id=g.user.id,
+                              keyword=keyword,
+                              source=source,
+                              quantity=quantity,
+                              date_from=date_from,
+                              date_to=date_to,
+                              language=language,
+                              type="detailed_search",
+                              sa=sa,
+                              sort_by=sort_by
+                              )
+
+                db.session.add(query)
+                db.session.commit()
+                user.saved_queries.append(query)
+                db.session.commit()
+
             api_call(dict, g.user.id)
 
             return redirect('/results')
@@ -309,8 +251,6 @@ def user():
 
     else:
         user = User.query.get(g.user.id)
-        # ordered = order_stories_recent(user.saved_stories)
-        # user.saved_stories = ordered
         is_empty = False
         if len(user.saved_stories) == 0:
             is_empty = True
@@ -319,7 +259,7 @@ def user():
 
 @app.route('/story/<int:story_id>/open')
 def open_story_link(story_id):
-    # FINISH THIS
+    """Opens url associated with story when link is clicked"""
     story = Story.query.get(story_id)
     user = User.query.get(g.user.id)
     user.history.append(story)
@@ -361,27 +301,27 @@ def delete_story(story_id):
 @app.route('/register', methods=['GET', 'POST'])
 def register_user():
     form = RegisterForm()
+
     if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+        email = form.email.data
+        first_name = form.first_name.data
+        last_name = form.last_name.data
+        new_user = User.register(
+            username, password, email, first_name, last_name)
+
         try:
-            username = form.username.data
-            password = form.password.data
-            email = form.email.data
-            first_name = form.first_name.data
-            last_name = form.last_name.data
-            new_user = User.register(
-                username, password, email, first_name, last_name)
             db.session.add(new_user)
             db.session.commit()
             do_login(new_user)
-            flash(
-                "Congratulations! You Have Successfully Created Your Account", "success")
             return redirect('/headlines')
+        except exc.SQLAlchemyError as e:
+            if isinstance(e.orig, UniqueViolation):
+                form.username.errors = [
+                    "The username you entered is already taken. Please pick another one."]
 
-        except IntegrityError:
-            form("Username already taken, please try again", 'danger')
-            # or form.username.errors.append('Username already taken. Please pick another')
             # https://www.youtube.com/embed/iBYCoLhziX4?showinfo=0&controls=1&rel=0&autoplay=1
-            return render_template('register.html', form=form)
 
     return render_template('register.html', form=form)
 
@@ -413,10 +353,12 @@ def logout():
     return redirect("/")
 
 
-"""Sentimental Analysis Functions"""
+"""Helper Functions"""
 
 
 def order_pol():
+    """Loops over a User's Queried Stories results, orders by polarity,
+    and filters stories with no results"""
     user = User.query.get(g.user.id)
     if user.queried_stories:
         results = []
@@ -445,17 +387,16 @@ def order_pol():
 
 
 def order_sub():
+    """Loops over a User's Queried Stories results, orders by subjectivity,
+    and filters stories with no results"""
     user = User.query.get(g.user.id)
     if user.queried_stories:
         for story in user.queried_stories:
             id = story.id
             score = subjectize(story)
-
             if score == None:
-
                 QueriedStory.query.filter_by(story_id=id).delete()
                 db.session.commit()
-
             else:
                 story.sub = str(score['measure'])
                 db.session.commit()
@@ -464,6 +405,66 @@ def order_sub():
         # CHANGE THESE SO THAT THEY SORT BY SUBJECTIVITY NUMBERS NOT RESULT SAME WITH POLARITY
         # ASK TA IF THEY KNOW OF PROGRESS BAR
         return ordered
+
+
+def transfer_db_query_to_session(query):
+    """Converts a saved query to session[dict]"""
+    dict = {}
+    dict['keyword'] = query.keyword
+    dict['source'] = query.source
+    dict['quantity'] = query.quantity
+    dict['date_from'] = query.date_from
+    dict['date_to'] = query.date_to
+    dict['language'] = query.language
+    dict['sa'] = query.sa
+    dict['sort_by'] = query.sort_by
+    return dict
+
+
+def make_session_query(form):
+    dict = {}
+    dict['keyword'] = form.keyword.data
+    dict['source'] = form.source.data
+    dict['quantity'] = form.quantity.data
+    dict['date_from'] = form.date_from.data
+    dict['date_to'] = form.date_to.data
+    dict['language'] = form.language.data
+    session['dict'] = dict
+    return dict
+
+
+def add_saved_query(user_id, form):
+    """Adds saved query to associated user in db"""
+    user = User.query.get(user_id)
+    keyword = form.keyword.data
+    source = form.source.data
+    quantity = form.quantity.data
+    date_from = form.date_from.data
+    date_to = form.date_to.data
+    language = form.language.data
+    default = form.default.data
+    if form.sort_by.data == "subjectivity" or form.sort_by.data == "polarity":
+        sa = form.sort_by.data
+        sort_by = 'relevancy'
+    else:
+        sort_by = form.sort_by.data
+        sa = None
+        query = TestQ(user_id=g.user.id,
+                      keyword=keyword,
+                      source=source,
+                      quantity=quantity,
+                      date_from=date_from,
+                      date_to=date_to,
+                      language=language,
+                      default=default,
+                      type="detailed_search",
+                      sa=sa,
+                      sort_by=sort_by
+                      )
+
+        db.session.add(query)
+        db.session.commit()
+        user.saved_queries.append(query)
 
 
 @app.route('/<int:story_id>/polarity', methods=['POST'])
@@ -502,20 +503,60 @@ def show_sub_calls(story_id):
     return jsonify({'response': story.sub})
 
 
-# test functions, remove when app ready
+# test functions, remove when app is ready
 
 
-def sub(headlines):
-    for article in headlines:
-        result = subjectize(article)
-        print(headlines.index(article))
-        print(result)
-    return "all done"
+# def sub(headlines):
+#     for article in headlines:
+#         result = subjectize(article)
+#         print(headlines.index(article))
+#         print(result)
+#     return "all done"
 
 
-def pol(headlines):
-    for article in headlines:
-        result = polarize(article)
-        print(headlines.index(article))
-        print(result)
-    return "all done"
+# def pol(headlines):
+#     for article in headlines:
+#         result = polarize(article)
+#         print(headlines.index(article))
+#         print(result)
+#     return "all done"
+
+
+# @app.route('/')
+# def slideshow():
+#     if CURR_USER_KEY in session:
+#         # DELETE THIS. this is only to limit the number of api calls
+#         user = User.query.get(g.user.id)
+#         user_queried_stories = user.queried_stories
+#         first = user_queried_stories[0]
+#         headlines = user_queried_stories
+#         top_story = first
+#         business = user_queried_stories
+#         business1 = first
+#         entertainment = user_queried_stories
+#         entertainment1 = first
+#         health = user_queried_stories
+#         health1 = first
+#         sports = user_queried_stories
+#         sports1 = first
+#         technology = user_queried_stories
+#         technology1 = first
+#         science = user_queried_stories
+#         science1 = first
+
+#         return render_template('/homepage.html',
+#                                headlines=headlines,
+#                                top_story=top_story,
+#                                business=business,
+#                                business1=business1,
+#                                ent=entertainment,
+#                                ent1=entertainment1,
+#                                health=health,
+#                                health1=health1,
+#                                science=science,
+#                                science1=science1,
+#                                sports=sports,
+#                                sports1=sports1,
+#                                tech=technology,
+#                                tech1=technology1
+#                                )
