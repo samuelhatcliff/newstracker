@@ -153,35 +153,3 @@ class SavedQuery(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     query_id = db.Column(db.Integer, db.ForeignKey(
         'testqs.id'), nullable=False)
-
-
-class UserHistory(db.Model):
-    __tablename__ = "user_history"
-    id = db.Column(db.Integer,
-                   primary_key=True,
-                   autoincrement=True)
-
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    story_id = db.Column(db.Integer, db.ForeignKey(
-        'stories.id'), nullable=False)
-    # add date viewed
-
-    def __repr__(self):
-        return f"<ID: {self.id}, User ID#:{self.user_id}, Story ID#:{self.story_id}>"
-
-
-class Note(db.Model):
-    __tablename__ = "notes"
-    id = db.Column(db.Integer,
-                   primary_key=True,
-                   autoincrement=True)
-
-    parent_note = db.Column(db.Integer, db.ForeignKey('notes.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    story_id = db.Column(db.Integer, db.ForeignKey(
-        'stories.id'), nullable=False)
-    content = db.Column(db.Text, nullable=False)
-    date = db.Column(db.DateTime)
-
-    def __repr__(self):
-        return f"<ID: {self.id}, User ID#:{self.user_id}, Story ID#:{self.story_id}>"

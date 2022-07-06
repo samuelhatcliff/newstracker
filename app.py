@@ -51,26 +51,27 @@ db.create_all()
 
 
 # Todo:
-
-# fix slideshow problem
-# make demo user
-# revisit show_pol_calls, show_sub_calls, understand what they're doing
-# Figure out how to associate default query search with user. start by figuring out if migrations are neccessary
-# Instead of changing current search query to sqlobject instead of session[dict],
-# convert sqlobject to session[dict] when the time comes to incorporate that feature
-# look up many to one relationships in sqlalchemy. saved_queries is a many to many relationship, but should be accessible as many to 1 with a simple foreign key. use user.filter to get foreign key
+# fix slideshow problem (as a temp fix remove arrows)
+# write parallel requests or loading progress bar
+# Redeploy!
+# Figure out how to associate default query search with user. start by figuring out if migrations are neccessary. look up many to one relationships in sqlalchemy. saved_queries is a many to many relationship, but should be accessible as many to 1 with a simple foreign key. use user.filter to get foreign key
 # implement saved queries (quick queries feauture)
-# remove user history and notes from models and add to v2 branch
 # change TestQ to "Query"
 # change "QueriedStories" to "ReturnedStories" or "Call Results" or "Query Results"
-# write parallel requests or loading progress bar
+# Redeploy!
 # add security
 # add error handling, testing
+# Redeploy!
+
 
 # When deploying:
 # watch out for <link rel="stylesheet" href="http://127.0.0.1:5000/static/app.css"> that links css file. the absolute
 # path of the local route was included to fix nested routes bootstrap bug. figure out how to fix this in production
 # make sure api key is hidden and works
+
+# Notes:
+# Instead of changing current search query to sqlobject instead of session[dict],
+# convert sqlobject to session[dict] when the time comes to incorporate that feature
 
 
 @app.before_request

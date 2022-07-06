@@ -1,5 +1,5 @@
 from models import db, QueriedStory, User, QueriedStory, TestQ
-from sent_analysis import subjectize, polarize
+from sent_analysis import subjectize, polarize, parse_async
 from flask import session, g
 
 
@@ -12,6 +12,7 @@ def order_pol():
     user = User.query.get(g.user.id)
     if user.queried_stories:
         results = []
+
         for story in user.queried_stories:
             # WRITE PARALLEL AXIOS REQUESTS
             id = story.id

@@ -1,11 +1,20 @@
 # libraries for parsing and sentiment analysis
-from newspaper import Article
-from nltk.corpus import stopwords
-from nltk.sentiment.vader import SentimentIntensityAnalyzer as SIA
-import re
-import spacy
-from textblob import TextBlob
 import nltk
+from textblob import TextBlob
+import spacy
+import re
+from nltk.sentiment.vader import SentimentIntensityAnalyzer as SIA
+from nltk.corpus import stopwords
+from newspaper import Article
+import os
+import time
+import asyncio
+import aiohttp
+import newspaper
+from multiprocessing.dummy import Pool as ThreadPool
+pool = ThreadPool(10)
+
+
 nltk.download('vader_lexicon')
 nltk.download('stopwords')
 nltk.download('punkt')
@@ -41,12 +50,45 @@ nlp = spacy.load('en_core_web_sm', disable=["parser", "ner"])
 
 # examine the process here in greater detail to understand how to put it in async function
 
-def parse(headlines):
-    article = Article(headlines.url)
-    article.download()
-    article.parse()
-    parsed = article.text
-    return parsed
+
+# class SingleSource(newspaper.Source):
+#     def __init__(self, articleURL):
+#         super(SingleSource, self).__init__("http://localhost")
+#         self.articles = [newspaper.Article(url=articleURL)]
+
+
+#     sources = [SingleSource(articleURL=u) for u in urls]
+
+#     newspaper.news_pool.set(sources)
+#     newspaper.news_pool.join()
+
+
+# async def parse_async(headlines):
+#     async with aiohttp.ClientSession() as session:
+#         for headline in headlines:
+#             print('headline')
+#             response = session.get(headline.url, ssl=False)
+
+
+def parse(headline):
+    try:
+        article = Article(headline.url)
+        article.download()
+        article.parse()
+        parsed = article.text
+        return parsed
+    except:
+        return ""
+
+
+def parse_async(headlines):
+    start = time.time()
+    # urls = [headline.url for headline in headlines]
+    results = pool.map(parse, headlines)
+    pool.close()
+    pool.join()
+    print(start, "time1")
+    return results
 
 
 def tokenize(headline):
