@@ -14,7 +14,10 @@
         <div class="row">
           <div class="heading">
             <h4 class="form display-5 text-center">Non-Users</h4>
-            <p>You don’t need to be a user to begin utilizing NewsTracker’s features. Here are some things you can do
+            <p>You can click the "Login as Demo User" button on the right-hand column check out NewsTracker's featurues
+              with
+              a dummy account,
+              but you already have access to several feautures. Here are some things you can do
               instantly, without even creating an account.</p>
           </div>
           <div class="announce col-lg">
@@ -117,7 +120,15 @@
 
     <div id="slideshows" class="col-md-5 col-sm">
       <div class="container" id="slide-counter">
-        <div class="row">
+        <div class="row" style="justify-content: center;">
+          <div class="demo-user">
+            <label for="demo">
+              <h5 class="card-title">Try NewsTracker with our dummy account:</h5>
+            </label>
+            <form id="save" class="sa-button col-sm my-auto col-6" action='/login/demo' , method="POST">
+              <input type="submit" value="Login as Demo User" id="demo" class="btn btn-dark btn-md badge-pill">
+            </form>
+          </div>
           {%for obj in data%}
           <div class="container">
             <h3 class="form display-5 text-center"><a href="/headlines/{{obj.name}}" class="category">{{obj.name}}</a>
@@ -125,6 +136,12 @@
             <div class="row">
               <div class="col-10" id="slideshow">
                 <div class="carousel slide" data-ride="carousel">
+                  <!-- <ol class="carousel-indicators">
+                    <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+                    <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+                    <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+                  </ol> -->
+                  <!-- https://getbootstrap.com/docs/4.0/components/carousel/ -->
                   <div class="carousel-inner">
                     <div class="carousel-item active" data-interval="3500">
                       <img class="d-block w-100" src="{{obj.top_story.image}}" alt="First slide" ;>

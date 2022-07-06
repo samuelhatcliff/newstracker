@@ -2,6 +2,8 @@
 import os
 from flask import Flask, request, render_template, flash, redirect, render_template, jsonify, session, g
 from models import connect_db, db, User, Story
+# from flask_debugtoolbar import DebugToolbarExtension
+from flask_bcrypt import Bcrypt
 
 # external libraries
 from forms import RegisterForm, LoginForm, SearchForm
@@ -16,10 +18,7 @@ from psycopg2.errors import UniqueViolation
 from newsapi.newsapi_client import NewsApiClient
 import creds
 
-# from flask_debugtoolbar import DebugToolbarExtension
-from flask_bcrypt import Bcrypt
-
-# import helper functions
+# import all helper functions
 from helpers import *
 
 # set-up app
@@ -99,6 +98,7 @@ def do_logout():
 
 @app.route('/')
 def slideshow():
+    """NewsTracker Homepage"""
     categories = ['business', 'entertainment',
                   'health', 'science', 'sports', 'technology']
     data = []
@@ -114,8 +114,6 @@ def slideshow():
 
 @app.route('/headlines', methods=['GET', 'POST'])
 def home_page():
-    """View function for all results"""
-    # todo: after changing all queries to database queries, combine route with "results" view function
     if CURR_USER_KEY in session:
         user = User.query.get(g.user.id)
         if not user.queried_stories:
@@ -135,7 +133,33 @@ def home_page():
         return render_template('/show_stories.html', results=results)
 
 
-@app.route('/simple', methods=['GET'])
+@app.route(f'/headlines/<category>')
+def show_for_category(category):
+    """Display top headlines for given category based off of link clicked from homepage"""
+    category = category.lower()
+    results = cat_calls(category)
+    return render_template('show_stories.html', results=results)
+
+
+@app.route('/search', methods=['GET', 'POST'])
+def search_form():
+    """This function creates a dictionary extracting data from the search form to be sent to the news-api"""
+    if CURR_USER_KEY in session:
+        form = SearchForm()
+        if form.validate_on_submit():
+            try:
+                make_session_query(form)
+                if form.saved_query.data:
+                    add_saved_query(g.user.id, form)
+                api_call(session['dict'], g.user.id)
+                return redirect('/search/results')
+            except:
+                return render_template('/users/search.html', form=form)
+        else:
+            return render_template('/users/search.html', form=form)
+
+
+@app.route('/search/simple', methods=['GET'])
 def search_simple():
     """API Call and Results for Simple Search"""
     keyword = request.args.get("search")
@@ -149,25 +173,7 @@ def search_simple():
     return render_template('/show_stories.html', results=results)
 
 
-@app.route('/search', methods=['GET', 'POST'])
-def search_params():
-    """This function creates a dictionary extracting data from the search form to be sent to the news-api"""
-    if CURR_USER_KEY in session:
-        form = SearchForm()
-        if form.validate_on_submit():
-            try:
-                make_session_query(form)
-                if form.saved_query.data:
-                    add_saved_query(g.user.id, form)
-                api_call(session['dict'], g.user.id)
-                return redirect('/search_results')
-            except:
-                return render_template('/users/search.html', form=form)
-        else:
-            return render_template('/users/search.html', form=form)
-
-
-@app.route('/search_results')
+@app.route('/search/results')
 def handle_results():
     if CURR_USER_KEY in session:
         dict = session['dict']
@@ -182,14 +188,6 @@ def handle_results():
             return render_template('/show_stories.html', results=results)
 
     return render_template('/show_stories.html', results=results)
-
-
-@app.route(f'/headlines/<category>')
-def show_for_category(category):
-    """Display top headlines for given category based off of link clicked from homepage"""
-    category = category.lower()
-    results = cat_calls(category)
-    return render_template('show_stories.html', results=results)
 
 
 @app.route('/user/saved')
@@ -293,134 +291,34 @@ def login_user():
     return render_template('login.html', form=form)
 
 
+@app.route('/login/demo', methods=['POST'])
+def login_demo_user():
+    username = 'demo-user'
+    password = 'demouser'
+    user = User.authenticate(username, password)
+    if user:
+        do_login(user)
+        return redirect('/headlines')
+    else:
+        print("Something went wrong when trying to authenticate demo user. Attemping registration.")
+        try:
+            User.register(
+                username, password, 'demo@user.com', 'demo', 'user')
+            user = User.authenticate(username, password)
+            if user:
+                do_login(user)
+                return redirect('/headlines')
+        except:
+            print("something went wrong when trying to register demo user")
+    return redirect('/login')
+
+
 @app.route('/logout')
 def logout():
     """Handle logout of user."""
     flash(f"You have successfully logged out.", "primary")
     do_logout()
     return redirect("/")
-
-
-# """Helper Functions"""
-
-
-# def order_pol():
-#     """Loops over a User's Queried Stories results, orders by polarity,
-#     then filters out stories with no SA results"""
-#     user = User.query.get(g.user.id)
-#     if user.queried_stories:
-#         results = []
-#         for story in user.queried_stories:
-#             # WRITE PARALLEL AXIOS REQUESTS
-#             id = story.id
-#             score = polarize(story)
-
-#             if not score:
-#                 QueriedStory.query.filter_by(story_id=id).delete()
-#                 db.session.commit()
-
-#             else:
-#                 result = score['article_res']['result']
-#                 story.pol = str(result)
-#                 db.session.commit()
-
-#         for result in user.queried_stories:
-#             results.append(result)
-
-#         ordered = sorted(user.queried_stories,
-#                          key=lambda story: story.pol,
-#                          reverse=True)
-
-#         return ordered
-
-
-# def order_sub():
-#     """Loops over a User's Queried Stories results, orders by subjectivity,
-#     then filters out stories with no SA results"""
-#     user = User.query.get(g.user.id)
-#     if user.queried_stories:
-#         for story in user.queried_stories:
-#             id = story.id
-#             score = subjectize(story)
-#             if score == None:
-#                 QueriedStory.query.filter_by(story_id=id).delete()
-#                 db.session.commit()
-#             else:
-#                 story.sub = str(score['measure'])
-#                 db.session.commit()
-#         ordered = sorted(user.queried_stories,
-#                          key=lambda story: story.sub, reverse=True)
-#         # CHANGE THESE SO THAT THEY SORT BY SUBJECTIVITY NUMBERS NOT RESULT SAME WITH POLARITY
-#         # ASK TA IF THEY KNOW OF PROGRESS BAR
-#         return ordered
-
-
-# def transfer_db_query_to_session(query):
-#     """Converts a saved query to session[dict]"""
-#     dict = {}
-#     dict['keyword'] = query.keyword
-#     dict['source'] = query.source
-#     dict['quantity'] = query.quantity
-#     dict['date_from'] = query.date_from
-#     dict['date_to'] = query.date_to
-#     dict['language'] = query.language
-#     dict['sa'] = query.sa
-#     dict['sort_by'] = query.sort_by
-#     return dict
-
-
-# def make_session_query(form):
-#     dict = {}
-#     dict['keyword'] = form.keyword.data
-#     dict['source'] = form.source.data
-#     dict['quantity'] = form.quantity.data
-#     dict['date_from'] = form.date_from.data
-#     dict['date_to'] = form.date_to.data
-#     dict['language'] = form.language.data
-
-#     if form.sort_by.data == "subjectivity" or form.sort_by.data == "polarity":
-#         dict['sa'] = form.sort_by.data
-#         dict['sort_by'] = 'relevancy'
-#     else:
-#         dict['sort_by'] = form.sort_by.data
-#         dict['sa'] = None
-#     session['dict'] = dict
-
-#     return dict
-
-
-# def add_saved_query(user_id, form):
-#     """Adds saved query to associated user in db"""
-#     user = User.query.get(user_id)
-#     keyword = form.keyword.data
-#     source = form.source.data
-#     quantity = form.quantity.data
-#     date_from = form.date_from.data
-#     date_to = form.date_to.data
-#     language = form.language.data
-#     default = form.default.data
-#     if form.sort_by.data == "subjectivity" or form.sort_by.data == "polarity":
-#         sa = form.sort_by.data
-#         sort_by = 'relevancy'
-#     else:
-#         sort_by = form.sort_by.data
-#         sa = None
-#         query = TestQ(user_id=g.user.id,
-#                       keyword=keyword,
-#                       source=source,
-#                       quantity=quantity,
-#                       date_from=date_from,
-#                       date_to=date_to,
-#                       language=language,
-#                       default=default,
-#                       type="detailed_search",
-#                       sa=sa,
-#                       sort_by=sort_by
-#                       )
-
-#         db.session.add(query)
-#         db.session.commit()
-#         user.saved_queries.append(query)
 
 
 """Sentiment Analysis API for individual stories"""

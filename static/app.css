@@ -138,6 +138,10 @@ h1 {
     margin-bottom:20px;
 }
 
+.demo-user {
+    text-align:center;
+    margin-bottom:20px;
+}
 #content {
     color:white;
     margin-top: 5px;
@@ -240,6 +244,7 @@ p {
 
 #slideshow {
     margin:auto;
+    margin-bottom:15px;
     padding:0px;
 }
 
@@ -286,7 +291,7 @@ h3 a{
 }
 
 .carousel-caption {
-	text-align:center;
+	text-align:justify;
 	padding:0px;
 	background:rgba(0,0,0,0.4);
     font-size: 1.25vw;
@@ -308,11 +313,14 @@ h3 a{
         padding-top: 1rem;
     }
     .carousel-caption {
-        text-align:center;
+        text-align:justify;
         padding:0px;
         background:rgba(0,0,0,0.4);
         font-size: 2vw;
         margin-bottom:2rem;
+    }
+    .caption {
+        text-align:justify;
     }
 }
 
