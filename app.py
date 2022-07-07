@@ -16,7 +16,6 @@ from psycopg2.errors import UniqueViolation
 
 # newsApi import
 from newsapi.newsapi_client import NewsApiClient
-import creds
 
 # import all helper functions
 from helpers import *
@@ -30,6 +29,7 @@ if production:
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
         'DATABASE_URL', 'postgresql:///capstone').replace("://", "ql://", 1)
 else:
+    import creds
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
         'DATABASE_URL', 'postgresql:///capstone')
 
