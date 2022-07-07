@@ -201,7 +201,6 @@ def polarize(headline, parsed=False):
         article_res['result'] = f"{avg_com} (Neutral)"
 
     article_res["message"] = f"{article_res['result']}. {avg_neg *100}% Negative, {avg_neu *100}% Neutral, and {avg_pos *100}% Positive"
-
     """Extracting polarity from headline text"""
 
     headline_res["com"] = headline['compound']

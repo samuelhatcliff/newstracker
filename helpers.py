@@ -12,7 +12,6 @@ def order_pol():
     user = User.query.get(g.user.id)
     if user.queried_stories:
         results = parse_async(user.queried_stories)
-        print("**results", results)
         for story in results:
             id = story['id']
             score = polarize(story, parsed=True)
@@ -33,10 +32,16 @@ def order_pol():
                 db_story[0].pol = result
                 db.session.commit()
 
-        ordered = sorted(user.queried_stories,
-                         key=lambda story: story.pol,
-                         reverse=True)
+        not_negative = [
+            story for story in user.queried_stories if story.pol[0] is not "-"]
+        negative = [
+            story for story in user.queried_stories if story.pol[0] is "-"]
 
+        ordered_neg = sorted(negative,
+                             key=lambda story: story.pol)
+        ordered_not_neg = sorted(not_negative,
+                                 key=lambda story: story.pol, reverse=True)
+        ordered = ordered_not_neg + ordered_neg
         return ordered
 
 
