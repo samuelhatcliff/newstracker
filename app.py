@@ -28,10 +28,10 @@ production = True
 if production:
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
         'DATABASE_URL', 'postgresql:///capstone').replace("://", "ql://", 1)
-else:
-    import creds
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-        'DATABASE_URL', 'postgresql:///capstone')
+# else:
+#     import creds
+#     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+#         'DATABASE_URL', 'postgresql:///capstone')
 
 # app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 # debug = DebugToolbarExtension(app)
