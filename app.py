@@ -29,13 +29,14 @@ if production:
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
         'DATABASE_URL', 'postgresql:///capstone').replace("://", "ql://", 1)
     my_api_key = os.environ.get("API_KEY")
-    port = int(os.environ.get('PORT', 33507))
+    # port = int(os.environ.get('PORT', 33507))
 
 
-# else:
+# if not production:
 #     import creds
 #     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
 #         'DATABASE_URL', 'postgresql:///capstone')
+
 # my_api_key = os.environ.get(creds.api_key)
 
 
@@ -85,6 +86,8 @@ db.create_all()
 @app.before_request
 def add_user_to_g():
     """If we're logged in, add curr user to Flask global."""
+    g.port = int(os.environ.get('PORT', 5000))
+
     if CURR_USER_KEY in session:
         g.user = User.query.get(session[CURR_USER_KEY])
     else:
@@ -111,6 +114,7 @@ def do_logout(user):
 
 @app.route('/')
 def slideshow():
+    port = str(g.port)
     """NewsTracker Homepage"""
     categories = ['business', 'entertainment',
                   'health', 'science', 'sports', 'technology']
@@ -127,6 +131,7 @@ def slideshow():
 
 @app.route('/headlines', methods=['GET', 'POST'])
 def home_page():
+    port = str(g.port)
     # For Development to Limit API Requests:
     # if CURR_USER_KEY in session:
     #     user = User.query.get(g.user.id)
@@ -148,6 +153,7 @@ def home_page():
 
 @app.route(f'/headlines/<category>')
 def show_for_category(category):
+    port = str(g.port)
     """Display top headlines for given category based off of link clicked from homepage"""
     category = category.lower()
     results = cat_calls(category)
@@ -156,6 +162,7 @@ def show_for_category(category):
 
 @app.route('/search', methods=['GET', 'POST'])
 def search_form():
+    port = str(g.port)
     """This function creates a dictionary extracting data from the search form to be sent to the news-api"""
     if CURR_USER_KEY in session:
         form = SearchForm()
@@ -167,13 +174,15 @@ def search_form():
                 api_call(session['dict'], g.user.id)
                 return redirect('/search/results')
             except:
-                return render_template('/users/search.html', form=form)
+                return render_template('/users/search.html', form=form, port=port)
         else:
-            return render_template('/users/search.html', form=form)
+            return render_template('/users/search.html', form=form, port=port)
 
 
 @app.route('/search/simple', methods=['GET'])
 def search_simple():
+    port = str(g.port)
+
     """API Call and Results for Simple Search"""
     keyword = request.args.get("search")
     if CURR_USER_KEY in session:
@@ -188,6 +197,8 @@ def search_simple():
 
 @app.route('/search/results')
 def handle_results():
+    port = str(g.port)
+
     if CURR_USER_KEY in session:
         dict = session['dict']
         user = User.query.get(g.user.id)
@@ -205,6 +216,7 @@ def handle_results():
 
 @app.route('/user/saved')
 def user():
+    port = str(g.port)
     if g.user.id != session[CURR_USER_KEY]:
         flash("Please log-in and try again.", "danger")
         return redirect("/")
@@ -260,6 +272,8 @@ def delete_story(story_id):
 
 @app.route('/register', methods=['GET', 'POST'])
 def register_user():
+    port = str(g.port)
+
     form = RegisterForm()
 
     if form.validate_on_submit():
@@ -289,6 +303,7 @@ def register_user():
 @app.route('/login', methods=['GET', 'POST'])
 def login_user():
     form = LoginForm()
+    port = str(g.port)
     if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
