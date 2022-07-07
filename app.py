@@ -28,16 +28,19 @@ production = True
 if production:
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
         'DATABASE_URL', 'postgresql:///capstone').replace("://", "ql://", 1)
+    my_api_key = os.environ.get("API_KEY")
+
 # else:
 #     import creds
 #     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
 #         'DATABASE_URL', 'postgresql:///capstone')
+# my_api_key = os.environ.get(creds.api_key)
+
 
 # app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 # debug = DebugToolbarExtension(app)
 
 # looks for heroku config variable first
-my_api_key = os.environ.get("API_KEY", creds.api_key)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY", "nevertell")
