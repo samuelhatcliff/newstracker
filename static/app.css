@@ -308,6 +308,7 @@ h3 a{
     color: #a3a3a3;
 }
 
+
 @media only screen and (max-width: 768px) {
     #slideshows{
         padding-top: 1rem;

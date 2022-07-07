@@ -51,17 +51,19 @@ db.create_all()
 
 
 # Todo:
-# fix slideshow problem (as a temp fix remove arrows)
-# write parallel requests or loading progress bar
+
 # Redeploy!
 # Figure out how to associate default query search with user. start by figuring out if migrations are neccessary. look up many to one relationships in sqlalchemy. saved_queries is a many to many relationship, but should be accessible as many to 1 with a simple foreign key. use user.filter to get foreign key
 # implement saved queries (quick queries feauture)
+# re-write polarity ordering
 # change TestQ to "Query"
 # change "QueriedStories" to "ReturnedStories" or "Call Results" or "Query Results"
 # Redeploy!
+# apply multithreading for category api calls on homepage
 # add security
 # add error handling, testing
 # Redeploy!
+# more permanent fix for slideshows
 # re-write aync sa functions as saving to the appropriate sqlalchemy obj in user.queried_stories, instead of dictionary. this will involve creating a new column "text" column and possibly a db migration
 
 
@@ -89,8 +91,12 @@ def do_login(user):
     session[CURR_USER_KEY] = user.id
 
 
-def do_logout():
+def do_logout(user):
     """Logout user."""
+    if user.queried_stories:
+        for story in user.queried_stories:
+            db.session.delete(story)
+            db.session.commit()
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
 
@@ -111,28 +117,28 @@ def slideshow():
         obj['name'] = cat.capitalize()
         data.append(obj)
 
-    return render_template('/homepage.html', data=data)
+    return render_template('/homepage.html', data=data, no_user=True)
 
 
 @app.route('/headlines', methods=['GET', 'POST'])
 def home_page():
-    if CURR_USER_KEY in session:
-        user = User.query.get(g.user.id)
-        if not user.queried_stories:
-            """Generic Headlines with user logged in"""
-            # if user does not have queried_stories, user hasn't arrived at route through search.
-            # therefore, we want to make an api call requesting general headlines
-            results = api_call(None)
-            return render_template('/show_stories.html', results=results)
+    # For Development to Limit API Requests:
+    # if CURR_USER_KEY in session:
+    #     user = User.query.get(g.user.id)
+    #     if not user.queried_stories:
+    #         """Generic Headlines with user logged in"""
+    #         # if user does not have queried_stories, user hasn't arrived at route through search.
+    #         # therefore, we want to make an api call requesting general headlines
+    #         results = api_call(None)
+    #         return render_template('/show_stories.html', results=results)
 
-        """Search Results From User"""
-        # this is just for development. get rid of this as well as if not user.queried stories statement
-        results = user.queried_stories
-        return render_template('/show_stories.html', results=results)
-    else:
-        """Generic Headlines without user logged in"""
-        results = api_call(None)
-        return render_template('/show_stories.html', results=results)
+    #     """Search Results From User"""
+    #     results = user.queried_stories
+    #     return render_template('/show_stories.html', results=results)
+    # else:
+    #     """Generic Headlines without user logged in"""
+    results = api_call(None)
+    return render_template('/show_stories.html', results=results)
 
 
 @app.route(f'/headlines/<category>')
@@ -319,7 +325,8 @@ def login_demo_user():
 def logout():
     """Handle logout of user."""
     flash(f"You have successfully logged out.", "primary")
-    do_logout()
+    user = User.query.get(g.user.id)
+    do_logout(user)
     return redirect("/")
 
 

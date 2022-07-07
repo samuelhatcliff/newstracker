@@ -121,6 +121,7 @@
     <div id="slideshows" class="col-md-5 col-sm">
       <div class="container" id="slide-counter">
         <div class="row" style="justify-content: center;">
+          {% if no_user%}
           <div class="demo-user">
             <label for="demo">
               <h5 class="card-title">Try NewsTracker with our dummy account:</h5>
@@ -129,6 +130,7 @@
               <input type="submit" value="Login as Demo User" id="demo" class="btn btn-dark btn-md badge-pill">
             </form>
           </div>
+          {% endif %}
           {%for obj in data%}
           <div class="container">
             <h3 class="form display-5 text-center"><a href="/headlines/{{obj.name}}" class="category">{{obj.name}}</a>
@@ -144,7 +146,7 @@
                   <!-- https://getbootstrap.com/docs/4.0/components/carousel/ -->
                   <div class="carousel-inner">
                     <div class="carousel-item active" data-interval="3500">
-                      <img class="d-block w-100" src="{{obj.top_story.image}}" alt="First slide" ;>
+                      <img class="slide d-block w-100" src="{{obj.top_story.image}}" alt="First slide" ;>
                       <div class="carousel-caption d-md-block">
                         <span class="caption">{{obj.top_story.headline}}</span>
                       </div>
@@ -160,14 +162,14 @@
                     </div>
                     {%endfor%}
                   </div>
-                  <a class="carousel-control-prev" role="button" data-slide="prev">
+                  <!-- <a class="carousel-control-prev" role="button" data-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                     <span class="sr-only">Previous</span>
                   </a>
                   <a class="carousel-control-next" role="button" data-slide="next">
                     <span class="carousel-control-next-icon" aria-hidden="true"></span>
                     <span class="sr-only">Next</span>
-                  </a>
+                  </a> -->
                 </div>
               </div>
             </div>

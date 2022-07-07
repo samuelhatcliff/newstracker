@@ -6,11 +6,6 @@ import re
 from nltk.sentiment.vader import SentimentIntensityAnalyzer as SIA
 from nltk.corpus import stopwords
 from newspaper import Article
-# import os
-# import time
-# import asyncio
-# import aiohttp
-# import newspaper
 from multiprocessing.dummy import Pool as ThreadPool
 
 
