@@ -69,6 +69,7 @@ db.create_all()
 # Redeploy!
 # more permanent fix for slideshows
 # re-write aync sa functions as saving to the appropriate sqlalchemy obj in user.queried_stories, instead of dictionary. this will involve creating a new column "text" column and possibly a db migration
+#
 
 
 # When deploying:
@@ -84,7 +85,6 @@ db.create_all()
 @app.before_request
 def add_user_to_g():
     """If we're logged in, add curr user to Flask global."""
-    # g.port = int(os.environ.get('PORT', 5000))
 
     if CURR_USER_KEY in session:
         g.user = User.query.get(session[CURR_USER_KEY])
@@ -261,8 +261,6 @@ def delete_story(story_id):
 
 @app.route('/register', methods=['GET', 'POST'])
 def register_user():
-    port = str(g.port)
-
     form = RegisterForm()
 
     if form.validate_on_submit():
@@ -286,13 +284,12 @@ def register_user():
 
             # https://www.youtube.com/embed/iBYCoLhziX4?showinfo=0&controls=1&rel=0&autoplay=1
 
-    return render_template('register.html', form=form, port=port)
+    return render_template('register.html', form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login_user():
     form = LoginForm()
-    port = str(g.port)
     if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
@@ -305,7 +302,7 @@ def login_user():
             form.username.errors = [
                 "Invalid username or password. Please try again."]
 
-    return render_template('login.html', form=form, port=port)
+    return render_template('login.html', form=form)
 
 
 @app.route('/login/demo', methods=['POST'])
