@@ -29,15 +29,13 @@ if production:
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
         'DATABASE_URL', 'postgresql:///capstone').replace("://", "ql://", 1)
     my_api_key = os.environ.get("API_KEY")
-    # port = int(os.environ.get('PORT', 33507))
 
 
 # if not production:
 #     import creds
 #     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
 #         'DATABASE_URL', 'postgresql:///capstone')
-
-# my_api_key = os.environ.get(creds.api_key)
+#     my_api_key = os.environ.get(creds.api_key)
 
 
 # app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
@@ -86,7 +84,7 @@ db.create_all()
 @app.before_request
 def add_user_to_g():
     """If we're logged in, add curr user to Flask global."""
-    g.port = int(os.environ.get('PORT', 5000))
+    # g.port = int(os.environ.get('PORT', 5000))
 
     if CURR_USER_KEY in session:
         g.user = User.query.get(session[CURR_USER_KEY])
@@ -114,7 +112,6 @@ def do_logout(user):
 
 @app.route('/')
 def slideshow():
-    port = str(g.port)
     """NewsTracker Homepage"""
     categories = ['business', 'entertainment',
                   'health', 'science', 'sports', 'technology']
@@ -126,12 +123,11 @@ def slideshow():
         obj['name'] = cat.capitalize()
         data.append(obj)
 
-    return render_template('/homepage.html', data=data, no_user=True, port=port)
+    return render_template('/homepage.html', data=data, no_user=True)
 
 
 @app.route('/headlines', methods=['GET', 'POST'])
 def home_page():
-    port = str(g.port)
     # For Development to Limit API Requests:
     # if CURR_USER_KEY in session:
     #     user = User.query.get(g.user.id)
@@ -148,21 +144,19 @@ def home_page():
     # else:
     #     """Generic Headlines without user logged in"""
     results = api_call(None)
-    return render_template('/show_stories.html', results=results, port=port)
+    return render_template('/show_stories.html', results=results)
 
 
 @app.route(f'/headlines/<category>')
 def show_for_category(category):
-    port = str(g.port)
     """Display top headlines for given category based off of link clicked from homepage"""
     category = category.lower()
     results = cat_calls(category)
-    return render_template('show_stories.html', results=results, port=port)
+    return render_template('show_stories.html', results=results)
 
 
 @app.route('/search', methods=['GET', 'POST'])
 def search_form():
-    port = str(g.port)
     """This function creates a dictionary extracting data from the search form to be sent to the news-api"""
     if CURR_USER_KEY in session:
         form = SearchForm()
@@ -174,15 +168,13 @@ def search_form():
                 api_call(session['dict'], g.user.id)
                 return redirect('/search/results')
             except:
-                return render_template('/users/search.html', form=form, port=port)
+                return render_template('/users/search.html', form=form, nested=True)
         else:
-            return render_template('/users/search.html', form=form, port=port)
+            return render_template('/users/search.html', form=form, nested=True)
 
 
 @app.route('/search/simple', methods=['GET'])
 def search_simple():
-    port = str(g.port)
-
     """API Call and Results for Simple Search"""
     keyword = request.args.get("search")
     if CURR_USER_KEY in session:
@@ -192,13 +184,11 @@ def search_simple():
     else:
         results = api_call(keyword)
 
-    return render_template('/show_stories.html', results=results, port=port)
+    return render_template('/show_stories.html', results=results, nested=True)
 
 
 @app.route('/search/results')
 def handle_results():
-    port = str(g.port)
-
     if CURR_USER_KEY in session:
         dict = session['dict']
         user = User.query.get(g.user.id)
@@ -209,14 +199,13 @@ def handle_results():
         elif dict['sa'] == 'subjectivity':
             results = order_sub()
         else:
-            return render_template('/show_stories.html', results=results, port=port)
+            return render_template('/show_stories.html', results=results, nested=True)
 
-    return render_template('/show_stories.html', results=results, port=port)
+    return render_template('/show_stories.html', results=results, nested=True)
 
 
 @app.route('/user/saved')
 def user():
-    port = str(g.port)
     if g.user.id != session[CURR_USER_KEY]:
         flash("Please log-in and try again.", "danger")
         return redirect("/")
@@ -226,7 +215,7 @@ def user():
         is_empty = False
         if len(user.saved_stories) == 0:
             is_empty = True
-        return render_template("/users/user.html", user=user, is_empty=is_empty, port=port)
+        return render_template("/users/user.html", user=user, is_empty=is_empty, nested=True)
 
 
 @app.route('/story/<int:story_id>/open')
