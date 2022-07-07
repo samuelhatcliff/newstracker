@@ -7,16 +7,14 @@ from flask import session, g
 
 
 def order_pol():
-    """Loops over a User's Queried Stories results, orders by polarity,
-    then filters out stories with no SA results"""
+    """Loops over a User's Queried Stories results, filters out stories with no SA results, 
+    then orders by polarity"""
     user = User.query.get(g.user.id)
     if user.queried_stories:
-        results = []
-
-        for story in user.queried_stories:
-            # WRITE PARALLEL AXIOS REQUESTS
-            id = story.id
-            score = polarize(story)
+        results = parse_async(user.queried_stories)
+        for story in results:
+            id = story['id']
+            score = polarize(story, parsed=True)
 
             if not score:
                 QueriedStory.query.filter_by(story_id=id).delete()
@@ -24,11 +22,15 @@ def order_pol():
 
             else:
                 result = score['article_res']['result']
-                story.pol = str(result)
-                db.session.commit()
+                db_story = [
+                    story for story in user.queried_stories if story.id == id]
 
-        for result in user.queried_stories:
-            results.append(result)
+                # Todo: figure out why changes in db don't show up with the code below. The code above is a hackey was of doing something i should be able to do through sqlalchemy
+                # db_story = QuriedStory.query.filter_by(story_id=id)
+                # db_story.pol = result
+
+                db_story[0].pol = result
+                db.session.commit()
 
         ordered = sorted(user.queried_stories,
                          key=lambda story: story.pol,

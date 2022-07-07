@@ -40,9 +40,9 @@ class User(db.Model):
 
     queried_stories = db.relationship(
         'Story', secondary='queried_stories', backref='user_queries')
-    history = db.relationship(
-        'Story', secondary='user_history', backref="viewed_by")
-    notes = db.relationship('Note', backref='user')
+    # history = db.relationship(
+    #     'Story', secondary='user_history', backref="viewed_by")
+    # notes = db.relationship('Note', backref='user')
 
     @classmethod
     def register(cls, username, pwd, email, first_name, last_name):
@@ -83,7 +83,7 @@ class Story(db.Model):
     published_at = db.Column(db.DateTime)
 
     """information related to its interaction with app"""
-    notes = db.relationship('Note', backref='story')
+    # notes = db.relationship('Note', backref='story')
     views = db.Column(db.Integer)
     sub = db.Column(db.Text)
     pol = db.Column(db.Text)

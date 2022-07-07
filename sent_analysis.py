@@ -12,7 +12,6 @@ import asyncio
 import aiohttp
 import newspaper
 from multiprocessing.dummy import Pool as ThreadPool
-pool = ThreadPool(10)
 
 
 nltk.download('vader_lexicon')
@@ -70,20 +69,34 @@ nlp = spacy.load('en_core_web_sm', disable=["parser", "ner"])
 #             response = session.get(headline.url, ssl=False)
 
 
-def parse(headline):
+# def parse(headlines):
+#     article = Article(headlines.url)
+#     article.download()
+#     article.parse()
+#     parsed = article.text
+#     return parsed
+
+
+def parse(headline, text_only=False):
+    dict = {'id': headline.id,
+            'headline': headline.headline}
     try:
         article = Article(headline.url)
         article.download()
         article.parse()
         parsed = article.text
-        return parsed
+        if text_only:
+            return parsed
+        dict['text'] = parsed
+        return dict
     except:
         return ""
 
 
 def parse_async(headlines):
+    pool = ThreadPool(10)
+
     start = time.time()
-    # urls = [headline.url for headline in headlines]
     results = pool.map(parse, headlines)
     pool.close()
     pool.join()
@@ -141,12 +154,11 @@ def subjectize(headline):
         parsed = parse(headline)
     except:
         return None
-    tblobbed = TextBlob(parsed)
+    tblobbed = TextBlob(parsed['text'])
     # separate this logic out into separate function
     subjectivity = round(tblobbed.sentiment.subjectivity, 2)
     subjectivity = str(subjectivity)
     subjectivity = subjectivity[-2:]
-    print("pppp", subjectivity)
     if subjectivity == ".":
         subjectivity = f"{subjectivity}0"
     if subjectivity == ".0":
@@ -171,7 +183,94 @@ def subjectize(headline):
     return sub_obj
 
 
-def polarize(headline):
+# def polarize(headline):
+#     # function returns an object of two sepearate polarity scores; one based off the text of the article and the other
+#     # from just the headline alone. Each of these are represented in their own respective objects.
+#     pol_obj = {}
+#     headline_res = {}
+#     article_res = {}
+
+#     """Extracting polarity from article text"""
+#     try:
+#         parsed = parse(headline)
+
+#     except:
+#         return None
+
+#     sentenced = nltk.tokenize.sent_tokenize(parsed)
+
+#     coms = []
+#     pos = []
+#     negs = []
+#     neus = []
+
+#     for sentence in sentenced:
+#         res = sia.polarity_scores(sentence)
+
+#         pos.append(res["pos"])
+#         negs.append(res["neg"])
+#         neus.append(res["neu"])
+#         if res['compound']:
+#             # sometimes the composite will be zero for certain sentences. We don't want to include that data.
+#             coms.append(res['compound'])
+
+#     if len(coms) == 0:
+#         return None
+#     avg_com = round((sum(coms) / len(coms)), 2)
+#     avg_pos = round((sum(pos) / len(pos)), 2)
+#     avg_neu = round((sum(neus) / len(neus)), 2)
+#     avg_neg = round((sum(negs) / len(negs)), 2)
+
+#     article_res["avg_com"] = round(avg_com, 2)
+#     article_res["avg_pos"] = round(avg_pos, 2)
+#     article_res["avg_neg"] = round(avg_neg, 2)
+#     article_res["avg_neu"] = round(avg_neu, 2)
+
+#     if avg_com >= 0.4:
+#         article_res['result'] = f"{avg_com} (Very Positive)"
+
+#     elif avg_com >= 0.2:
+#         article_res['result'] = f"{avg_com} (Positive)"
+
+#     elif avg_com <= - 0.2:
+#         article_res['result'] = f"{avg_com} (Negative)"
+
+#     elif avg_com <= - 0.2:
+#         article_res['result'] = f"{avg_com} (Very Negative)"
+
+#     else:
+#         article_res['result'] = f"{avg_com} (Neutral)"
+
+#     article_res["message"] = f"{article_res['result']}. {avg_neg *100}% Negative, {avg_neu *100}% Neutral, and {avg_pos *100}% Positive"
+
+#     """Extracting polarity from headline text"""
+
+#     headline = sia.polarity_scores(headline.headline)
+#     headline_res["com"] = headline['compound']
+#     headline_res["pos"] = headline['pos']
+#     headline_res["neg"] = headline['neg']
+#     headline_res["neu"] = headline['neu']
+
+#     if headline_res['com'] >= 0.2:
+#         headline_res['result'] = "Positive"
+
+#     elif headline_res['com'] >= 0.4:
+#         headline_res['result'] = "Very Positive"
+#     elif headline_res['com'] <= - 0.2:
+#         headline_res['result'] = "Negative"
+#     elif headline_res['com'] <= - 0.4:
+#         headline_res['result'] = "Very Negative"
+
+#     else:
+#         headline_res['result'] = "Neutral"
+
+#     pol_obj['headline_res'] = headline_res
+#     pol_obj['article_res'] = article_res
+
+#     return pol_obj
+
+
+def polarize(headline, parsed=False):
     # function returns an object of two sepearate polarity scores; one based off the text of the article and the other
     # from just the headline alone. Each of these are represented in their own respective objects.
     pol_obj = {}
@@ -180,12 +279,25 @@ def polarize(headline):
 
     """Extracting polarity from article text"""
     try:
-        parsed = parse(headline)
+        """First argument might be a dictionary that's already been parsed and turned into a dictionary
+        to be used in order_pol() by async_parse (in the case of multiple articles). Alternatively, it could
+        be a single sqlalchemy object of a news story that needs to be parsed. In the latter case, we just 
+        want text, as we don't need to keep track of ids."""
+
+        # first argument is a dictionary
+        if parsed:
+            parsed = headline
+            sentenced = nltk.tokenize.sent_tokenize(parsed['text'])
+            headline = sia.polarity_scores(parsed['headline'])
+
+        # first argument is a sqlalchemy object
+        else:
+            parsed = parse(headline, text_only=True)
+            sentenced = nltk.tokenize.sent_tokenize(parsed)
+            headline = sia.polarity_scores(headline.headline)
 
     except:
         return None
-
-    sentenced = nltk.tokenize.sent_tokenize(parsed)
 
     coms = []
     pos = []
@@ -233,7 +345,6 @@ def polarize(headline):
 
     """Extracting polarity from headline text"""
 
-    headline = sia.polarity_scores(headline.headline)
     headline_res["com"] = headline['compound']
     headline_res["pos"] = headline['pos']
     headline_res["neg"] = headline['neg']
@@ -254,7 +365,6 @@ def polarize(headline):
 
     pol_obj['headline_res'] = headline_res
     pol_obj['article_res'] = article_res
-
     return pol_obj
 
 
