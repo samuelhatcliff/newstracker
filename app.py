@@ -25,7 +25,7 @@ from helpers import *
 CURR_USER_KEY = "curr_user"
 bcrypt = Bcrypt()
 app = Flask(__name__)
-production = False
+production = True
 if production:
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
         'DATABASE_URL', 'postgresql:///capstone').replace("://", "ql://", 1)
