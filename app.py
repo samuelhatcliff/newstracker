@@ -29,6 +29,8 @@ if production:
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
         'DATABASE_URL', 'postgresql:///capstone').replace("://", "ql://", 1)
     my_api_key = os.environ.get("API_KEY")
+    port = int(os.environ.get('PORT', 33507))
+
 
 # else:
 #     import creds
@@ -120,7 +122,7 @@ def slideshow():
         obj['name'] = cat.capitalize()
         data.append(obj)
 
-    return render_template('/homepage.html', data=data, no_user=True)
+    return render_template('/homepage.html', data=data, no_user=True, port=port)
 
 
 @app.route('/headlines', methods=['GET', 'POST'])
@@ -141,7 +143,7 @@ def home_page():
     # else:
     #     """Generic Headlines without user logged in"""
     results = api_call(None)
-    return render_template('/show_stories.html', results=results)
+    return render_template('/show_stories.html', results=results, port=port)
 
 
 @app.route(f'/headlines/<category>')
@@ -149,7 +151,7 @@ def show_for_category(category):
     """Display top headlines for given category based off of link clicked from homepage"""
     category = category.lower()
     results = cat_calls(category)
-    return render_template('show_stories.html', results=results)
+    return render_template('show_stories.html', results=results, port=port)
 
 
 @app.route('/search', methods=['GET', 'POST'])
@@ -181,7 +183,7 @@ def search_simple():
     else:
         results = api_call(keyword)
 
-    return render_template('/show_stories.html', results=results)
+    return render_template('/show_stories.html', results=results, port=port)
 
 
 @app.route('/search/results')
@@ -196,9 +198,9 @@ def handle_results():
         elif dict['sa'] == 'subjectivity':
             results = order_sub()
         else:
-            return render_template('/show_stories.html', results=results)
+            return render_template('/show_stories.html', results=results, port=port)
 
-    return render_template('/show_stories.html', results=results)
+    return render_template('/show_stories.html', results=results, port=port)
 
 
 @app.route('/user/saved')
@@ -212,7 +214,7 @@ def user():
         is_empty = False
         if len(user.saved_stories) == 0:
             is_empty = True
-        return render_template("/users/user.html", user=user, is_empty=is_empty)
+        return render_template("/users/user.html", user=user, is_empty=is_empty, port=port)
 
 
 @app.route('/story/<int:story_id>/open')
@@ -281,7 +283,7 @@ def register_user():
 
             # https://www.youtube.com/embed/iBYCoLhziX4?showinfo=0&controls=1&rel=0&autoplay=1
 
-    return render_template('register.html', form=form)
+    return render_template('register.html', form=form, port=port)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -299,7 +301,7 @@ def login_user():
             form.username.errors = [
                 "Invalid username or password. Please try again."]
 
-    return render_template('login.html', form=form)
+    return render_template('login.html', form=form, port=port)
 
 
 @app.route('/login/demo', methods=['POST'])
