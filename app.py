@@ -62,6 +62,7 @@ db.create_all()
 # add security
 # add error handling, testing
 # Redeploy!
+# re-write aync sa functions as saving to the appropriate sqlalchemy obj in user.queried_stories, instead of dictionary. this will involve creating a new column "text" column and possibly a db migration
 
 
 # When deploying:

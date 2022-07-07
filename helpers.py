@@ -12,6 +12,7 @@ def order_pol():
     user = User.query.get(g.user.id)
     if user.queried_stories:
         results = parse_async(user.queried_stories)
+        print("**results", results)
         for story in results:
             id = story['id']
             score = polarize(story, parsed=True)
@@ -40,23 +41,24 @@ def order_pol():
 
 
 def order_sub():
-    """Loops over a User's Queried Stories results, orders by subjectivity,
-    then filters out stories with no SA results"""
+    """Loops over a User's Queried Stories results, filters out stories with no SA results, 
+    then orders by subjectivity"""
     user = User.query.get(g.user.id)
     if user.queried_stories:
-        for story in user.queried_stories:
-            id = story.id
-            score = subjectize(story)
+        results = parse_async(user.queried_stories)
+        for story in results:
+            id = story['id']
+            score = subjectize(story, parsed=True)
             if score == None:
                 QueriedStory.query.filter_by(story_id=id).delete()
                 db.session.commit()
             else:
-                story.sub = str(score['measure'])
+                db_story = [
+                    story for story in user.queried_stories if story.id == id]
+                db_story[0].sub = str(score['measure'])
                 db.session.commit()
         ordered = sorted(user.queried_stories,
                          key=lambda story: story.sub, reverse=True)
-        # CHANGE THESE SO THAT THEY SORT BY SUBJECTIVITY NUMBERS NOT RESULT SAME WITH POLARITY
-        # ASK TA IF THEY KNOW OF PROGRESS BAR
         return ordered
 
 

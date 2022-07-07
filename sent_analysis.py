@@ -6,11 +6,11 @@ import re
 from nltk.sentiment.vader import SentimentIntensityAnalyzer as SIA
 from nltk.corpus import stopwords
 from newspaper import Article
-import os
-import time
-import asyncio
-import aiohttp
-import newspaper
+# import os
+# import time
+# import asyncio
+# import aiohttp
+# import newspaper
 from multiprocessing.dummy import Pool as ThreadPool
 
 
@@ -21,60 +21,6 @@ sia = SIA()
 
 
 nlp = spacy.load('en_core_web_sm', disable=["parser", "ner"])
-
-
-# async def get(
-#     session: aiohttp.ClientSession,
-#     url = url
-# ) -> dict:
-#     url = f"{url}/"
-#     print(f"Requesting {url}")
-#     article = await Article(url)
-# parsed = await article.text
-#     # Note that this may raise an exception for non-2xx responses
-#     # You can either handle that here, or pass the exception through
-#     return parsed
-# source:
-# https://stackoverflow.com/questions/53021448/multiple-async-requests-simultaneously
-# https://realpython.com/async-io-python/
-# https://stackoverflow.com/questions/57126286/fastest-parallel-requests-in-python
-
-# if type(headlines) == list:
-#     async with aiohttp.ClientSession() as session:
-#         tasks = []
-#         for headline in headlines:
-#             url = headline.url
-#             tasks.append(get(session=session, url=url))
-#     htmls = await asyncio.gather(*tasks, return_exceptions=True)
-
-# examine the process here in greater detail to understand how to put it in async function
-
-
-# class SingleSource(newspaper.Source):
-#     def __init__(self, articleURL):
-#         super(SingleSource, self).__init__("http://localhost")
-#         self.articles = [newspaper.Article(url=articleURL)]
-
-
-#     sources = [SingleSource(articleURL=u) for u in urls]
-
-#     newspaper.news_pool.set(sources)
-#     newspaper.news_pool.join()
-
-
-# async def parse_async(headlines):
-#     async with aiohttp.ClientSession() as session:
-#         for headline in headlines:
-#             print('headline')
-#             response = session.get(headline.url, ssl=False)
-
-
-# def parse(headlines):
-#     article = Article(headlines.url)
-#     article.download()
-#     article.parse()
-#     parsed = article.text
-#     return parsed
 
 
 def parse(headline, text_only=False):
@@ -95,12 +41,9 @@ def parse(headline, text_only=False):
 
 def parse_async(headlines):
     pool = ThreadPool(10)
-
-    start = time.time()
     results = pool.map(parse, headlines)
     pool.close()
     pool.join()
-    print(start, "time1")
     return results
 
 
@@ -149,12 +92,15 @@ def tokenize(headline):
     # https://datascience.stackexchange.com/questions/39960/remove-special-character-in-a-list-or-string
 
 
-def subjectize(headline):
+def subjectize(headline, parsed=False):
     try:
-        parsed = parse(headline)
+        if parsed:
+            parsed = headline['text']
+        else:
+            parsed = parse(headline, text_only=True)
     except:
         return None
-    tblobbed = TextBlob(parsed['text'])
+    tblobbed = TextBlob(parsed)
     # separate this logic out into separate function
     subjectivity = round(tblobbed.sentiment.subjectivity, 2)
     subjectivity = str(subjectivity)
@@ -181,93 +127,6 @@ def subjectize(headline):
     if sub_obj['score'] == 0.0:
         return None
     return sub_obj
-
-
-# def polarize(headline):
-#     # function returns an object of two sepearate polarity scores; one based off the text of the article and the other
-#     # from just the headline alone. Each of these are represented in their own respective objects.
-#     pol_obj = {}
-#     headline_res = {}
-#     article_res = {}
-
-#     """Extracting polarity from article text"""
-#     try:
-#         parsed = parse(headline)
-
-#     except:
-#         return None
-
-#     sentenced = nltk.tokenize.sent_tokenize(parsed)
-
-#     coms = []
-#     pos = []
-#     negs = []
-#     neus = []
-
-#     for sentence in sentenced:
-#         res = sia.polarity_scores(sentence)
-
-#         pos.append(res["pos"])
-#         negs.append(res["neg"])
-#         neus.append(res["neu"])
-#         if res['compound']:
-#             # sometimes the composite will be zero for certain sentences. We don't want to include that data.
-#             coms.append(res['compound'])
-
-#     if len(coms) == 0:
-#         return None
-#     avg_com = round((sum(coms) / len(coms)), 2)
-#     avg_pos = round((sum(pos) / len(pos)), 2)
-#     avg_neu = round((sum(neus) / len(neus)), 2)
-#     avg_neg = round((sum(negs) / len(negs)), 2)
-
-#     article_res["avg_com"] = round(avg_com, 2)
-#     article_res["avg_pos"] = round(avg_pos, 2)
-#     article_res["avg_neg"] = round(avg_neg, 2)
-#     article_res["avg_neu"] = round(avg_neu, 2)
-
-#     if avg_com >= 0.4:
-#         article_res['result'] = f"{avg_com} (Very Positive)"
-
-#     elif avg_com >= 0.2:
-#         article_res['result'] = f"{avg_com} (Positive)"
-
-#     elif avg_com <= - 0.2:
-#         article_res['result'] = f"{avg_com} (Negative)"
-
-#     elif avg_com <= - 0.2:
-#         article_res['result'] = f"{avg_com} (Very Negative)"
-
-#     else:
-#         article_res['result'] = f"{avg_com} (Neutral)"
-
-#     article_res["message"] = f"{article_res['result']}. {avg_neg *100}% Negative, {avg_neu *100}% Neutral, and {avg_pos *100}% Positive"
-
-#     """Extracting polarity from headline text"""
-
-#     headline = sia.polarity_scores(headline.headline)
-#     headline_res["com"] = headline['compound']
-#     headline_res["pos"] = headline['pos']
-#     headline_res["neg"] = headline['neg']
-#     headline_res["neu"] = headline['neu']
-
-#     if headline_res['com'] >= 0.2:
-#         headline_res['result'] = "Positive"
-
-#     elif headline_res['com'] >= 0.4:
-#         headline_res['result'] = "Very Positive"
-#     elif headline_res['com'] <= - 0.2:
-#         headline_res['result'] = "Negative"
-#     elif headline_res['com'] <= - 0.4:
-#         headline_res['result'] = "Very Negative"
-
-#     else:
-#         headline_res['result'] = "Neutral"
-
-#     pol_obj['headline_res'] = headline_res
-#     pol_obj['article_res'] = article_res
-
-#     return pol_obj
 
 
 def polarize(headline, parsed=False):
@@ -366,13 +225,3 @@ def polarize(headline, parsed=False):
     pol_obj['headline_res'] = headline_res
     pol_obj['article_res'] = article_res
     return pol_obj
-
-
-def sa_sum(headlines):
-    for headline in headlines:
-        sum = {}
-        sum['parsed'] = parse(headline)
-        sum['tokenized'] = tokenize(headline)
-        sum['subjectivity'] = subjectize(headline)
-        sum['polarity'] = polarize(headline)
-    return sum
