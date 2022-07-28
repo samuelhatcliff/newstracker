@@ -7,7 +7,7 @@ from flask_bcrypt import Bcrypt
 
 # external libraries
 from forms import RegisterForm, LoginForm, SearchForm
-from api_calls import api_call, cat_calls
+from api_calls import api_call, cat_calls, async_reqs
 from sent_analysis import subjectize, polarize
 
 # sqlalchemy imports
@@ -24,18 +24,18 @@ from helpers import *
 CURR_USER_KEY = "curr_user"
 bcrypt = Bcrypt()
 app = Flask(__name__)
-production = True
-if production:
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-        'DATABASE_URL', 'postgresql:///capstone').replace("://", "ql://", 1)
-    my_api_key = os.environ.get("API_KEY")
-
-
-# if not production:
-#     import creds
+production = False
+# if production:
 #     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-#         'DATABASE_URL', 'postgresql:///capstone')
-#     my_api_key = os.environ.get(creds.api_key)
+#         'DATABASE_URL', 'postgresql:///capstone').replace("://", "ql://", 1)
+#     my_api_key = os.environ.get("API_KEY")
+
+
+if not production:
+    import creds
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+        'DATABASE_URL', 'postgresql:///capstone')
+    my_api_key = os.environ.get(creds.api_key)
 
 
 # app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
@@ -63,13 +63,12 @@ db.create_all()
 # change TestQ to "Query"
 # change "QueriedStories" to "ReturnedStories" or "Call Results" or "Query Results"
 # Redeploy!
-# apply multithreading for category api calls on homepage
 # add security
 # add error handling, testing
 # Redeploy!
 # more permanent fix for slideshows
 # re-write aync sa functions as saving to the appropriate sqlalchemy obj in user.queried_stories, instead of dictionary. this will involve creating a new column "text" column and possibly a db migration
-#
+# find better way than "nested" to determine bootstrap path for nested routes
 
 
 # When deploying:
@@ -109,20 +108,19 @@ def do_logout(user):
 
 """View functions for application"""
 
-
 @app.route('/')
 def slideshow():
     """NewsTracker Homepage"""
     categories = ['business', 'entertainment',
                   'health', 'science', 'sports', 'technology']
     data = []
-    for cat in categories:
+    results = async_reqs(categories)
+    for index, result in enumerate(results):
         obj = {}
-        obj['results'] = cat_calls(cat)
-        obj['top_story'] = obj['results'].pop(0)
-        obj['name'] = cat.capitalize()
+        obj['results'] = result
+        obj['top_story'] = result[0]
+        obj['name'] = categories[index].capitalize()
         data.append(obj)
-
     return render_template('/homepage.html', data=data, no_user=True)
 
 

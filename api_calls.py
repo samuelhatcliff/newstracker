@@ -2,6 +2,8 @@ from newsapi.newsapi_client import NewsApiClient
 from dateutil import parser
 from models import db, QueriedStory, Story, User, QueriedStory, TestQ
 newsapi = NewsApiClient(api_key='b4f52eb738354e648912261c010632e7')
+from multiprocessing.dummy import Pool as ThreadPool
+
 # from app import app
 
 
@@ -79,7 +81,14 @@ def api_call(query=None, user_id=None):
 
 
 """Individual functions for separate types of API Calls"""
-
+def async_reqs(query):
+    pool = ThreadPool(10)
+    results = pool.map(cat_calls, query)
+    #we only use this function with cat_calls, as the latter is the only function where we need to send separate requests to the api
+    #at the same time
+    pool.close()
+    pool.join()
+    return results
 
 def cat_calls(query):
     """Gets generalized headlines for a specific catagory"""
