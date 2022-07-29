@@ -1,5 +1,7 @@
 #general imports
 import os
+from flask import session, g
+# from app import session
 from newsapi.newsapi_client import NewsApiClient
 from dateutil import parser
 from models import db, Story, User
@@ -11,6 +13,30 @@ newsapi = NewsApiClient(api_key=my_api_key)
 #async imports
 from multiprocessing.dummy import Pool as ThreadPool
 
+def save_to_session(articles):
+    if "results" in session:
+        session.pop("results")
+    results = []
+    for article in articles:
+        """This section converts each story from API data to our own SQLalchemy objects"""
+        headline = article['title']
+        source = article["source"]["name"]
+        if not article["content"]:
+            # sometimes Newsapi is unable to provide content for each story
+            content = "No content preview found. Click the link above to access the full story."
+        else:
+            content = article['content']
+
+        author = article['author']
+        description = article['description']
+        url = article['url']
+        image = article['urlToImage']
+        api_date = article['publishedAt']
+        published_at = parser.parse(api_date)
+        story = {'headline':headline, 'source':source, 'content':content, 'author':author, 'description':description, 'url':url, 'image':image, 'published_at':published_at}
+        results.append(story)
+    session["results"] = results
+    return results
 
 
 def save_to_db(articles, user_id=None):
@@ -18,7 +44,6 @@ def save_to_db(articles, user_id=None):
 
     # A temporary query is used (user.queried_stories) to keep track of the data from each api call so that we may
     # easily extract this data globally.
-
     if user_id:
         user = User.query.get(user_id)
         # deletes all previous instances of queried_stories to make room for new query
@@ -100,7 +125,8 @@ def cat_calls(query):
     """Gets generalized headlines for a specific catagory"""
     data = newsapi.get_top_headlines(language="en", category=f"{query}")
     articles = data['articles']
-    saved = save_to_db(articles)
+    # saved = save_to_db(articles)
+    saved = save_to_session(articles)
     return saved
 
 
@@ -109,9 +135,12 @@ def simple_search_call(query, user_id=None):
     data = newsapi.get_everything(q=f"{query}")
     articles = data['articles']
     if user_id:
-        saved = save_to_db(articles, user_id)
+        # saved = save_to_db(articles, user_id)
+        saved = save_to_session(articles)
+
     else:
-        saved = save_to_db(articles)
+        # saved = save_to_db(articles)
+        saved = save_to_session(articles)
         return saved
 
 
@@ -120,9 +149,11 @@ def top_headlines_call(user_id=None):
     data = newsapi.get_top_headlines(language="en")
     articles = data['articles']
     if user_id:
-        saved = save_to_db(articles, user_id)
+        # saved = save_to_db(articles, user_id)
+        saved = save_to_session(articles)
         return saved
-    saved = save_to_db(articles)
+    # saved = save_to_db(articles)
+    saved = save_to_session(articles)
     return saved
 
 
@@ -154,7 +185,9 @@ def advanced_search_call(query, user_id=None):
     spliced = articles[:quantity]
 
     if user_id:
-        saved = save_to_db(spliced, user_id)
+        # saved = save_to_db(spliced, user_id)
+        saved = save_to_session(spliced)
     else:
-        saved = save_to_db(spliced)
+        # saved = save_to_db(spliced)
+        saved = save_to_session(spliced)
     return saved

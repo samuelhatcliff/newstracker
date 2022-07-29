@@ -1,11 +1,13 @@
 # flask, local, and system imports
 import os
+import creds
 from flask import Flask, request, render_template, flash, redirect, render_template, jsonify, session, g
 from models import connect_db, db, User, Story
 # from flask_debugtoolbar import DebugToolbarExtension
 from flask_bcrypt import Bcrypt
+bcrypt = Bcrypt()
 
-# external libraries
+# imports from other modules in directory
 from forms import RegisterForm, LoginForm, SearchForm
 from api_calls import api_call, cat_calls, async_reqs
 from sent_analysis import subjectize, polarize
@@ -19,33 +21,34 @@ from helpers import *
 
 # set-up app
 CURR_USER_KEY = "curr_user"
-bcrypt = Bcrypt()
 app = Flask(__name__)
 production = False
-# if production:
-#     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-#         'DATABASE_URL', 'postgresql:///capstone').replace("://", "ql://", 1)
-#     my_api_key = os.environ.get("API_KEY")
-
-
 if not production:
-    import creds
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
         'DATABASE_URL', 'postgresql:///capstone')
-    secret_key = os.environ.get(creds.secret_key)
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+        'DATABASE_URL', 'postgresql:///capstone').replace("://", "ql://", 1)
 
-
-# app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
-# debug = DebugToolbarExtension(app)
-
-# looks for heroku config variable first
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
-app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY", secret_key)
+secret_key = os.environ.get(creds.secret_key)
+app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY", creds.secret_key)
 
 connect_db(app)
 # db.drop_all()
 db.create_all()
+
+#SERVER_SIDE SESSION
+from flask_session import Session
+import redis
+app.config['SESSION_TYPE'] = 'redis'
+app.config['SESSION_USE_SIGNER'] = True
+app.config['SESSION_PERMANENT'] = False
+#CHANGE THIS FOR REDEPLOYMENT
+# app.config['SESSION_REDIS'] = redis.from_url('redis://localhost:5000')
+
+server_session = Session(app)
 
 
 # Todo:
@@ -61,7 +64,6 @@ db.create_all()
 # add error handling, testing
 # Redeploy!
 # more permanent fix for slideshows
-# re-write aync sa functions as saving to the appropriate sqlalchemy obj in user.queried_stories, instead of dictionary. this will involve creating a new column "text" column and possibly a db migration
 # find better way than "nested" to determine bootstrap path for nested routes
 
 
@@ -183,9 +185,10 @@ def search_simple():
 def handle_results():
     if CURR_USER_KEY in session:
         dict = session['dict']
-        user = User.query.get(g.user.id)
-        user_queried_stories = user.queried_stories
-        results = user_queried_stories
+        # user = User.query.get(g.user.id)
+        # user_queried_stories = user.queried_stories
+        # results = user_queried_stories
+        results = session['results']
         if dict['sa'] == 'polarity':
             results = order_pol()
         elif dict['sa'] == 'subjectivity':

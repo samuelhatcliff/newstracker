@@ -97,6 +97,7 @@ def make_session_query(form):
         dict['sort_by'] = form.sort_by.data
         dict['sa'] = None
     session['dict'] = dict
+    print(session['dict'], "*********")
 
     return dict
 
