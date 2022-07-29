@@ -36,6 +36,7 @@ if not production:
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
         'DATABASE_URL', 'postgresql:///capstone')
     my_api_key = os.environ.get(creds.api_key)
+    secret_key = os.environ.get(creds.secret_key)
 
 
 # app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
@@ -44,7 +45,7 @@ if not production:
 # looks for heroku config variable first
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
-app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY", "nevertell")
+app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY", secret_key)
 
 newsapi = NewsApiClient(api_key=my_api_key)
 
