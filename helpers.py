@@ -9,62 +9,46 @@ from flask import session, g
 def order_pol():
     """Loops over a User's Queried Stories results, filters out stories with no SA results, 
     then orders by polarity"""
-    user = User.query.get(g.user.id)
-    if user.queried_stories:
-        results = parse_async(user.queried_stories)
-        for story in results:
-            id = story['id']
-            score = polarize(story, parsed=True)
+    results = parse_async(session['results'])
+    for story in results:
+        id = story['id']
+        score = polarize(story, parsed=True)
 
-            if not score:
-                QueriedStory.query.filter_by(story_id=id).delete()
-                db.session.commit()
+        if not score:
+            index = results.index(story)
+            results.pop(index)
 
-            else:
-                result = score['article_res']['result']
-                db_story = [
-                    story for story in user.queried_stories if story.id == id]
+        else:
+            story['pol'] = score['article_res']['result']
 
-                # Todo: figure out why changes in db don't show up with the code below. The code above is a hackey was of doing something i should be able to do through sqlalchemy
-                # db_story = QuriedStory.query.filter_by(story_id=id)
-                # db_story.pol = result
+    not_negative = [
+        story for story in results if story.pol[0] is not "-"]
+    negative = [
+        story for story in results if story.pol[0] is "-"]
 
-                db_story[0].pol = result
-                db.session.commit()
-
-        not_negative = [
-            story for story in user.queried_stories if story.pol[0] is not "-"]
-        negative = [
-            story for story in user.queried_stories if story.pol[0] is "-"]
-
-        ordered_neg = sorted(negative,
-                             key=lambda story: story.pol)
-        ordered_not_neg = sorted(not_negative,
-                                 key=lambda story: story.pol, reverse=True)
-        ordered = ordered_not_neg + ordered_neg
-        return ordered
+    ordered_neg = sorted(negative,
+                            key=lambda story: story.pol)
+    ordered_not_neg = sorted(not_negative,
+                                key=lambda story: story.pol, reverse=True)
+    ordered = ordered_not_neg + ordered_neg
+    return ordered
 
 
 def order_sub():
     """Loops over a User's Queried Stories results, filters out stories with no SA results, 
     then orders by subjectivity"""
-    user = User.query.get(g.user.id)
-    if user.queried_stories:
-        results = parse_async(user.queried_stories)
-        for story in results:
-            id = story['id']
-            score = subjectize(story, parsed=True)
-            if score == None:
-                QueriedStory.query.filter_by(story_id=id).delete()
-                db.session.commit()
-            else:
-                db_story = [
-                    story for story in user.queried_stories if story.id == id]
-                db_story[0].sub = str(score['measure'])
-                db.session.commit()
-        ordered = sorted(user.queried_stories,
-                         key=lambda story: story.sub, reverse=True)
-        return ordered
+    results = parse_async(session['results'])
+    for story in results:
+        id = story['id']
+        score = subjectize(story, parsed=True)
+        index = results.index(story)
+        if not score:
+            results.pop(index)
+        else:
+            story['sub'] = str(score['measure'])
+    ordered = sorted(results,
+                        key=lambda story: story.sub, reverse=True)
+    return ordered
 
 
 def transfer_db_query_to_session(query):
@@ -97,8 +81,6 @@ def make_session_query(form):
         dict['sort_by'] = form.sort_by.data
         dict['sa'] = None
     session['dict'] = dict
-    print(session['dict'], "*********")
-
     return dict
 
 

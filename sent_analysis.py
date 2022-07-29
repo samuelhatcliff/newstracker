@@ -19,7 +19,7 @@ nlp = spacy.load('en_core_web_sm', disable=["parser", "ner"])
 
 
 def parse(headline, text_only=False):
-    dict = {'id': headline.id,
+    dict = {'id': headline['session_id'],
             'headline': headline.headline}
     try:
         article = Article(headline.url)

@@ -80,7 +80,6 @@ server_session = Session(app)
 @app.before_request
 def add_user_to_g():
     """If we're logged in, add curr user to Flask global."""
-
     if CURR_USER_KEY in session:
         g.user = User.query.get(session[CURR_USER_KEY])
     else:
@@ -185,9 +184,6 @@ def search_simple():
 def handle_results():
     if CURR_USER_KEY in session:
         dict = session['dict']
-        # user = User.query.get(g.user.id)
-        # user_queried_stories = user.queried_stories
-        # results = user_queried_stories
         results = session['results']
         if dict['sa'] == 'polarity':
             results = order_pol()
@@ -223,18 +219,26 @@ def open_story_link(story_id):
     return redirect(f"{story.url}")
 
 
-@app.route('/story/<int:story_id>/save_story', methods=["POST"])
-def save_story(story_id):
+@app.route('/story/<session_id>/save_story', methods=["POST"])
+def save_story(session_id):
     if g.user.id != session[CURR_USER_KEY]:
         flash("Please log-in and try again.", "danger")
         return redirect("/")
 
     else:
-        story = Story.query.get(story_id)
+        results = session["results"]
+        print("44444", type(session_id), type(results[0]['session_id']))
+
+        session_story = [story for story in results if story['session_id'] == session_id][0]
+        print('sessssss')
+        story = Story(headline=session_story['headline'], source=session_story['source'], content=session_story['content'],
+                      author=session_story['author'], description=session_story['description'], url=session_story['url'], image=session_story['image'],
+                      published_at=session_story['published_at'])
         user = User.query.get(g.user.id)
-        if story in user.saved_stories:
-            flash("This story already exists in your saved stories.", "danger")
-            return redirect("/")
+        # REWRITE 
+        # if story in user.saved_stories:
+        #     flash("This story already exists in your saved stories.", "danger")
+        #     return redirect("/")
         user.saved_stories.append(story)
         db.session.commit()
         return redirect("/user/saved")
@@ -352,9 +356,7 @@ def show_pol_calls(story_id):
 
 @app.route('/<int:story_id>/subjectivity', methods=['POST'])
 def show_sub_calls(story_id):
-
     story = Story.query.get(story_id)
-
     score = subjectize(story)
     if score == None:
         story.sub = "No Data"

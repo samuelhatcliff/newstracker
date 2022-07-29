@@ -48,7 +48,7 @@
                         <h5 class="card-subtitle mb-2 text-center blockquote-footer" id="date">{{story.published_at}}
                             </li>
                             <p class="card-text text-center" id="content">{{story.content}}</p>
-                            <form action='/story/{{story.id}}/save_story' , method="POST" id="save">
+                            <form action='/story/{{story.session_id}}/save_story' , method="POST" id="save">
                                 <input type="submit" value="Save Story" class="btn btn-dark btn-sm badge-pill">
                             </form>
                     </div>

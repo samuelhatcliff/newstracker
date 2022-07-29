@@ -1,7 +1,7 @@
 #general imports
 import os
 from flask import session, g
-# from app import session
+import uuid
 from newsapi.newsapi_client import NewsApiClient
 from dateutil import parser
 from models import db, Story, User
@@ -33,7 +33,10 @@ def save_to_session(articles):
         image = article['urlToImage']
         api_date = article['publishedAt']
         published_at = parser.parse(api_date)
-        story = {'headline':headline, 'source':source, 'content':content, 'author':author, 'description':description, 'url':url, 'image':image, 'published_at':published_at}
+        session_id = uuid.uuid4().hex
+        story = {'headline':headline, 'source':source, 'content':content,
+        'author':author, 'description':description, 'url':url,
+        'image':image, 'published_at':published_at, 'session_id': session_id}
         results.append(story)
     session["results"] = results
     return results
@@ -135,11 +138,9 @@ def simple_search_call(query, user_id=None):
     data = newsapi.get_everything(q=f"{query}")
     articles = data['articles']
     if user_id:
-        # saved = save_to_db(articles, user_id)
         saved = save_to_session(articles)
 
     else:
-        # saved = save_to_db(articles)
         saved = save_to_session(articles)
         return saved
 
@@ -149,10 +150,8 @@ def top_headlines_call(user_id=None):
     data = newsapi.get_top_headlines(language="en")
     articles = data['articles']
     if user_id:
-        # saved = save_to_db(articles, user_id)
         saved = save_to_session(articles)
         return saved
-    # saved = save_to_db(articles)
     saved = save_to_session(articles)
     return saved
 
@@ -185,9 +184,7 @@ def advanced_search_call(query, user_id=None):
     spliced = articles[:quantity]
 
     if user_id:
-        # saved = save_to_db(spliced, user_id)
         saved = save_to_session(spliced)
     else:
-        # saved = save_to_db(spliced)
         saved = save_to_session(spliced)
     return saved
