@@ -1,10 +1,16 @@
+#general imports
+import os
 from newsapi.newsapi_client import NewsApiClient
 from dateutil import parser
-from models import db, QueriedStory, Story, User, QueriedStory, TestQ
-newsapi = NewsApiClient(api_key='b4f52eb738354e648912261c010632e7')
+from models import db, Story, User
+# newsApi imports
+from newsapi.newsapi_client import NewsApiClient
+import creds
+my_api_key = os.environ.get("API_KEY", creds.api_key)
+newsapi = NewsApiClient(api_key=my_api_key)
+#async imports
 from multiprocessing.dummy import Pool as ThreadPool
 
-# from app import app
 
 
 def save_to_db(articles, user_id=None):

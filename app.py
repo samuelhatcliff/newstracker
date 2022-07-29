@@ -14,9 +14,6 @@ from sent_analysis import subjectize, polarize
 from sqlalchemy import exc
 from psycopg2.errors import UniqueViolation
 
-# newsApi import
-from newsapi.newsapi_client import NewsApiClient
-
 # import all helper functions
 from helpers import *
 
@@ -35,7 +32,6 @@ if not production:
     import creds
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
         'DATABASE_URL', 'postgresql:///capstone')
-    my_api_key = os.environ.get(creds.api_key)
     secret_key = os.environ.get(creds.secret_key)
 
 
@@ -46,9 +42,6 @@ if not production:
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY", secret_key)
-
-newsapi = NewsApiClient(api_key=my_api_key)
-
 
 connect_db(app)
 # db.drop_all()
