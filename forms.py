@@ -66,7 +66,7 @@ class SearchForm(FlaskForm):
     # API default is all languages. Set to english if this becomes problematic
 
     sort_by = SelectField("Search by:", choices=[('relevancy', 'Relevant'), ('popularity', 'Popular'), ('publishedAt', 'Recent'),
-                                                 ('polarity', 'Polarity (results ordered by positive to negative)'), ('subjectivity', 'Subjectivity (results ordered by objective to subjective)')], validators=[Optional()])
+                                                 ('polarity', 'Polarity (results ordered from positive to negative)'), ('subjectivity', 'Objectivity (results ordered from objective to subjective)')], validators=[Optional()])
     # API default: publishedAt. subjectivity and polarity might take more time as individual get requests are needed for each url. This data
     # comes from our own logic, rather than the API's
 

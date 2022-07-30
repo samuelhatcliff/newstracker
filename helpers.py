@@ -7,7 +7,7 @@ from flask import session, g
 
 
 def order_pol():
-    """Loops over a User's Queried Stories results, filters out stories with no SA results, 
+    """Loops over session results, filters out stories with no SA results, 
     then orders by polarity"""
     results = parse_async(session['results'])
     for story in results:
@@ -22,7 +22,6 @@ def order_pol():
         story for story in results if story['pol'][0] is not "-"]
     negative = [
         story for story in results if story['pol'][0] is "-"]
-
     ordered_neg = sorted(negative,
                             key=lambda story: story['pol'])
     ordered_not_neg = sorted(not_negative,
@@ -32,7 +31,7 @@ def order_pol():
 
 
 def order_sub():
-    """Loops over a User's Queried Stories results, filters out stories with no SA results, 
+    """Loops over session results, filters out stories with no SA results, 
     then orders by subjectivity"""
     results = parse_async(session['results'])
     for story in results:
