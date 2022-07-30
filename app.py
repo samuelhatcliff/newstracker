@@ -227,10 +227,7 @@ def save_story(session_id):
 
     else:
         results = session["results"]
-        print("44444", type(session_id), type(results[0]['session_id']))
-
         session_story = [story for story in results if story['session_id'] == session_id][0]
-        print('sessssss')
         story = Story(headline=session_story['headline'], source=session_story['source'], content=session_story['content'],
                       author=session_story['author'], description=session_story['description'], url=session_story['url'], image=session_story['image'],
                       published_at=session_story['published_at'])

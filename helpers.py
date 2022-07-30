@@ -11,25 +11,22 @@ def order_pol():
     then orders by polarity"""
     results = parse_async(session['results'])
     for story in results:
-        id = story['id']
         score = polarize(story, parsed=True)
-
         if not score:
-            index = results.index(story)
-            results.pop(index)
-
+            story['pol'] = None
         else:
             story['pol'] = score['article_res']['result']
-
+    session['results'] = [story for story in results if story['pol']]
+    results = session['results']
     not_negative = [
-        story for story in results if story.pol[0] is not "-"]
+        story for story in results if story['pol'][0] is not "-"]
     negative = [
-        story for story in results if story.pol[0] is "-"]
+        story for story in results if story['pol'][0] is "-"]
 
     ordered_neg = sorted(negative,
-                            key=lambda story: story.pol)
+                            key=lambda story: story['pol'])
     ordered_not_neg = sorted(not_negative,
-                                key=lambda story: story.pol, reverse=True)
+                                key=lambda story: story['pol'], reverse=True)
     ordered = ordered_not_neg + ordered_neg
     return ordered
 
@@ -39,15 +36,15 @@ def order_sub():
     then orders by subjectivity"""
     results = parse_async(session['results'])
     for story in results:
-        id = story['id']
         score = subjectize(story, parsed=True)
-        index = results.index(story)
         if not score:
-            results.pop(index)
+            story['sub'] = None
         else:
             story['sub'] = str(score['measure'])
+    session['results'] = [story for story in results if story['sub']]
+    results = session['results']
     ordered = sorted(results,
-                        key=lambda story: story.sub, reverse=True)
+                        key=lambda story: story['sub'], reverse=True)
     return ordered
 
 

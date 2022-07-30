@@ -18,25 +18,23 @@ sia = SIA()
 nlp = spacy.load('en_core_web_sm', disable=["parser", "ner"])
 
 
-def parse(headline, text_only=False):
-    dict = {'id': headline['session_id'],
-            'headline': headline.headline}
+def parse(story, text_only=False):
     try:
-        article = Article(headline.url)
+        article = Article(story['url'])
         article.download()
         article.parse()
         parsed = article.text
         if text_only:
             return parsed
-        dict['text'] = parsed
-        return dict
+        story['text'] = parsed
+        return story
     except:
         return ""
 
 
-def parse_async(headlines):
+def parse_async(stories):
     pool = ThreadPool(10)
-    results = pool.map(parse, headlines)
+    results = pool.map(parse, stories)
     pool.close()
     pool.join()
     return results
