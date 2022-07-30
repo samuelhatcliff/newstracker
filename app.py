@@ -16,7 +16,7 @@ from sqlalchemy import exc
 from psycopg2.errors import UniqueViolation
 
 # import all helper functions
-from helpers import *
+from helpers import add_saved_query, make_session_query, order_sub, order_pol
 
 # set-up app
 CURR_USER_KEY = "curr_user"
@@ -24,10 +24,10 @@ app = Flask(__name__)
 production = False
 if not production:
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-        'DATABASE_URL', 'postgresql:///capstone')
+        'DATABASE_URL', 'postgresql:///news-tracker2')
 else:
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-        'DATABASE_URL', 'postgresql:///capstone').replace("://", "ql://", 1)
+        'DATABASE_URL', 'postgresql:///news-tracker2').replace("://", "ql://", 1)
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
@@ -157,9 +157,9 @@ def search_form():
                 api_call(session['dict'])
                 return redirect('/search/results')
             except:
-                return render_template('/users/search.html', form=form, nested=True)
+                return render_template('/search.html', form=form, nested=True)
         else:
-            return render_template('/users/search.html', form=form, nested=True)
+            return render_template('/search.html', form=form, nested=True)
 
 
 @app.route('/search/simple', methods=['GET'])
@@ -185,7 +185,7 @@ def handle_results():
     return render_template('/show_stories.html', results=results, nested=True)
 
 
-@app.route('/user/saved')
+@app.route('/saved')
 def user():
     if g.user.id != session[CURR_USER_KEY]:
         flash("Please log-in and try again.", "danger")
@@ -199,34 +199,35 @@ def user():
         if "saved" in session:
             session.pop("saved")
         session["saved"] = [story for story in user.saved_stories]
-        return render_template("/users/user.html", user=user, is_empty=is_empty, nested=True)
+        return render_template("/user.html", user=user, is_empty=is_empty, nested=True)
 
 
-@app.route('/user/story/<session_id>/open')
-def open_story_link(session_id):
+@app.route('/story/<id>/open')
+def open_story_link(id):
     """Opens url associated with story when link is clicked"""
     try:
-        story = Story.query.get(session_id)
+        story = Story.query.get(id)
+        return redirect(f"{story.url}")
+
     except:
         results = session['results']
-        story = [story for story in results if story['session_id'] == session_id][0]
-
-        
-    return redirect(f"{story['url']}")
+        story = [story for story in results if story['id'] == id][0]
+        return redirect(f"{story['url']}")
 
 
-@app.route('/story/<session_id>/save_story', methods=["POST"])
-def save_story(session_id):
+
+@app.route('/story/<id>/save_story', methods=["POST"])
+def save_story(id):
     if g.user.id != session[CURR_USER_KEY]:
         flash("Please log-in and try again.", "danger")
         return redirect("/")
 
     else:
         results = session["results"]
-        session_story = [story for story in results if story['session_id'] == session_id][0]
+        session_story = [story for story in results if story['id'] == id][0]
         story = Story(headline=session_story['headline'], source=session_story['source'], content=session_story['content'],
                       author=session_story['author'], description=session_story['description'], url=session_story['url'], image=session_story['image'],
-                      published_at=session_story['published_at'])
+                      published_at=session_story['published_at'], id=session_story['id'])
         user = User.query.get(g.user.id)
         # REWRITE 
         # if story in user.saved_stories:
@@ -234,21 +235,22 @@ def save_story(session_id):
         #     return redirect("/")
         user.saved_stories.append(story)
         db.session.commit()
-        return redirect("/user/saved")
+        return redirect("/saved")
 
 
-@app.route('/story/<int:story_id>/delete_story', methods=["POST"])
-def delete_story(story_id):
+@app.route('/story/<id>/delete_story', methods=["POST"])
+def delete_story(id):
     if g.user.id != session[CURR_USER_KEY]:
         flash("Please log-in and try again.", "danger")
         return redirect("/")
 
     else:
-        story = Story.query.get(story_id)
+        print(id, '******')
+        story = Story.query.get(id)
         user = User.query.get(g.user.id)
         user.saved_stories.remove(story)
         db.session.commit()
-        return redirect("/user/saved")
+        return redirect("/saved")
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -331,10 +333,11 @@ def logout():
 """Sentiment Analysis API for individual stories"""
 
 
-@app.route('/<session_id>/polarity', methods=['POST'])
-def show_pol_calls(session_id):
+@app.route('/<id>/polarity', methods=['POST'])
+def show_pol_calls(id):
+    print("@@@@@@")
     results = session["results"]
-    story = [story for story in results if story['session_id'] == session_id][0]
+    story = [story for story in results if story['id'] == id][0]
     score = polarize(story)
     if score == None:
         story['pol'] = "No Data"
@@ -345,10 +348,10 @@ def show_pol_calls(session_id):
     return jsonify({'response': story['pol']})
 
 
-@app.route('/<session_id>/subjectivity', methods=['POST'])
-def show_sub_calls(session_id):
+@app.route('/<id>/subjectivity', methods=['POST'])
+def show_sub_calls(id):
     results = session["results"]
-    story = [story for story in results if story['session_id'] == session_id][0]
+    story = [story for story in results if story['id'] == id][0]
     score = subjectize(story)
     if score == None:
         story['sub'] = "No Data"

@@ -20,13 +20,13 @@
                         <div class="row media">
                             {% if story.pol%}
                             <form data-story="{{story.id}}" class="sa-button col-sm my-auto order1 col-6" id="left-b"
-                                action='/user/{{story.id}}/polarity' , method="POST">
+                                action='/{{story.id}}/polarity' , method="POST">
                                 <input type="submit" value="{{story.pol}}" class="btn btn-dark btn-sm badge-pill">
                             </form>
 
                             {% else %}
-                            <form data-story="{{story.session_id}}" class="sa-button col-sm my-auto order1 col-6"
-                                id="left-b" action='user/{{story.session_id}}/polarity' , method="POST">
+                            <form data-story="{{story.id}}" class="sa-button col-sm my-auto order1 col-6" id="left-b"
+                                action='/{{story.id}}/polarity' , method="POST">
                                 <input type="submit" value="Get Polarity" class="btn btn-dark btn-sm badge-pill">
                             </form>
                             {% endif %}
@@ -36,14 +36,14 @@
 
                             {% if story.sub%}
                             <form data-story="{{story.id}}" class="sa-button col-sm my-auto col-6" id="right-b"
-                                action='/user/{{story.id}}/subjectivity' action='/sacalls/{{story.id}}/subjectivity' ,
+                                action='/{{story.id}}/subjectivity' action='/sacalls/{{story.id}}/subjectivity' ,
                                 method="POST">
                                 <input type="submit" value="{{story.sub}}" class="btn btn-dark btn-sm badge-pill">
                             </form>
 
                             {% else %}
-                            <form data-story="{{story.session_id}}" class="sa-button col-sm my-auto col-6" id="right-b"
-                                action='/{{story.session_id}}/subjectivity' ,method="POST">
+                            <form data-story="{{story.id}}" class="sa-button col-sm my-auto col-6" id="right-b"
+                                action='/{{story.id}}/subjectivity' ,method="POST">
                                 <input type="submit" value="Get Subjectivity" class="btn btn-dark btn-sm badge-pill">
                             </form>
                             {% endif %}

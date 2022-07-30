@@ -31,10 +31,10 @@ def save_to_session(articles):
         image = article['urlToImage']
         api_date = article['publishedAt']
         published_at = parser.parse(api_date)
-        session_id = uuid.uuid4().hex[:10]
+        id = uuid.uuid4().hex[:10]
         story = {'headline':headline, 'source':source, 'content':content,
         'author':author, 'description':description, 'url':url,
-        'image':image, 'published_at':published_at, 'session_id': session_id}
+        'image':image, 'published_at':published_at, 'id': id}
         results.append(story)
     session["results"] = results
     return results

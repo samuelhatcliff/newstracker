@@ -1,4 +1,4 @@
-from models import db, QueriedStory, User, QueriedStory, TestQ
+from models import db, User, Query
 from sent_analysis import subjectize, polarize, parse_async
 from flask import session, g
 
@@ -94,7 +94,7 @@ def add_saved_query(user_id, form):
     else:
         sort_by = form.sort_by.data
         sa = None
-        query = TestQ(user_id=g.user.id,
+        query = Query(user_id=g.user.id,
                       keyword=keyword,
                       source=source,
                       quantity=quantity,
@@ -107,6 +107,6 @@ def add_saved_query(user_id, form):
                       sort_by=sort_by
                       )
 
-        db.session.add(query)
-        db.session.commit()
-        user.saved_queries.append(query)
+    db.session.add(query)
+    db.session.commit()
+    user.saved_queries.append(query)

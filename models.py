@@ -35,15 +35,6 @@ class User(db.Model):
     saved_stories = db.relationship(
         'Story', secondary='saved_stories', backref='users')
 
-    saved_queries = db.relationship(
-        'TestQ', backref="users")
-
-    queried_stories = db.relationship(
-        'Story', secondary='queried_stories', backref='user_queries')
-    # history = db.relationship(
-    #     'Story', secondary='user_history', backref="viewed_by")
-    # notes = db.relationship('Note', backref='user')
-
     @classmethod
     def register(cls, username, pwd, email, first_name, last_name):
         hashed = bcrypt.generate_password_hash(pwd)
@@ -70,7 +61,7 @@ class User(db.Model):
 
 class Story(db.Model):
     __tablename__ = "stories"
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.String, nullable = False, unique = True, primary_key = True)
 
     """information taken from newsapi request"""
     headline = db.Column(db.String, nullable=False)
@@ -83,8 +74,6 @@ class Story(db.Model):
     published_at = db.Column(db.DateTime)
 
     """information related to its interaction with app"""
-    # notes = db.relationship('Note', backref='story')
-    views = db.Column(db.Integer)
     sub = db.Column(db.Text)
     pol = db.Column(db.Text)
 
@@ -99,57 +88,30 @@ class SavedStory(db.Model):
                    autoincrement=True)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    story_id = db.Column(db.Integer, db.ForeignKey(
+    story_id = db.Column(db.Text, db.ForeignKey(
         'stories.id'), nullable=False)
 
     def __repr__(self):
         return f"<ID: {self.id}, User ID#:{self.user_id}, Story ID#:{self.story_id}>"
 
 
-class QueriedStory(db.Model):
-    # stories contain too much info to save as session storage, so are turned into sqlalchemy objects.
-    # also useful for adding polarity and subjectivity when specified in searches, and for deleting each story from db to optimize space
-
-    __tablename__ = "queried_stories"
+class Query(db.Model):
+    __tablename__ = "queries"
     id = db.Column(db.Integer,
                    primary_key=True,
                    autoincrement=True)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    story_id = db.Column(db.Integer, db.ForeignKey(
-        'stories.id'), nullable=False)
+    name = db.Column(db.String, nullable = False)
+    default = db.Column(db.Boolean)
+    keyword = db.Column(db.String)
+    quantity = db.Column(db.Integer, default = 10)
+    date_from = db.Column(db.DateTime)
+    date_to = db.Column(db.DateTime)
+    language = db.Column(db.String)
+    sort_by = db.Column(db.String)
+    type = db.Column(db.String)
+    sa = db.Column(db.String, default = "")
 
     def __repr__(self):
-        return f"<ID: {self.id}, User ID#:{self.user_id}, Story ID#:{self.story_id}>"
-
-
-class TestQ(db.Model):
-    __tablename__ = "testqs"
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    category = db.Column(db.String, nullable=True)
-    keyword = db.Column(db.String, nullable=True)
-    source = db.Column(db.Text, nullable=True)
-    quantity = db.Column(db.Integer, nullable=True)
-    date_from = db.Column(db.String, nullable=True)
-    date_to = db.Column(db.String, nullable=True)
-    language = db.Column(db.String, nullable=True)
-    sort_by = db.Column(db.String, nullable=True)
-    sa = db.Column(db.String, nullable=True)
-    saved_query = db.Column(db.Boolean, nullable=True)
-    default = db.Column(db.Boolean, nullable=True)
-    type = db.Column(db.String, nullable=True)
-
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-
-    def __repr__(self):
-        return f"<ID: {self.id}, User ID#:{self.user_id}, category:{self.category}, keyword={self.keyword}, source={self.source}, quantity={self.quantity}, from={self.date_from}, to={self.date_to}, language={self.language}, sa = {self.sa}, saved_query={self.saved_query}, default={self.default}, type={self.type}>"
-
-
-class SavedQuery(db.Model):
-    __tablename__ = "saved_queries"
-    id = db.Column(db.Integer,
-                   primary_key=True,
-                   autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    query_id = db.Column(db.Integer, db.ForeignKey(
-        'testqs.id'), nullable=False)
+        return f"<ID: {self.id}, User ID#:{self.user_id}, Name:{self.name}, Default:{self.default}"
