@@ -8,7 +8,6 @@ from nltk.corpus import stopwords
 from newspaper import Article
 from multiprocessing.dummy import Pool as ThreadPool
 
-
 nltk.download('vader_lexicon')
 nltk.download('stopwords')
 nltk.download('punkt')
@@ -135,7 +134,7 @@ def polarize(headline, parsed=False):
         to be used in order_pol() by async_parse (in the case of multiple articles). Alternatively, it could
         be a single sqlalchemy object of a news story that needs to be parsed. In the latter case, we just 
         want text, as we don't need to keep track of ids."""
-
+    
         # first argument is a dictionary
         if parsed:
             parsed = headline
@@ -146,7 +145,8 @@ def polarize(headline, parsed=False):
         else:
             parsed = parse(headline, text_only=True)
             sentenced = nltk.tokenize.sent_tokenize(parsed)
-            headline = sia.polarity_scores(headline.headline)
+            headline = sia.polarity_scores(headline['headline'])
+
 
     except:
         return None
@@ -165,7 +165,6 @@ def polarize(headline, parsed=False):
         if res['compound']:
             # sometimes the composite will be zero for certain sentences. We don't want to include that data.
             coms.append(res['compound'])
-
     if len(coms) == 0:
         return None
     avg_com = round((sum(coms) / len(coms)), 2)

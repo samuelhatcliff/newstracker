@@ -3,7 +3,6 @@ import os
 import creds
 from flask import Flask, request, render_template, flash, redirect, render_template, jsonify, session, g
 from models import connect_db, db, User, Story
-# from flask_debugtoolbar import DebugToolbarExtension
 from flask_bcrypt import Bcrypt
 bcrypt = Bcrypt()
 
@@ -41,7 +40,6 @@ db.create_all()
 
 #SERVER_SIDE SESSION
 from flask_session import Session
-import redis
 app.config['SESSION_TYPE'] = 'redis'
 app.config['SESSION_USE_SIGNER'] = True
 app.config['SESSION_PERMANENT'] = False
@@ -60,7 +58,6 @@ server_session = Session(app)
 # change TestQ to "Query"
 # change "QueriedStories" to "ReturnedStories" or "Call Results" or "Query Results"
 # Redeploy!
-# add security
 # add error handling, testing
 # Redeploy!
 # more permanent fix for slideshows
@@ -76,6 +73,8 @@ server_session = Session(app)
 # Instead of changing current search query to sqlobject instead of session[dict],
 # convert sqlobject to session[dict] when the time comes to incorporate that feature
 
+#TODONOW: -move templates out of nested structure
+#-rewrite code and distinguish between session['saved] and session['results]
 
 @app.before_request
 def add_user_to_g():
@@ -93,30 +92,27 @@ def do_login(user):
 
 def do_logout(user):
     """Logout user."""
-    if user.queried_stories:
-        for story in user.queried_stories:
-            db.session.delete(story)
-            db.session.commit()
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
 
 
 """View functions for application"""
 
-@app.route('/')
-def slideshow():
-    """NewsTracker Homepage"""
-    categories = ['business', 'entertainment',
-                  'health', 'science', 'sports', 'technology']
-    data = []
-    results = async_reqs(categories)
-    for index, result in enumerate(results):
-        obj = {}
-        obj['results'] = result
-        obj['top_story'] = result[0]
-        obj['name'] = categories[index].capitalize()
-        data.append(obj)
-    return render_template('/homepage.html', data=data, no_user=True)
+with app.app_context():
+    @app.route('/')
+    def slideshow():
+        """NewsTracker Homepage"""
+        categories = ['business', 'entertainment',
+                    'health', 'science', 'sports', 'technology']
+        data = []
+        results = async_reqs(categories)
+        for index, result in enumerate(results):
+            obj = {}
+            obj['results'] = result
+            obj['top_story'] = result[0]
+            obj['name'] = categories[index].capitalize()
+            data.append(obj)
+        return render_template('/homepage.html', data=data, no_user=True)
 
 
 @app.route('/headlines', methods=['GET', 'POST'])
@@ -136,7 +132,7 @@ def home_page():
     #     return render_template('/show_stories.html', results=results)
     # else:
     #     """Generic Headlines without user logged in"""
-    results = api_call(None)
+    results = api_call()
     return render_template('/show_stories.html', results=results)
 
 
@@ -158,7 +154,7 @@ def search_form():
                 make_session_query(form)
                 if form.saved_query.data:
                     add_saved_query(g.user.id, form)
-                api_call(session['dict'], g.user.id)
+                api_call(session['dict'])
                 return redirect('/search/results')
             except:
                 return render_template('/users/search.html', form=form, nested=True)
@@ -170,13 +166,7 @@ def search_form():
 def search_simple():
     """API Call and Results for Simple Search"""
     keyword = request.args.get("search")
-    if CURR_USER_KEY in session:
-        user = User.query.get(g.user.id)
-        api_call(keyword, g.user.id)
-        results = user.queried_stories
-    else:
-        results = api_call(keyword)
-
+    results = api_call(keyword)
     return render_template('/show_stories.html', results=results, nested=True)
 
 
@@ -206,17 +196,23 @@ def user():
         is_empty = False
         if len(user.saved_stories) == 0:
             is_empty = True
+        if "saved" in session:
+            session.pop("saved")
+        session["saved"] = [story for story in user.saved_stories]
         return render_template("/users/user.html", user=user, is_empty=is_empty, nested=True)
 
 
-@app.route('/story/<int:story_id>/open')
-def open_story_link(story_id):
+@app.route('/user/story/<session_id>/open')
+def open_story_link(session_id):
     """Opens url associated with story when link is clicked"""
-    story = Story.query.get(story_id)
-    user = User.query.get(g.user.id)
-    user.history.append(story)
-    db.session.commit()
-    return redirect(f"{story.url}")
+    try:
+        story = Story.query.get(session_id)
+    except:
+        results = session['results']
+        story = [story for story in results if story['session_id'] == session_id][0]
+
+        
+    return redirect(f"{story['url']}")
 
 
 @app.route('/story/<session_id>/save_story', methods=["POST"])
@@ -335,55 +331,33 @@ def logout():
 """Sentiment Analysis API for individual stories"""
 
 
-@app.route('/<int:story_id>/polarity', methods=['POST'])
-def show_pol_calls(story_id):
-    story = Story.query.get(story_id)
+@app.route('/<session_id>/polarity', methods=['POST'])
+def show_pol_calls(session_id):
+    results = session["results"]
+    story = [story for story in results if story['session_id'] == session_id][0]
     score = polarize(story)
-
     if score == None:
-        story.pol = "No Data"
+        story['pol'] = "No Data"
     else:
         score = score['article_res']['result']
-        story.pol = str(score)
+        story['pol'] = str(score)
 
-    db.session.commit()
-
-    return jsonify({'response': story.pol})
+    return jsonify({'response': story['pol']})
 
 
-@app.route('/<int:story_id>/subjectivity', methods=['POST'])
-def show_sub_calls(story_id):
-    story = Story.query.get(story_id)
+@app.route('/<session_id>/subjectivity', methods=['POST'])
+def show_sub_calls(session_id):
+    results = session["results"]
+    story = [story for story in results if story['session_id'] == session_id][0]
     score = subjectize(story)
     if score == None:
-        story.sub = "No Data"
-
+        story['sub'] = "No Data"
     else:
         score = score['measure']
-        story.sub = str(score)
+        story['sub']= str(score)
 
-    db.session.commit()
+    return jsonify({'response': story['sub']})
 
-    return jsonify({'response': story.sub})
-
-
-# test functions, remove when app is ready
-
-
-# def sub(headlines):
-#     for article in headlines:
-#         result = subjectize(article)
-#         print(headlines.index(article))
-#         print(result)
-#     return "all done"
-
-
-# def pol(headlines):
-#     for article in headlines:
-#         result = polarize(article)
-#         print(headlines.index(article))
-#         print(result)
-#     return "all done"
 
 
 # @app.route('/')

@@ -2,9 +2,7 @@ from models import db, QueriedStory, User, QueriedStory, TestQ
 from sent_analysis import subjectize, polarize, parse_async
 from flask import session, g
 
-
 """Helper Functions"""
-
 
 def order_pol():
     """Loops over session results, filters out stories with no SA results, 

@@ -13,6 +13,7 @@ for (let button of saButtons) {
         let input = text.nextSibling;
         let value = input.value;
         let storyID = button.getAttribute('data-story')
+        console.log("TRYTYYYY", storyID)
 
         if (value === "Get Polarity") {
             try {
