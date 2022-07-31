@@ -30,7 +30,7 @@ class SearchForm(FlaskForm):
     # A comma-seperated string of identifiers (maximum 20) for the news sources or blogs you want headlines from. Use the /sources
     # endpoint to locate these programmatically or look at the sources index.
 
-    source = SelectField("Choose source", choices=[
+    source = SelectField("Choose source:", choices=[
         ('', 'All'), ('abc-news', 'ABC News'), ('al-jazeera-english',
                                                 'Al Jazeera'), ('associated-press', 'Associated Press'), ('axios', 'Axios'),
         ('bbc-news', 'BBC News'), ('bloomberg', 'Bloomberg'), ('cbc-news',
@@ -42,8 +42,8 @@ class SearchForm(FlaskForm):
         ('the-washington-post', "The Washington Post"), ('time', 'Time'), ('usa-today', 'USA Today'), ('vice-news', 'Vice News')],
         validators=[Optional()])
 
-    quantity = IntegerField("Enter of many articles you want returned (max 10):", default=10, validators=[
-                            NumberRange(min=1, max=10, message="Please enter a number between 1 and 10")])
+    quantity = IntegerField("Enter # of many articles you want returned (max 15):", default=10, validators=[
+                            NumberRange(min=1, max=15, message="Please enter a number between 1 and 10")])
     # this is represented by the "pageSize" parameter in the API. The default and max are both set to 100.
     # figure out how to change this default to 10
 

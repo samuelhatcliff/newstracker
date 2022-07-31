@@ -112,6 +112,7 @@ with app.app_context():
             obj['top_story'] = result[0]
             obj['name'] = categories[index].capitalize()
             data.append(obj)
+            print('Data$$', data, "INDEX$$", index, 'length of results$$', len(results), "object$$$", obj, "$$$$$$$")
         return render_template('/homepage.html', data=data, no_user=True)
 
 
@@ -140,7 +141,7 @@ def home_page():
 def show_for_category(category):
     """Display top headlines for given category based off of link clicked from homepage"""
     category = category.lower()
-    results = cat_calls(category)
+    results = cat_calls(category, slideshow=False)
     return render_template('show_stories.html', results=results)
 
 
@@ -245,7 +246,6 @@ def delete_story(id):
         return redirect("/")
 
     else:
-        print(id, '******')
         story = Story.query.get(id)
         user = User.query.get(g.user.id)
         user.saved_stories.remove(story)
@@ -335,7 +335,6 @@ def logout():
 
 @app.route('/<id>/polarity', methods=['POST'])
 def show_pol_calls(id):
-    print("@@@@@@")
     results = session["results"]
     story = [story for story in results if story['id'] == id][0]
     score = polarize(story)

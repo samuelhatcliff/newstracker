@@ -12,11 +12,7 @@ newsapi = NewsApiClient(api_key=my_api_key)
 #async imports
 from multiprocessing.dummy import Pool as ThreadPool
 
-
-def save_to_session(articles):
-    """Saves results from api calls as a list of session objects"""
-    if "results" in session: # clears previous session results if they exist
-        session.pop('results')
+def collect_results(articles):
     results = []
     for article in articles:
         headline = article['title']
@@ -36,9 +32,15 @@ def save_to_session(articles):
         'author':author, 'description':description, 'url':url,
         'image':image, 'published_at':published_at, 'id': id}
         results.append(story)
-    session["results"] = results
     return results
 
+def save_to_session(articles):
+    """Saves results from api calls as a list of session objects"""
+    if "results" in session: # clears previous session results if they exist
+        session.pop('results')
+    results  = collect_results(articles)
+    session["results"] = results
+    return results
 
 def api_call(query=None):
     """Makes API call for top headlines"""
@@ -70,10 +72,13 @@ def async_reqs(query):
     return results
 
 
-def cat_calls(query):
+def cat_calls(query, slideshow = True):
     """Gets generalized headlines for a specific catagory"""
     data = newsapi.get_top_headlines(language="en", category=f"{query}")
     articles = data['articles']
+    if slideshow:
+        data = collect_results(articles)
+        return data
     saved = save_to_session(articles)
     return saved
 
