@@ -16,7 +16,7 @@ from sqlalchemy import exc
 from psycopg2.errors import UniqueViolation
 
 # import all helper functions
-from helpers import add_saved_query, make_session_query, order_sub, order_pol
+from helpers import *
 
 # set-up app
 CURR_USER_KEY = "curr_user"
@@ -38,7 +38,7 @@ connect_db(app)
 # db.drop_all()
 db.create_all()
 
-#SERVER_SIDE SESSION
+#server-side session
 from flask_session import Session
 app.config['SESSION_TYPE'] = 'redis'
 app.config['SESSION_USE_SIGNER'] = True
@@ -52,22 +52,22 @@ server_session = Session(app)
 # Todo:
 
 # Redeploy!
-# Figure out how to associate default query search with user. start by figuring out if migrations are neccessary. look up many to one relationships in sqlalchemy. saved_queries is a many to many relationship, but should be accessible as many to 1 with a simple foreign key. use user.filter to get foreign key
 # implement saved queries (quick queries feauture)
 # re-write polarity ordering
-# change TestQ to "Query"
-# change "QueriedStories" to "ReturnedStories" or "Call Results" or "Query Results"
+# write else statement for if user not in session
 # Redeploy!
 # add error handling, testing
 # Redeploy!
 # more permanent fix for slideshows
 # find better way than "nested" to determine bootstrap path for nested routes
+# create separate .env file for app config 
 
 
 # When deploying:
 # watch out for <link rel="stylesheet" href="http://127.0.0.1:5000/static/app.css"> that links css file. the absolute
 # path of the local route was included to fix nested routes bootstrap bug. figure out how to fix this in production
 # make sure api key is hidden and works
+# connect redis to heroku
 
 # Notes:
 # Instead of changing current search query to sqlobject instead of session[dict],
@@ -112,7 +112,6 @@ with app.app_context():
             obj['top_story'] = result[0]
             obj['name'] = categories[index].capitalize()
             data.append(obj)
-            print('Data$$', data, "INDEX$$", index, 'length of results$$', len(results), "object$$$", obj, "$$$$$$$")
         return render_template('/homepage.html', data=data, no_user=True)
 
 
@@ -155,7 +154,7 @@ def search_form():
                 make_session_query(form)
                 if form.saved_query.data:
                     add_saved_query(g.user.id, form)
-                api_call(session['dict'])
+                api_call(session['query'])
                 return redirect('/search/results')
             except:
                 return render_template('/search.html', form=form, nested=True)
@@ -174,7 +173,7 @@ def search_simple():
 @app.route('/search/results')
 def handle_results():
     if CURR_USER_KEY in session:
-        dict = session['dict']
+        dict = session['query']
         results = session['results']
         if dict['sa'] == 'polarity':
             results = order_pol()
@@ -182,17 +181,12 @@ def handle_results():
             results = order_sub()
         else:
             return render_template('/show_stories.html', results=results, nested=True)
-
     return render_template('/show_stories.html', results=results, nested=True)
 
 
 @app.route('/saved')
 def user():
-    if g.user.id != session[CURR_USER_KEY]:
-        flash("Please log-in and try again.", "danger")
-        return redirect("/")
-
-    else:
+    if CURR_USER_KEY in session:
         user = User.query.get(g.user.id)
         is_empty = False
         if len(user.saved_stories) == 0:
@@ -201,6 +195,9 @@ def user():
             session.pop("saved")
         session["saved"] = [story for story in user.saved_stories]
         return render_template("/user.html", user=user, is_empty=is_empty, nested=True)
+    else:
+        flash("Please log-in and try again.", "danger")
+        return redirect("/")
 
 
 @app.route('/story/<id>/open')
@@ -209,21 +206,14 @@ def open_story_link(id):
     try:
         story = Story.query.get(id)
         return redirect(f"{story.url}")
-
     except:
         results = session['results']
         story = [story for story in results if story['id'] == id][0]
         return redirect(f"{story['url']}")
 
-
-
 @app.route('/story/<id>/save_story', methods=["POST"])
 def save_story(id):
-    if g.user.id != session[CURR_USER_KEY]:
-        flash("Please log-in and try again.", "danger")
-        return redirect("/")
-
-    else:
+    if CURR_USER_KEY in session:
         results = session["results"]
         session_story = [story for story in results if story['id'] == id][0]
         story = Story(headline=session_story['headline'], source=session_story['source'], content=session_story['content'],
@@ -237,26 +227,27 @@ def save_story(id):
         user.saved_stories.append(story)
         db.session.commit()
         return redirect("/saved")
+    else:
+        flash("Please log-in and try again.", "danger")
+        return redirect("/")
 
 
 @app.route('/story/<id>/delete_story', methods=["POST"])
 def delete_story(id):
-    if g.user.id != session[CURR_USER_KEY]:
-        flash("Please log-in and try again.", "danger")
-        return redirect("/")
-
-    else:
+    if CURR_USER_KEY in session:
         story = Story.query.get(id)
         user = User.query.get(g.user.id)
         user.saved_stories.remove(story)
         db.session.commit()
         return redirect("/saved")
+    else:
+        flash("Please log-in and try again.", "danger")
+        return redirect("/")
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def register_user():
     form = RegisterForm()
-
     if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
@@ -265,7 +256,6 @@ def register_user():
         last_name = form.last_name.data
         new_user = User.register(
             username, password, email, first_name, last_name)
-
         try:
             db.session.add(new_user)
             db.session.commit()
@@ -275,9 +265,7 @@ def register_user():
             if isinstance(e.orig, UniqueViolation):
                 form.username.errors = [
                     "The username you entered is already taken. Please pick another one."]
-
             # https://www.youtube.com/embed/iBYCoLhziX4?showinfo=0&controls=1&rel=0&autoplay=1
-
     return render_template('register.html', form=form)
 
 
@@ -295,7 +283,6 @@ def login_user():
         else:
             form.username.errors = [
                 "Invalid username or password. Please try again."]
-
     return render_template('login.html', form=form)
 
 
@@ -338,12 +325,11 @@ def show_pol_calls(id):
     results = session["results"]
     story = [story for story in results if story['id'] == id][0]
     score = polarize(story)
-    if score == None:
+    if not score:
         story['pol'] = "No Data"
     else:
         score = score['article_res']['result']
         story['pol'] = str(score)
-
     return jsonify({'response': story['pol']})
 
 
@@ -352,12 +338,11 @@ def show_sub_calls(id):
     results = session["results"]
     story = [story for story in results if story['id'] == id][0]
     score = subjectize(story)
-    if score == None:
+    if not score:
         story['sub'] = "No Data"
     else:
         score = score['measure']
         story['sub']= str(score)
-
     return jsonify({'response': story['sub']})
 
 

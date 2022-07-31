@@ -1,6 +1,6 @@
 #general imports
 import os
-from flask import session, g
+from flask import session
 import uuid
 from newsapi.newsapi_client import NewsApiClient
 from dateutil import parser
@@ -34,6 +34,7 @@ def collect_results(articles):
         results.append(story)
     return results
 
+
 def save_to_session(articles):
     """Saves results from api calls as a list of session objects"""
     if "results" in session: # clears previous session results if they exist
@@ -42,19 +43,18 @@ def save_to_session(articles):
     session["results"] = results
     return results
 
+
 def api_call(query=None):
     """Makes API call for top headlines"""
     if not query:
         # we can determine that a request for headlines is being made if there is no search query given
         results = top_headlines_call()
         return results
-
     """Makes API call for simple search from search bar in navbar (keyword only)"""
     if type(query) == str:
         # if this function is called via simple_search view function, the query will be a string
         results = simple_search_call(query)
         return results
-
     """Makes API call for advanced search"""
     #  we determine that an advanced search call is being made
     #  if it hasn't already been flagged as a simple search or headline call
@@ -73,10 +73,10 @@ def async_reqs(query):
 
 
 def cat_calls(query, slideshow = True):
-    """Gets generalized headlines for a specific catagory"""
+    """API call to get generalized headlines for a specific catagory"""
     data = newsapi.get_top_headlines(language="en", category=f"{query}")
     articles = data['articles']
-    if slideshow:
+    if slideshow: #if api request is being made for homepage, transfer data directly rather than save to session
         data = collect_results(articles)
         return data
     saved = save_to_session(articles)
@@ -84,7 +84,7 @@ def cat_calls(query, slideshow = True):
 
 
 def simple_search_call(query):
-    """Gets results from simple search """
+    """API call to get results from single search query"""
     data = newsapi.get_everything(q=f"{query}")
     articles = data['articles']
     spliced = articles[:10]
@@ -93,7 +93,7 @@ def simple_search_call(query):
 
 
 def top_headlines_call():
-    """Gets Generic top headlines"""
+    """API call to get top headlines for all categories"""
     data = newsapi.get_top_headlines(language="en")
     articles = data['articles']
     saved = save_to_session(articles)

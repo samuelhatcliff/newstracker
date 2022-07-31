@@ -1,6 +1,6 @@
 from models import db, User, Query
 from sent_analysis import subjectize, polarize, parse_async
-from flask import session, g
+from flask import session
 
 """Helper Functions"""
 
@@ -60,27 +60,26 @@ def transfer_db_query_to_session(query):
 
 
 def make_session_query(form):
-    dict = {}
-    dict['keyword'] = form.keyword.data
-    dict['source'] = form.source.data
-    dict['quantity'] = form.quantity.data
-    dict['date_from'] = form.date_from.data
-    dict['date_to'] = form.date_to.data
-    dict['language'] = form.language.data
+    query = {}
+    query['keyword'] = form.keyword.data
+    query['source'] = form.source.data
+    query['quantity'] = form.quantity.data
+    query['date_from'] = form.date_from.data
+    query['date_to'] = form.date_to.data
+    query['language'] = form.language.data
 
     if form.sort_by.data == "subjectivity" or form.sort_by.data == "polarity":
-        dict['sa'] = form.sort_by.data
-        dict['sort_by'] = 'relevancy'
+        query['sa'] = form.sort_by.data
+        query['sort_by'] = 'relevancy'
     else:
-        dict['sort_by'] = form.sort_by.data
-        dict['sa'] = None
-    session['dict'] = dict
-    return dict
+        query['sort_by'] = form.sort_by.data
+        query['sa'] = None
+    session['query'] = query
+    return query
 
 
 def add_saved_query(user_id, form):
     """Adds saved query to associated user in db"""
-    user = User.query.get(user_id)
     keyword = form.keyword.data
     source = form.source.data
     quantity = form.quantity.data
@@ -94,7 +93,8 @@ def add_saved_query(user_id, form):
     else:
         sort_by = form.sort_by.data
         sa = None
-        query = Query(user_id=g.user.id,
+    #TODO: query sqlalchemy object needs name. build responsive form that asks if query should be default and allows space to name query
+    query = Query(user_id=user_id,
                       keyword=keyword,
                       source=source,
                       quantity=quantity,
@@ -106,7 +106,5 @@ def add_saved_query(user_id, form):
                       sa=sa,
                       sort_by=sort_by
                       )
-
     db.session.add(query)
     db.session.commit()
-    user.saved_queries.append(query)

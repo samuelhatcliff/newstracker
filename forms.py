@@ -23,12 +23,6 @@ class LoginForm(FlaskForm):
 
 class SearchForm(FlaskForm):
     keyword = StringField("Enter a search term:", validators=[Optional()])
-    # if this field is empty, the get_top_headlines function should be called instead
-
-    # source = StringField("Enter name of source:", validators=[Optional()])
-    # could potentially allow for multiple sources to be searched later. From API docs:
-    # A comma-seperated string of identifiers (maximum 20) for the news sources or blogs you want headlines from. Use the /sources
-    # endpoint to locate these programmatically or look at the sources index.
 
     source = SelectField("Choose source:", choices=[
         ('', 'All'), ('abc-news', 'ABC News'), ('al-jazeera-english',
@@ -42,33 +36,27 @@ class SearchForm(FlaskForm):
         ('the-washington-post', "The Washington Post"), ('time', 'Time'), ('usa-today', 'USA Today'), ('vice-news', 'Vice News')],
         validators=[Optional()])
 
-    quantity = IntegerField("Enter # of many articles you want returned (max 15):", default=10, validators=[
-                            NumberRange(min=1, max=15, message="Please enter a number between 1 and 10")])
-    # this is represented by the "pageSize" parameter in the API. The default and max are both set to 100.
-    # figure out how to change this default to 10
+    quantity = IntegerField("Enter # of many articles you want returned (max 15):",
+     default=10, validators=[
+    NumberRange(min=1, max=15, # this is represented by the "pageSize" parameter in the API where default and max are both set to 100
+    message="Please enter a number between 1 and 10")]) 
 
-    # search_in = SelectField("Search in:", choices=[('headline', 'Headline'), ('description', 'Description'), ('content', 'Content')], validators= [Optional()])
-    # doesn't appear to be supported by python newsapi library.
-    # default from api: all fields are searched
 
     date_from = DateField("Select a starting date:", validators=[Optional()])
-    date_to = DateField("Up until which date?",
-                        default=dt.datetime.today, validators=[Optional()])
-   # API default if will be newest to oldest with no limit
+    date_to = DateField("Up until which date?",  # API default if will be newest to oldest with no limit 
+    default=dt.datetime.today, validators=[Optional()])
 
-    language = SelectField("Choose which language you want to see results from:", choices=[
-        ('en', 'English'), ('es', 'Spanish'), ('fr', 'French'), ('ar',
-                                                                 'Arabic'), ('he', 'Hebrew'), ('he', 'Hebrew'), ('it', 'Italian'),
-        ('nl', 'Dutch'), ('no', 'Norwegian'), ('pt', 'Portuguese'), ('ru', 'Russian'), ('zh', 'Chinese'), ('se', 'Swedish')],
-        validators=[Optional()])
+    language = SelectField("Choose which language you want to see results from:", choices=[ # API default is all languages
 
-    # can't find 'ud' language code (which is specificied by the api), try to run a search with ud as part of query to figure out what it is
-    # API default is all languages. Set to english if this becomes problematic
+        ('en', 'English'), ('es', 'Spanish'), ('fr', 'French'),
+        ('ar', 'Arabic'), ('he', 'Hebrew'), ('he', 'Hebrew'), ('it', 'Italian'),
+        ('nl', 'Dutch'), ('no', 'Norwegian'), ('pt', 'Portuguese'), ('ru', 'Russian'),
+        ('zh', 'Chinese'), ('se', 'Swedish')],
+        validators=[Optional()]) # can't find 'ud' language code as specified by api
 
-    sort_by = SelectField("Search by:", choices=[('relevancy', 'Relevant'), ('popularity', 'Popular'), ('publishedAt', 'Recent'),
-                                                 ('polarity', 'Polarity (results ordered from positive to negative)'), ('subjectivity', 'Objectivity (results ordered from objective to subjective)')], validators=[Optional()])
-    # API default: publishedAt. subjectivity and polarity might take more time as individual get requests are needed for each url. This data
-    # comes from our own logic, rather than the API's
+    sort_by = SelectField("Search by:", choices=[('relevancy', 'Relevant'), ('popularity', 'Popular'), ('publishedAt', 'Recent'), # API default: publishedAt 
+                                                 ('polarity', 'Polarity (results ordered from positive to negative)'), 
+                                                 ('subjectivity', 'Objectivity (results ordered from objective to subjective)')], validators=[Optional()])
 
     default = BooleanField(
         "Make this your default search settings for your home page feed?")
