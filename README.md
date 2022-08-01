@@ -5,8 +5,8 @@ Python, Flask, SQLAlchemy, NewsAPI, WTForms, CSS, Bootstrap, AJAX, JSON, NLTK, S
 
 
 ## Summary: 
-  NewsTracker is an application designed to enhance and optimize the way that a user interacts with news stories. 
-  This is achieved primarily using a search engine that connects to NewsAPI which allows the user to narrow-down the content of their results.  
+  NewsTracker is an application designed to enhance and optimize the way a user interacts with news stories. 
+  This is achieved primarily using a search engine that connects to [NewsAPI](https://newsapi.org/) which allows the user to narrow-down the content of their results.  
   Additional search parameters such as "Polarity" and "Subjectivity" use Natural Language Processing through Python's NLTK library to parse through 
   the html data given by the URL returned by NewsAPI, which will order a user's search results by the degree to which an article is objective or positive, 
   as well as attach specific Sentimental Analysis data to each story.
