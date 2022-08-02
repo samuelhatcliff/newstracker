@@ -40,9 +40,12 @@ Python, Flask, SQLAlchemy, Redis, NewsAPI, NLTK, Newspaper, Axios, WTForms, CSS,
 
 
 ## User-Flow: 
-  The homepage of NewsTracker contains cards on the left side explaining various features of the app, while the right side contains multiple Bootstrap carousels
+  The homepage of NewsTracker contains an easily accessible Demo User login button on the top right of the page, which allows a visitor to access the same feautures as a real user. The page as a whole contains cards on the left side explaining various features of the app,
+  while the right side contains multiple Bootstrap carousels
   containing the top headlines for each category permitted to us by the News Api.  Clicking on each story as they pass through the carousel results 
-  in said story opening up in a new window, while clicking the category name itself returns a feed of headlines containing the stories displayed in the carousel. A Demo User login button is accessible through the homepage above the carousel, which allows a visitor to access the same feautures as a "real" user. 
+  in said story opening up in a new window, while clicking the category name itself returns a feed of headlines containing the stories displayed in the carousel.  
+  
+  ![Homepage](static/photos/user_flows/homepage2.png)
   
   A user can use the links in the navbar to log-in or register. After which, they will be redirected to a feed of headlines (*referred to as "Headlines" in the navbar*)
   or a feed displaying results from their default search query, if previously selected. 
