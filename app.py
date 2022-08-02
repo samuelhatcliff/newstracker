@@ -184,8 +184,6 @@ def handle_results():
     return render_template('/show_stories.html', results=results, nested=True)
 
     
-
-
 @app.route('/saved')
 def user():
     if CURR_USER_KEY in session:
