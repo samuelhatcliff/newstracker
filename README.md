@@ -59,7 +59,7 @@ Python, Flask, SQLAlchemy, Redis, NewsAPI, NLTK, Newspaper, Axios, WTForms, CSS,
 ## Data-Flows: 
   Data for individual news stories is sent to the app via one of the two endpoints that NewsApi provides; Get Top Headlines, and Get Everything. Get Everything is the more customizable endpoint, with a sizable amount of different parameters, many of which are utilized in News-Tracker's advanced search. Get Top Headlines, on the other hand, only allows language and category as its parameters. Both are used at various points throughout the app. The diagram below illustrates the directional flow of information and data as it travels throughout the application.
 
-![Diagram](static/photos/diagram-complex.pdf)
+![Diagram](static/photos/newstracker-data-v1.drawio.png)
 
   
   
