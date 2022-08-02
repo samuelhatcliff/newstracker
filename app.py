@@ -8,7 +8,7 @@ bcrypt = Bcrypt()
 
 # imports from other modules in directory
 from forms import RegisterForm, LoginForm, SearchForm
-from api_calls import api_call, cat_calls, async_reqs
+from api_calls import *
 from sent_analysis import subjectize, polarize
 
 # sqlalchemy imports
@@ -100,7 +100,7 @@ def do_logout(user):
 
 with app.app_context():
     @app.route('/')
-    def slideshow():
+    def homepage():
         """NewsTracker Homepage"""
         categories = ['business', 'entertainment',
                     'health', 'science', 'sports', 'technology']
@@ -116,7 +116,7 @@ with app.app_context():
 
 
 @app.route('/headlines', methods=['GET', 'POST'])
-def home_page():
+def headlines():
     # For Development to Limit API Requests:
     # if CURR_USER_KEY in session:
     #     user = User.query.get(g.user.id)
@@ -132,7 +132,7 @@ def home_page():
     #     return render_template('/show_stories.html', results=results)
     # else:
     #     """Generic Headlines without user logged in"""
-    results = api_call()
+    results = top_headlines_call()
     return render_template('/show_stories.html', results=results)
 
 
@@ -154,7 +154,7 @@ def search_form():
                 make_session_query(form)
                 if form.saved_query.data:
                     add_saved_query(g.user.id, form)
-                api_call(session['query'])
+                advanced_search_call(session['query'])
                 return redirect('/search/results')
             except:
                 return render_template('/search.html', form=form, nested=True)
@@ -166,22 +166,24 @@ def search_form():
 def search_simple():
     """API Call and Results for Simple Search"""
     keyword = request.args.get("search")
-    results = api_call(keyword)
+    results = simple_search_call(keyword)
     return render_template('/show_stories.html', results=results, nested=True)
 
 
 @app.route('/search/results')
 def handle_results():
     if CURR_USER_KEY in session:
-        dict = session['query']
+        query = session['query']
         results = session['results']
-        if dict['sa'] == 'polarity':
+        if query['sa'] == 'polarity':
             results = order_pol()
-        elif dict['sa'] == 'subjectivity':
+        elif query['sa'] == 'subjectivity':
             results = order_sub()
         else:
             return render_template('/show_stories.html', results=results, nested=True)
     return render_template('/show_stories.html', results=results, nested=True)
+
+    
 
 
 @app.route('/saved')

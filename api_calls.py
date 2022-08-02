@@ -44,22 +44,22 @@ def save_to_session(articles):
     return results
 
 
-def api_call(query=None):
-    """Makes API call for top headlines"""
-    if not query:
-        # we can determine that a request for headlines is being made if there is no search query given
-        results = top_headlines_call()
-        return results
-    """Makes API call for simple search from search bar in navbar (keyword only)"""
-    if type(query) == str:
-        # if this function is called via simple_search view function, the query will be a string
-        results = simple_search_call(query)
-        return results
-    """Makes API call for advanced search"""
-    #  we determine that an advanced search call is being made
-    #  if it hasn't already been flagged as a simple search or headline call
-    results = advanced_search_call(query)
-    return results
+# def api_call(query=None):
+#     """Makes API call for top headlines"""
+#     if not query:
+#         # we can determine that a request for headlines is being made if there is no search query given
+#         results = top_headlines_call()
+#         return results
+#     """Makes API call for simple search from search bar in navbar (keyword only)"""
+#     if type(query) == str:
+#         # if this function is called via simple_search view function, the query will be a string
+#         results = simple_search_call(query)
+#         return results
+#     """Makes API call for advanced search"""
+#     #  we determine that an advanced search call is being made
+#     #  if it hasn't already been flagged as a simple search or headline call
+#     results = advanced_search_call(query)
+#     return results
 
 
 """Individual functions for separate types of API Calls"""
@@ -83,20 +83,19 @@ def cat_calls(query, slideshow = True):
     return saved
 
 
+def top_headlines_call():
+    """API call to get top headlines for all categories"""
+    data = newsapi.get_top_headlines(language="en")
+    articles = data['articles']
+    saved = save_to_session(articles)
+    return saved
+
 def simple_search_call(query):
     """API call to get results from single search query"""
     data = newsapi.get_everything(q=f"{query}")
     articles = data['articles']
     spliced = articles[:10]
     saved = save_to_session(spliced)
-    return saved
-
-
-def top_headlines_call():
-    """API call to get top headlines for all categories"""
-    data = newsapi.get_top_headlines(language="en")
-    articles = data['articles']
-    saved = save_to_session(articles)
     return saved
 
 
