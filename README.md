@@ -10,10 +10,9 @@ Python, Flask, SQLAlchemy, Redis, NewsAPI, NLTK, Newspaper, Axios, WTForms, CSS,
   Additional search parameters such as [Polarity"](https://www.nltk.org/api/nltk.sentiment.html) and [Subjectivity](https://www.topcoder.com/thrive/articles/getting-started-with-textblob-for-sentiment-analysis#:~:text=Subjectivity%20is%20the%20output%20that,%2C%20WordNet%20integration%2C%20and%20more.) use Natural Language Processing through Python's [NLTK](https://www.nltk.org/) and [Textblob](https://textblob.readthedocs.io/en/dev/) libararies to parse through 
   the html data given by the URL returned by NewsAPI, which will order a user's search results by the degree to which an article is objective or positive, 
   as well as attach specific Sentimental Analysis data to each story.
-  Other features available to users include the ability to save stories that they want to refer back to later, as well save a specific search query as their 
-  default so that the main headline page will show results based off of the user's default search query. Future features will include the ability for a user
-  to save and title multiple search queries and folders containing saved stories, as well as visual representations of data gleaned from the app's SA features. 
-
+  
+  Other features available to users include the ability to save stories that they want to refer back to later, save multiple search queries for easy-access through an accordian drop-down, and the ability to set one of said queries as a user's default so that their headline feed will be base its results off that query
+  default so that the main headline page will show results based off of the user's default search query. 
 
 ## Purpose: 
   The ability to run an advanced search query to display a specific type of story and store it permanently in a user's account could be beneficial for 
