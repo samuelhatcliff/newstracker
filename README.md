@@ -45,7 +45,7 @@ Python, Flask, SQLAlchemy, Redis, NewsAPI, NLTK, Newspaper, Axios, WTForms, CSS,
   containing the top headlines for each category permitted to us by the News Api.  Clicking on each story as they pass through the carousel results 
   in said story opening up in a new window, while clicking the category name itself returns a feed of headlines containing the stories displayed in the carousel.  
   
-  ![Homepage](static/photos/user_flows/homepage2.png)
+  ![Homepage](static/photos/user_flows/homepage-mobile.png)
   
   A user can use the links in the navbar to log-in or register. After which, they will be redirected to a feed of headlines (*referred to as "Headlines" in the navbar*)
   or a feed displaying results from their default search query, if previously selected. 
