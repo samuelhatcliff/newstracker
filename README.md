@@ -1,7 +1,7 @@
 # newstracker
 
 ## Technology/Tools: 
-Python, Flask, SQLAlchemy, NewsAPI, WTForms, CSS, Bootstrap, AJAX, JSON, NLTK, Spacy, Newspaper.
+Python, Flask, SQLAlchemy, Redis, NewsAPI, NLTK, Newspaper, Axios, WTForms, CSS, Bootstrap,
 
 
 ## Summary: 
