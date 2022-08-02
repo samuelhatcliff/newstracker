@@ -57,25 +57,10 @@ Python, Flask, SQLAlchemy, Redis, NewsAPI, NLTK, Newspaper, Axios, WTForms, CSS,
   wherever they are rendered, with the exception of the category-carousels on the home-page. 
  
 ## Data-Flows: 
-  When NewsTracker loads its homepage, it automatically makes several API get requests to NewsAPI using the "Top Headlines" endpoint. This API only accepts one
-  optional parameter, which is the category of top headlines requested by us to the API. The "Headlines" link in the navbar will make an API call to the same endpoint with no
-  additional parameters aside from setting "language" to "en" (unless switched to a user's default search query, see below).
-  
-  Get requests that require additional API parameters (simple search in the navbar, advanced searches, or default search queries replacing a user's headlines page) need to use
-  NewsAPI's "Get Everything" endpoint, which allows more specific arguments to be passed in to achieve our desired results. On our end, we use SQLalchemy to save the data contained
-  within the search query itself as an object represented by the search-query table. This helps us access information from the search query globally, which relieves us of the need to use
-  session or to be constantly passing the data into various routes as an argument. Another positive effect of storing the query data this way, is that it allows us to link queries
-  to specific users, which will be useful in the future when the ability for a user to save various search queries that they have set themselves is implemented. 
-  
-  In every circumstance where we need to make a get request to NewsAPI, we use the function `api_call`, which can be found in the `api_calls` module. As you can imagine,
-  this is where all of our logic related to our interactions with NewsAPI is located. Our `api_call` function determines the type of API call being made on our end (ie simple search,
-  advanced search, top headlines), calls one of the functions that we have written below designated to specific types of requests on our end, and proceeds to call the 
-  `save_to_db` function. This function uses our QueriedStory table (not to be confused with the table representing the query data itself) to save the data returned by NewsAPI as stories
-  assigned to a particular user. This allows the results of these types of search queries to be retrieved globally and to be manipulated by SA results after they've been saved to our database. 
-  These stories will be deleted from user.queried_stories the next time the function as called, which avoids unwanted stories from being attached to our 
-  search results and saves us space in our own database. No story is permanently saved to our own database unless added to `user.saved_stories` by the user saving the story.
-  
-  SA data functions can be found in the `sent_analysis` module. The result of passing a particular story in to one of these functions is then committed to each story in our database.
+  Data for individual news stories is sent to the app via one of the two endpoints that NewsApi provides; Get Top Headlines, and Get Everything. Get Everything is the more customizable endpoint, with a sizable amount of different parameters, many of which are utilized in News-Tracker's advanced search. Get Top Headlines, on the other hand, only allows language and category as its parameters. Both are used at various points throughout the app. The diagram below illustrates the directional flow of information and data as it travels throughout the application.
+
+![Diagram](static/photos/diagram-complex.pdf)
+
   
   
 ## Challenges: 
