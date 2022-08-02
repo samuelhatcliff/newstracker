@@ -16,7 +16,7 @@ Python, Flask, SQLAlchemy, Redis, NewsAPI, NLTK, Newspaper, Axios, WTForms, CSS,
 
 
 ## Purpose: 
-  The ability to run an advanced search query to display a specific type of story and store it permanently in a user's account should be beneficial for 
+  The ability to run an advanced search query to display a specific type of story and store it permanently in a user's account could be beneficial for 
   anyone wanting to keep up with current events and/or investment opportunities. Getting Sentimental Analysis prior to reading a story has a variety of potential 
   benefits. Imagine the following scenarios:
 
@@ -41,8 +41,8 @@ Python, Flask, SQLAlchemy, Redis, NewsAPI, NLTK, Newspaper, Axios, WTForms, CSS,
 
 ## User-Flow: 
   The homepage of NewsTracker contains cards on the left side explaining various features of the app, while the right side contains multiple Bootstrap carousels
-  that represent each category that NewsApi allows to passed as an argument to its "Top Headlines" endpoint. Clicking on each story as they pass through the carousel results 
-  in said story opening up in a new window, while clicking the category name itself returns a feed of headlines containing the stories displayed in the carousel.
+  containing the top headlines for each category permitted to us by the News Api.  Clicking on each story as they pass through the carousel results 
+  in said story opening up in a new window, while clicking the category name itself returns a feed of headlines containing the stories displayed in the carousel. A Demo User login button is accessible through the homepage above the carousel, which allows a visitor to access the same feautures as a "real" user. 
   
   A user can use the links in the navbar to log-in or register. After which, they will be redirected to a feed of headlines (*referred to as "Headlines" in the navbar*)
   or a feed displaying results from their default search query, if previously selected. 
@@ -50,8 +50,8 @@ Python, Flask, SQLAlchemy, Redis, NewsAPI, NLTK, Newspaper, Axios, WTForms, CSS,
   Now that a user is logged in, they may want to user features of the application only available to users, such as the Advanced Search feature (*"Detailed Search" in 
   the navbar*) or refer to previous saved stories (*"My Stories" in the navbar*).
   
-  Along with the option of filtering one's search results by polarity or subjectivity, a user may choose to get such sentimental analysis data on any individual story
-  wherever it appears, with the exception of the category-carousels on the home-page. 
+  Along with the option of filtering one's search results by polarity or subjectivity, a user may choose to get such sentimental analysis data on any individual stories
+  wherever they are rendered, with the exception of the category-carousels on the home-page. 
  
 ## Data-Flows: 
   When NewsTracker loads its homepage, it automatically makes several API get requests to NewsAPI using the "Top Headlines" endpoint. This API only accepts one
