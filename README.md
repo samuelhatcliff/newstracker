@@ -19,7 +19,7 @@
     [- iii. Sentimental Analysis Accuracy: ](#sentimental-analysis-accuracy)
 
 
-## Technology/Tools: 
+### Technology/Tools: 
 Python, Flask, SQLAlchemy, Redis, NewsAPI, NLTK, Newspaper, Multiprocessing, Axios, WTForms, CSS, Bootstrap,
 
 
