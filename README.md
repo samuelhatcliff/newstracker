@@ -10,7 +10,7 @@
 [- ii. Users](#users)
 [III. Data](#data)
 [- i. Postgresql/Flask-SqlAlchemy](#PostgresqlFlask-SqlAlchemy)  
-[- ii. Flask's Server-Side Session with Redis](#Flask'sServer-SideSessionwithRedis)  
+[- ii. Flask's Server-Side Session with Redis](#flasks-server-side-session-with-redis)  
 [- iii. News-Api](#News-Api)  
 [- iv. Summary](#summary)  
 [IV. Challenges](#challenges)
