@@ -2,7 +2,7 @@
 import os
 import creds
 from flask import Flask, request, render_template, flash, redirect, render_template, jsonify, session, g
-from models import connect_db, db, User, Story
+from models import connect_db, db, User, Story, Query
 from flask_bcrypt import Bcrypt
 bcrypt = Bcrypt()
 
@@ -24,10 +24,10 @@ app = Flask(__name__)
 production = False
 if not production:
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-        'DATABASE_URL', 'postgresql:///news-tracker2')
+        'DATABASE_URL', 'postgresql:///news-tracker6')
 else:
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-        'DATABASE_URL', 'postgresql:///news-tracker2').replace("://", "ql://", 1)
+        'DATABASE_URL', 'postgresql:///news-tracker6').replace("://", "ql://", 1)
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
@@ -51,8 +51,8 @@ server_session = Session(app)
 
 # Todo:
 
-# Redeploy!
 # implement saved queries (quick queries feauture)
+# Redeploy!
 # re-write polarity ordering
 # write else statement for if user not in session
 # Redeploy!
@@ -148,12 +148,14 @@ def show_for_category(category):
 def search_form():
     """This function creates a dictionary extracting data from the search form to be sent to the news-api"""
     if CURR_USER_KEY in session:
+        # todo: check to make sure I can't access this route if im not logged in
         form = SearchForm()
         if form.validate_on_submit():
             try:
                 make_session_query(form)
-                if form.saved_query.data:
+                if form.saved_query.data or form.default.data:
                     add_saved_query(g.user.id, form)
+                    query = Query.query.filter_by(user_id=g.user.id).all()
                 advanced_search_call(session['query'])
                 return redirect('/search/results')
             except:

@@ -63,3 +63,5 @@ class SearchForm(FlaskForm):
 
     saved_query = BooleanField(
         "Would you like to add this to your saved search queries?")
+
+    name = StringField("Give your saved search query a name (if applicable)", validators=[Optional()])

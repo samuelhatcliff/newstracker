@@ -99,15 +99,16 @@ class Query(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     name = db.Column(db.String, nullable = False)
-    default = db.Column(db.Boolean)
-    keyword = db.Column(db.String)
-    quantity = db.Column(db.Integer, default = 10)
-    date_from = db.Column(db.DateTime)
-    date_to = db.Column(db.DateTime)
-    language = db.Column(db.String)
-    sort_by = db.Column(db.String)
-    type = db.Column(db.String)
-    sa = db.Column(db.String, default = "")
+    source = db.Column(db.String, nullable = True)
+    default = db.Column(db.Boolean, nullable = True)
+    keyword = db.Column(db.String, nullable = True)
+    quantity = db.Column(db.Integer, default = 10, nullable = True)
+    date_from = db.Column(db.DateTime, nullable = True)
+    date_to = db.Column(db.DateTime, nullable = True)
+    language = db.Column(db.String, nullable = True)
+    sort_by = db.Column(db.String, nullable = True)
+    type = db.Column(db.String, nullable = True)
+    sa = db.Column(db.String, default = "", nullable = True)
 
     def __repr__(self):
         return f"<ID: {self.id}, User ID#:{self.user_id}, Name:{self.name}, Default:{self.default}"

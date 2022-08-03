@@ -87,6 +87,7 @@ def add_saved_query(user_id, form):
     date_to = form.date_to.data
     language = form.language.data
     default = form.default.data
+    name = form.name.data
     if form.sort_by.data == "subjectivity" or form.sort_by.data == "polarity":
         sa = form.sort_by.data
         sort_by = 'relevancy'
@@ -94,17 +95,20 @@ def add_saved_query(user_id, form):
         sort_by = form.sort_by.data
         sa = None
     #TODO: query sqlalchemy object needs name. build responsive form that asks if query should be default and allows space to name query
-    query = Query(user_id=user_id,
+    query = Query(
+                      name = name,
+                      user_id = user_id,
                       keyword=keyword,
                       source=source,
                       quantity=quantity,
-                      date_from=date_from,
-                      date_to=date_to,
                       language=language,
                       default=default,
                       type="detailed_search",
                       sa=sa,
-                      sort_by=sort_by
+                      sort_by=sort_by,
+                      date_from=date_from,
+                      date_to=date_to,
                       )
+
     db.session.add(query)
     db.session.commit()
