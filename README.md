@@ -68,7 +68,7 @@ A diagram of our Postgresql schema is shown below.
   
  ![Session-Diagram](static/photos/session-diagram.png)
 
-  ### News-Api
+### News-Api
   
 Data for individual news stories is sent to Newstracker by either one of the two endpoints NewsApi provides; `Get Top Headlines`, and `Get Everything`. `Get Everything` is the more customizable endpoint, with a sizable amount of different parameters, many of which are utilized in News-Tracker's advanced search. `Get Top Headlines`, on the other hand, only allows language and category as its parameters. Both are used at various points throughout the app. The diagram below illustrates the directional flow of information and data as it travels throughout the application.
   
@@ -105,6 +105,28 @@ Obviously, the more URLs that we have added to our list of requests to make, the
 #### A Better Solution: Multiprocessing 
 Asyncronous code in Python seems to be a bit more complicated than in Javascript, and the number of options out there to implement parallel code is a bit overwhelming for someone like myself who is a relative beginner. However, I was able to come across a quick and clean way to reduce the total amount of time needed by using Python's [multiprocessing library!](https://docs.python.org/3/library/multiprocessing.html) We import the `Pool` object from the multiprocessing library and instantiate it with a numerical value that represents the number of worker processes. We can then call its .map() method which allows an iterable to be passed as the second arguement and for each of these elements to be passed into the function in the first argument. .map() blocks the main program and maintains the same order, although this doesn't matter to us as we will reorder the list anyway after we have obtained our sentiment analysis results. The callback function that we've given to .map() as its first argument contains all the logic that we need to parse an article with Newspaper given its url. 
 This solution made a huge difference in increasing overall speed, although I have a hunch that I could implement an even more efficient solution if I understood Multiprocessing and Multithreading in Python more deeply. This is definitely an area that I intend to research further. Incidentally, this same logic is also used when making the six separate request to NewsApi when getting the top headlines for each category on the homepage. 
+
+### Storage and State Deliberations: Postgres VS Client-Side Session VS Server-Side Session
+#### Problem: Temporarily storing search results in our database isn't very efficient, but data is too large to be handled using cookies
+I had original stored each story result from the API in the Postgres db  (to be deleted the next time a query is made) because there wasn’t enough space to store them Flask’s (Client-Side) Session, the advantage of the constraints defined in the database scheme making it harder to accidentally create stories that would result in errors elsewhere in the app, and to ease the development process as all instances of a story would be represented exactly the same way. I had also intended for users to be able to view history, which would have required that each story that showed up in a users search results be saved to the db as a story object and associated with that particular user. 
+However, further along in my software development journey, I started understand and think more deeply about performance and scalability, and realized that storing every single story in my Postgres Database *probably* wasn't the most efficient way to handle the data. 
+
+#### Solution: Flask's Server Side Session
+Server-side session solves this. Server-Side Sessions can be configured using a database, preferrably one where data is stored in memory rather than disk, such as Redis and Memcached to offer the similar perfomance improvements and ease of use that client side session uses, but with the added benefits of extra storage size and security. 
+
+Storage: Server-Side Sessions offer more storage size simply by storing the data on the server it is hosted on, rather than using cookies exclusively, which only permit a maximum file size of 4KB. It still has to create cookies, because it's representing a session for a particular user. The difference is, instead of storing the data in the cookie, server-side sessions simply store ids as cookies. These ids are subsequently used by flask to query the database and get the data from the session. This has the added benefit of making the information provided by the client much more secure. Let's go into this in a bit more depth. 
+
+Security: Regular client-side sessions use base-64 encoding. This is different than encryption. Allow the text in the developer tools in the browser is not readable by the user, all one would have to do to decode such information is to paste the encoded text into a base64 decoder, [of which there are many publicly available] (https://www.base64decode.org/), and anyone can read the information stored. 
+
+With server-side sessions, information is stored on the server. Therefore, the information will be just as secure as the server itself. 
+
+Obviously, in the case of this project, the search results of news stories aren’t exactly sensitive information. Regardless, I believe this is very important to be aware of and something that I personally wasn’t aware of when I first started using flask sessions. 
+
+Speed: From the official Redis website:
+`Redis is an open source (BSD licensed), in-memory data structure store, used as a database, cache and message broker.` 
+Databases such as Redis and Memcached support sub-millisecond response times. 
+By storing data in-memory they can read and write data more quickly than disk based databases. In some situations, [Redis has reportedly performed at up to 16 times the speed of a Postgres database.](https://www.peterbe.com/plog/redis-vs-postgres-blob-of-json) 
+
   
-  
+### Sentimental Analysis Accuracy: 
   
