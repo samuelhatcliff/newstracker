@@ -89,12 +89,22 @@ After extracting the resulting data from the api, the data is saved to Flasks's 
 
 
 ## Challenges: 
-  The free version of news API is only limited to 100 requests per day, and does not allow developers to access the entirety of a story's content. As a work-around, I've used the "Newspaper"
-  parsing library in python to extract the actual content of a story by making a request to the story's URL given to us by the NewsAPI. As a downside, each time sentimental analysis data
-  is being parsed, a separate HTTP request is made. This is not so problematic when SA data is being requested by the user for one particular story, but does cause less than ideal waiting
-  times for a user that has entered a search query requesting the results to be sorted by polarity or subjectivity. Because of this, I've temporarily limited the amount of results that are able to be
-  requested in the advanced search feature to 10 until I've added a progress window to set the user's mind at ease, as well as more logic to the form itself that warns the user of the time it may
-  take to initiate such a query.
+### Limitations NewsApi's 'Free' Tier
+#### Problem: Inability to access a story's full content.
+  The free version of news API does not allow developers to access the entirety of a story's content, only providing the first few sentences. This is a huge problem for our app, since one of the key features we've imagined is to perform sentimental analysis on the body of each article, not just the headline or a few sentences! 
+  
+#### My Solution: Use webscraping library [Newspaper](https://newspaper.readthedocs.io/en/latest/) 
+  Although we peasants don't have access to the article's body through NewsApi's free tier, we *are* given the URL, through which we can access an article's body by sending an HTTP request to the url and extracting the full content from the HTML, otherwise known as web-scraping. The only problem (and it's a big one) is that a web-scraper needs to know where it can expect to find the content to extract (ei, a div with an id of x) which would be an extremely difficult task given that we are dealing with dozens of news sources, each with their own uniquely structured html layouts. This is where the `Newspaper` Library comes in. Newspaper sends a request to a given url and is able to parse the actual content of the article, regardless of the source, with surprising accuracy, rarely including "junk" content such as ads, comments, etc. Frankly, I don't have much of an idea how the underlying mechanics of this library works. Although not 100% perfect, it performs accurately enough for the purpose of this app, and is our magical little solution to address this issue of dynamic webscraping. 
+  
+#### Problem: Multiple consecutive HTTP requests for each story drastically increases user wait time. 
+    But wait! Now that we've decided that we're going to retrieve a story's full content by webscraping each URL, we've introduced a new problem. Each time we want to access full content from a single news story, we have to wait for a full "Request-Response" cycle to be completed. Just a single one can sometimes take several seconds! How are we going to provide an enjoyable user experience if a user is forced to wait between 10-30 seconds or more each time they want to search using a sentiment analysis filter?
+
+#### An Inadequate Solution: Limit the # of stories that can be requested. 
+Obviously, the more URLs that we have added to our list of requests to make, the longer it will take to render results to the user. NewsApi defaults to retrieving 100 different stories, which would result in astronomically long wait times up to several minutes. We can remove the situation where a user is unsure whether or not progress is being made by ensuring that the number of requested stories is limited by capping the number of results that can be returned. 
+
+#### A Better Solution: Multiprocessing 
+Asyncronous code in Python seems to be a bit more complicated than in Javascript, and the number of options out there to implement parallel code is a bit overwhelming for someone like myself who is a relative beginner. However, I was able to come across a quick and clean way to reduce the total amount of time needed by using Python's multiprocessing library! We import the Pool object from the multiprocessing library and instantiate it with a numerical value that represents the number of worker processes. We can then call its .map() method which allows an iterable to be passed as the second arguement and for each of these elements to be passed into the function in the first argument. .map() blocks the main program and maintains the same order, although this doesn't matter to us as we will reorder the list anyway after we have obtained our sentiment analysis results. The callback function that we've given to .map() as its first argument contains all the logic that we need to parse an article with Newspaper given its url. 
+This solution made a huge difference in increasing overall speed, although I have a hunch that I could implement an even more efficient solution if I understood Multiprocessing and Multithreading in Python more deeply. This is definitely an area that I intend to research further. Incidentally, this same logic is also used when making the six separate request to NewsApi when getting the top headlines for each category on the homepage. 
   
   
   
