@@ -64,7 +64,7 @@ Python, Flask, SQLAlchemy, Redis, NewsAPI, NLTK, Newspaper, Multiprocessing, Axi
   containing the top headlines for each category permitted to us by the News Api.  Clicking on each story as they pass through the carousel results 
   in said story opening up in a new window, while clicking the category name itself returns a feed of headlines containing the stories displayed in the carousel.  
   
-<img src="static/photos/user_flows/homepage-mobile.png" width="300"><img src="static/photos/db-schema.png" width="300">
+<img src="static/photos/user_flows/homepage-mobile.png" width="350">
 
   
   ### Users:
@@ -84,12 +84,12 @@ Python, Flask, SQLAlchemy, Redis, NewsAPI, NLTK, Newspaper, Multiprocessing, Axi
   News Tracker uses a Postgresql database configured through Flask-Sqlalchemy on the backend to store information that we want to persist in our application regardless of the client. When reduced to the absolute minimum amount necessary for the application to work as envisioned, we are left only with information pertaining to a registered user. This is composed of information given by a user upon registration, as well as stories and search queries that they may have saved. In SQL terms, we are left with a simple schema containing 3 tables: `User`, `Story`, and `Query`, where `Story` and `Query` are associated with their respective user by a foreign key in a one-way, one-to-many relationsip.
 A diagram of our Postgresql schema is shown below. 
   
-  ![Schema](static/photos/db-schema.png)
+<img src="static/photos/db-schema.png" width="500">
   
 ### Flask's Server-Side Session with Redis
   Data that doesn't need to persist, in our case being regular search queries and search results that a user does not choose to save, are temporarily stored memory with Flask's Server-Side Session configured through a Redis database. By taking the approach of avoiding using our Postgresql database except when absolutely necessary, we reduce latency and increase overall permformance. A more in depth explanation discussing the trade-offs of using Posgresql, Server Side Session, and Client Side Session for this project can be found here. Below is a basic diagram of how Session is used to temporarily store data.
   
- ![Session-Diagram](static/photos/session-diagram.png)
+<img src="static/photos/session-diagram.png" width="500">
 
 ### News-Api
   
