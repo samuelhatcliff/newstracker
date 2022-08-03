@@ -6,7 +6,7 @@
     [- ii. Summary](#summary)  
     [- iii. Purpose](#purpose)  
 [II. User Flows](#user-flow)\
-    [- i. Non-Users](#non-users)\ 
+    [- i. Non-Users](#non-users)          
     [- ii. Users](#users)\
 [III. Data](#data)\
     [- i. Postgresql/Flask-SqlAlchemy](#PostgresqlFlask-SqlAlchemy)  
