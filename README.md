@@ -86,11 +86,13 @@ A diagram of our Postgresql schema is shown below.
 <p align="center">
 <img src="static/photos/db-schema.png" width="500">
 </p>    
+
 ### Flask's Server-Side Session with Redis
   Data that doesn't need to persist, in our case being regular search queries and search results that a user does not choose to save, are temporarily stored memory with Flask's Server-Side Session configured through a Redis database. By taking the approach of avoiding using our Postgresql database except when absolutely necessary, we reduce latency and increase overall permformance. A more in depth explanation discussing the trade-offs of using Posgresql, Server Side Session, and Client Side Session for this project can be found here. Below is a basic diagram of how Session is used to temporarily store data.
  <p align="center"> 
 <img src="static/photos/session-diagram.png" width="500">
 </p>
+
 ### News-Api
   
 Data for individual news stories is sent to Newstracker by either one of the two endpoints NewsApi provides; `Get Top Headlines`, and `Get Everything`. `Get Everything` is the more customizable endpoint, with a sizable amount of different parameters, many of which are utilized in News-Tracker's advanced search. `Get Top Headlines`, on the other hand, only allows language and category as its parameters. Both are used at various points throughout the app. The diagram below illustrates the directional flow of information and data as it travels throughout the application.
