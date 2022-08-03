@@ -2,21 +2,25 @@
 
 ## Table of Contents
 [I. Overview](#technologytools)
+
 [- i. Technology/Tools](#technologytools)  
 [- ii. Summary](#summary)  
 [- iii. Purpose](#purpose)  
 [II. User Flows](#user-flow)
+
 [- i. Non-Users](#non-users)  
 [- ii. Users](#users)
 [III. Data](#data)
+
 [- i. Postgresql/Flask-SqlAlchemy](#PostgresqlFlask-SqlAlchemy)  
 [- ii. Flask's Server-Side Session with Redis](#flasks-server-side-session-with-redis)  
 [- iii. News-Api](#News-Api)  
 [- iv. Summary](#summary)  
 [IV. Challenges](#challenges)
+
 [- i. Limitations of NewsApi's Free Tier](#limitations-of-newsapis-free-tier)  
-[- ii. Storage and State Deliberations: Postgres VS Client-Side Session VS Server-Side Session (#StorageandStateDeliberations:PostgresVSClient-SideSessionVSServer-SideSession)
-[- iii. Sentimental Analysis Accuracy: ](#SentimentalAnalysisAccuracy)  
+[- ii. Storage and State Deliberations: Postgres VS Client-Side Session VS Server-Side Session]
+[- iii. Sentimental Analysis Accuracy: ](#sentimental-analysis-accuracy)
 
 
 
