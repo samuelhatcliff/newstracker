@@ -4,7 +4,7 @@
 [I. Overview](#technologytools)\
     [- i. Technology/Tools](#technologytools)   
     [- ii. Summary](#summary)  
-    [- iii. Purpose](#purpose)\ 
+    [- iii. Purpose](#purpose).  
 [II. User Flows](#user-flow)\
     [- i. Non-Users](#non-users) 
     [- ii. Users](#users)\
