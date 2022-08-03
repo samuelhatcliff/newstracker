@@ -14,8 +14,8 @@
 [- iii. News-Api](#News-Api)  
 [- iv. Summary](#summary)  
 [IV. Challenges](#challenges)
-[- i. Limitations of NewsApi's Free Tier](#LimitationsofNewsApi'sFreeTier)  
-[- ii. Storage and State Deliberations: Postgres VS Client-Side Session VS Server-Side Session](#StorageandStateDeliberations:PostgresVSClient-SideSessionVSServer-SideSession)  
+[- i. Limitations of NewsApi's Free Tier](#limitations-of-newsapis-free-tier)  
+[- ii. Storage and State Deliberations: Postgres VS Client-Side Session VS Server-Side Session (#StorageandStateDeliberations:PostgresVSClient-SideSessionVSServer-SideSession)
 [- iii. Sentimental Analysis Accuracy: ](#SentimentalAnalysisAccuracy)  
 
 
