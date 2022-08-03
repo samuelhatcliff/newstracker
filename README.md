@@ -114,15 +114,15 @@ However, further along in my software development journey, I started understand 
 #### Solution: Flask's Server Side Session
 Server-side session solves this. Server-Side Sessions can be configured using a database, preferrably one where data is stored in memory rather than disk, such as Redis and Memcached to offer the similar perfomance improvements and ease of use that client side session uses, but with the added benefits of extra storage size and security. 
 
-Storage: Server-Side Sessions offer more storage size simply by storing the data on the server it is hosted on, rather than using cookies exclusively, which only permit a maximum file size of 4KB. It still has to create cookies, because it's representing a session for a particular user. The difference is, instead of storing the data in the cookie, server-side sessions simply store ids as cookies. These ids are subsequently used by flask to query the database and get the data from the session. This has the added benefit of making the information provided by the client much more secure. Let's go into this in a bit more depth. 
+**Storage**: Server-Side Sessions offer more storage size simply by storing the data on the server it is hosted on, rather than using cookies exclusively, which only permit a maximum file size of 4KB. It still has to create cookies, because it's representing a session for a particular user. The difference is, instead of storing the data in the cookie, server-side sessions simply store ids as cookies. These ids are subsequently used by flask to query the database and get the data from the session. This has the added benefit of making the information provided by the client much more secure. Let's go into this in a bit more depth. 
 
-Security: Regular client-side sessions use base-64 encoding. This is different than encryption. Allow the text in the developer tools in the browser is not readable by the user, all one would have to do to decode such information is to paste the encoded text into a base64 decoder, [of which there are many publicly available] (https://www.base64decode.org/), and anyone can read the information stored. 
+**Security**: Regular client-side sessions use base-64 encoding. This is different than encryption. Allow the text in the developer tools in the browser is not readable by the user, all one would have to do to decode such information is to paste the encoded text into a base64 decoder, [of which there are many publicly available](https://www.base64decode.org/), and anyone can read the information stored. 
 
 With server-side sessions, information is stored on the server. Therefore, the information will be just as secure as the server itself. 
 
 Obviously, in the case of this project, the search results of news stories aren’t exactly sensitive information. Regardless, I believe this is very important to be aware of and something that I personally wasn’t aware of when I first started using flask sessions. 
 
-Speed: From the official Redis website:
+**Speed**: From the official Redis website:
 `Redis is an open source (BSD licensed), in-memory data structure store, used as a database, cache and message broker.` 
 Databases such as Redis and Memcached support sub-millisecond response times. 
 By storing data in-memory they can read and write data more quickly than disk based databases. In some situations, [Redis has reportedly performed at up to 16 times the speed of a Postgres database.](https://www.peterbe.com/plog/redis-vs-postgres-blob-of-json) 
