@@ -3,6 +3,10 @@
 ## Technology/Tools: 
 Python, Flask, SQLAlchemy, Redis, NewsAPI, NLTK, Newspaper, Multiprocessing, Axios, WTForms, CSS, Bootstrap,
 
+## Table of Contents
+[I. Summary)](#Summary)
+[II. Purpose](#purpose)  
+
 
 ## Summary: 
   NewsTracker is an application designed to enhance and optimize the way a user interacts with news stories. 
