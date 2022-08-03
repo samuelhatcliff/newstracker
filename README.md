@@ -99,7 +99,7 @@ It's helpful to conceptualize these two endpoints as such that requests generate
 
 Thus, the overall flow of news story data can be concieved of as `NewsApi Results ---> Session Storage ---> Postgresql`, being one-directional and capable of stopping at each point without arriving at the next. An simple illustration representing this process is shown below.
 
-<img src="static/photos/all-data-simplified.png" width="600">
+<img src="static/photos/all-data-simplified.png" width="500">
 
 
 ### Summary
