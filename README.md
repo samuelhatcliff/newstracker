@@ -99,7 +99,8 @@ It's helpful to conceptualize these two endpoints as such that requests generate
 
 Thus, the overall flow of news story data can be concieved of as `NewsApi Results ---> Session Storage ---> Postgresql`, being one-directional and capable of stopping at each point without arriving at the next. An simple illustration representing this process is shown below.
 
-![All-Data-Simplefied](static/photos/all-data-simplified.png)
+<img src="static/photos/all-data-simplified.png" width="600">
+
 
 ### Summary
 Now that we've walked through each step in News Tracker's dataflow, let's combine everything we've covered into a single diagram which gives us a more precise understanding of how data might be accessed throughout the application. While not comprehensive, the following diagram now includes specific routes, instances of API calls, our Sentimental Analysis logic, and Jinja templates.
