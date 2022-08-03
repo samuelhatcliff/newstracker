@@ -64,7 +64,8 @@ Python, Flask, SQLAlchemy, Redis, NewsAPI, NLTK, Newspaper, Multiprocessing, Axi
   containing the top headlines for each category permitted to us by the News Api.  Clicking on each story as they pass through the carousel results 
   in said story opening up in a new window, while clicking the category name itself returns a feed of headlines containing the stories displayed in the carousel.  
   
-  ![Homepage](static/photos/user_flows/homepage-mobile.png)
+<img src="static/photos/user_flows/homepage-mobile.png" width="30">
+
   
   ### Users:
 
