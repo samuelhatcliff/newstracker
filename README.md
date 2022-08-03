@@ -1,10 +1,16 @@
 # newstracker
 
 ## Table of Contents
-[I. Overview](#summary)
-[- i. Summary](#summary)  
-[- ii. Technology/Tools](#technologytools)  
+[I. Overview](#technologytools)
+[- i. Technology/Tools](#technologytools)  
+[- ii. Summary](#summary)  
 [- iii. Purpose](#purpose)  
+[II. User Flows](#user-flow)
+[- i. Non-Users](#non-users)  
+[- ii. Users](#users)  
+
+
+
 
 
 ## Summary: 
@@ -45,6 +51,7 @@ Python, Flask, SQLAlchemy, Redis, NewsAPI, NLTK, Newspaper, Multiprocessing, Axi
 
 
 ## User-Flow: 
+### Non-Users:
   The homepage of NewsTracker contains an easily accessible Demo User login button on the top right of the page, which allows a visitor to access the same feautures as a real user. The page as a whole contains cards on the left side explaining various features of the app,
   while the right side contains multiple Bootstrap carousels
   containing the top headlines for each category permitted to us by the News Api.  Clicking on each story as they pass through the carousel results 
@@ -52,6 +59,8 @@ Python, Flask, SQLAlchemy, Redis, NewsAPI, NLTK, Newspaper, Multiprocessing, Axi
   
   ![Homepage](static/photos/user_flows/homepage-mobile.png)
   
+  ### Users:
+
   A user can use the links in the navbar to log-in or register. After which, they will be redirected to a feed of headlines (*referred to as "Headlines" in the navbar*)
   or a feed displaying results from their default search query, if previously selected. 
   
