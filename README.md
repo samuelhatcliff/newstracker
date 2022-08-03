@@ -7,8 +7,16 @@
 [- iii. Purpose](#purpose)  
 [II. User Flows](#user-flow)
 [- i. Non-Users](#non-users)  
-[- ii. Users](#users)  
-
+[- ii. Users](#users)
+[III. Data](#data)
+[- i. Postgresql/Flask-SqlAlchemy](#PostgresqlFlask-SqlAlchemy)  
+[- ii. Flask's Server-Side Session with Redis](#Flask'sServer-SideSessionwithRedis)  
+[- iii. News-Api](#News-Api)  
+[- iv. Summary](#summary)  
+[IV. Challenges](#challenges)
+[- i. Limitations of NewsApi's Free Tier](#LimitationsofNewsApi'sFreeTier)  
+[- ii. Storage and State Deliberations: Postgres VS Client-Side Session VS Server-Side Session](#StorageandStateDeliberations:PostgresVSClient-SideSessionVSServer-SideSession)  
+[- iii. Sentimental Analysis Accuracy: ](#SentimentalAnalysisAccuracy)  
 
 
 
@@ -61,7 +69,7 @@ Python, Flask, SQLAlchemy, Redis, NewsAPI, NLTK, Newspaper, Multiprocessing, Axi
   
   ### Users:
 
-  A user can use the links in the navbar to log-in or register. After which, they will be redirected to a feed of headlines (*referred to as "Headlines" in the navbar*)
+  A visitor can use the links in the navbar to log-in or register. After which, they will be redirected to a feed of headlines (*referred to as "Headlines" in the navbar*)
   or a feed displaying results from their default search query, if previously selected. 
   
   Now that a user is logged in, they may want to user features of the application only available to users, such as the Advanced Search feature (*"Detailed Search" in 
