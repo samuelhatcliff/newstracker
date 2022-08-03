@@ -1,7 +1,7 @@
 # newstracker
 
 ## Table of Contents
-[I. Overview)](#summary)
+[I. Overview](#summary)
 [- i. Summary](#summary)  
 [- ii. Technology/Tools](#technology)  
 [- iii. Purpose](#purpose)  
