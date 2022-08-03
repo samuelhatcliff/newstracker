@@ -2,13 +2,13 @@
 
 ## Table of Contents
 [I. Overview](#technologytools)
-[- i. Technology/Tools](#technologytools)  
+[- i. Technology/Tools](#technologytools)\  
 [- ii. Summary](#summary)  
 [- iii. Purpose](#purpose)  
-[II. User Flows](#user-flow)
+[II. User Flows](#user-flow)\
 [- i. Non-Users](#non-users)  
 [- ii. Users](#users)
-[III. Data](#data)
+[III. Data](#data)\
 [- i. Postgresql/Flask-SqlAlchemy](#PostgresqlFlask-SqlAlchemy)  
 [- ii. Flask's Server-Side Session with Redis](#flasks-server-side-session-with-redis)  
 [- iii. News-Api](#News-Api)  
