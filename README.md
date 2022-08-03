@@ -89,7 +89,7 @@ After extracting the resulting data from the api, the data is saved to Flasks's 
 
 
 ## Challenges: 
-### Limitations NewsApi's Free Tier
+### Limitations of NewsApi's Free Tier
 #### Problem: Inability to access a story's full content.
   The free version of news API does not allow developers to access the entirety of a story's content, only providing the first few sentences. This is a huge problem for our app, since one of the key features we've imagined is to perform sentimental analysis on the body of each article, not just the headline or a few sentences! 
   
@@ -102,16 +102,16 @@ But wait! Now that we've decided that we're going to retrieve a story's full con
 #### An Inadequate Solution: Limit the # of stories that can be requested. 
 Obviously, the more URLs that we have added to our list of requests to make, the longer it will take to render results to the user. NewsApi defaults to retrieving 100 different stories, which would result in astronomically long wait times up to several minutes. We can remove the situation where a user is unsure whether or not progress is being made by ensuring that the number of requested stories is limited by capping the number of results that can be returned. 
 
-#### A Better Solution: Multiprocessing 
+#### A Better Solution: Multiprocessing.
 Asyncronous code in Python seems to be a bit more complicated than in Javascript, and the number of options out there to implement parallel code is a bit overwhelming for someone like myself who is a relative beginner. However, I was able to come across a quick and clean way to reduce the total amount of time needed by using Python's [multiprocessing library!](https://docs.python.org/3/library/multiprocessing.html) We import the `Pool` object from the multiprocessing library and instantiate it with a numerical value that represents the number of worker processes. We can then call its .map() method which allows an iterable to be passed as the second arguement and for each of these elements to be passed into the function in the first argument. .map() blocks the main program and maintains the same order, although this doesn't matter to us as we will reorder the list anyway after we have obtained our sentiment analysis results. The callback function that we've given to .map() as its first argument contains all the logic that we need to parse an article with Newspaper given its url. 
 This solution made a huge difference in increasing overall speed, although I have a hunch that I could implement an even more efficient solution if I understood Multiprocessing and Multithreading in Python more deeply. This is definitely an area that I intend to research further. Incidentally, this same logic is also used when making the six separate request to NewsApi when getting the top headlines for each category on the homepage. 
 
 ### Storage and State Deliberations: Postgres VS Client-Side Session VS Server-Side Session
-#### Problem: Temporarily storing search results in our database isn't very efficient, but data is too large to be handled using cookies
+#### Problem: Temporarily storing search results in our database isn't very efficient, but data is too large to be handled using cookies.
 I had original stored each story result from the API in the Postgres db  (to be deleted the next time a query is made) because there wasn’t enough space to store them Flask’s (Client-Side) Session, the advantage of the constraints defined in the database scheme making it harder to accidentally create stories that would result in errors elsewhere in the app, and to ease the development process as all instances of a story would be represented exactly the same way. I had also intended for users to be able to view history, which would have required that each story that showed up in a users search results be saved to the db as a story object and associated with that particular user. 
 However, further along in my software development journey, I started understand and think more deeply about performance and scalability, and realized that storing every single story in my Postgres Database *probably* wasn't the most efficient way to handle the data. 
 
-#### Solution: Flask's Server Side Session
+#### Solution: Flask's Server Side Session.
 Server-side session solves this. Server-Side Sessions can be configured using a database, preferrably one where data is stored in memory rather than disk, such as Redis and Memcached to offer the similar perfomance improvements and ease of use that client side session uses, but with the added benefits of extra storage size and security. 
 
 **Storage**: Server-Side Sessions offer more storage size simply by storing the data on the server it is hosted on, rather than using cookies exclusively, which only permit a maximum file size of 4KB. It still has to create cookies, because it's representing a session for a particular user. The difference is, instead of storing the data in the cookie, server-side sessions simply store ids as cookies. These ids are subsequently used by flask to query the database and get the data from the session. This has the added benefit of making the information provided by the client much more secure. Let's go into this in a bit more depth. 
@@ -127,16 +127,16 @@ Obviously, in the case of this project, the search results of news stories aren�
 Databases such as Redis and Memcached support sub-millisecond response times. 
 By storing data in-memory they can read and write data more quickly than disk based databases. In some situations, [Redis has reportedly performed at up to 16 times the speed of a Postgres database.](https://www.peterbe.com/plog/redis-vs-postgres-blob-of-json) 
 
-#### Problem: Complications Changing Sqlalchemy logic to Session logic:
+#### Problem: Complications Changing Sqlalchemy logic to Session logic.
 Now that the stories returned by the search results are stored in session, the question of how to connect user interactions with each story presents itself (clicking get pol, get sub buttons, saving story, removing story, etc). Previously, each story had its own unique id autoincrementing as the primary key, and was fairly easy to access handle.
 
-#### Solution:
+#### Solution: Generate keys using uuid.
 To remedy this, we create our random keys using uuid() to assign to each story as represented a dictionary in session. 
 
-#### Problem: 
+#### Problem: Data relative to each story is going to be stored differently depending on where we are in the app.
 For example, story data from a user’s saved stories will be stored in the database, whereas search results and headlines will be stored in session. 
 
-#### Solution:
+#### Solution: Have SQLalchemy objects inherit uuids as primary key when created. 
 To remedy this, I made sure that SQLAlchemy objects and session dictionaries contain the same exact data. When the SQLAlchemy objects are created, the inherit the session ID generated by uuid as the primary key. Since these keys are 10 digits, it is extremely improbable that the same random id would be generated twice. If this application was actually widely used, I would probably implement some logic to call uuid() recursively if we get a SQLAlchemy error of violating the unique key restraint. 
   
 ### Sentimental Analysis Accuracy: 
