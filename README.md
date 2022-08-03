@@ -107,7 +107,7 @@ Thus, the overall flow of news story data can be concieved of as `NewsApi Result
 ### Summary
 Now that we've walked through each step in News Tracker's dataflow, let's combine everything we've covered into a single diagram which gives us a more precise understanding of how data might be accessed throughout the application. While not comprehensive, the following diagram now includes specific routes, instances of API calls, our Sentimental Analysis logic, and Jinja templates.
 <p align="center">
-    <img src="static/photos/newstracker-data-v1.drawio.png" height="1200">
+    <img src="static/photos/newstracker-data-v1.drawio.png" height="800">
 </p>
 
 After extracting the resulting data from the api, the data is saved to Flasks's Server-Side Session, configured using a Redis database. This allows the results returned from the most recent request accessible globally within the app, and for each story to be assigned a unique data using Python's uuid(). This id is inherited as the primary key the story's Sqlalchemy object if it ends up getting saved by a user to our database. 
