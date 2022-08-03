@@ -1,11 +1,10 @@
 # newstracker
 
-## Technology/Tools: 
-Python, Flask, SQLAlchemy, Redis, NewsAPI, NLTK, Newspaper, Multiprocessing, Axios, WTForms, CSS, Bootstrap,
-
 ## Table of Contents
-[I. Summary)](#Summary)
-[II. Purpose](#purpose)  
+[I. Overview)](#summary)
+[- i. Summary](#summary)  
+[- ii. Technology/Tools](#technology/tools)  
+[- iii. Purpose](#purpose)  
 
 
 ## Summary: 
@@ -17,6 +16,9 @@ Python, Flask, SQLAlchemy, Redis, NewsAPI, NLTK, Newspaper, Multiprocessing, Axi
   
   Other features available to users include the ability to save stories that they want to refer back to later, save multiple search queries for easy-access through an accordian drop-down, and the ability to set one of said queries as a user's default so that their headline feed will be base its results off that query
   default so that the main headline page will show results based off of the user's default search query. 
+  
+## Technology/Tools: 
+Python, Flask, SQLAlchemy, Redis, NewsAPI, NLTK, Newspaper, Multiprocessing, Axios, WTForms, CSS, Bootstrap,
 
 ## Purpose: 
   The ability to run an advanced search query to display a specific type of story and store it permanently in a user's account could be beneficial for 
