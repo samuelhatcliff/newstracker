@@ -56,6 +56,10 @@ def transfer_db_query_to_session(query):
     dict['language'] = query.language
     dict['sa'] = query.sa
     dict['sort_by'] = query.sort_by
+    if "query" in session:
+        session.pop("query")
+
+    session["query"] = dict
     return dict
 
 
@@ -67,7 +71,6 @@ def make_session_query(form):
     query['date_from'] = form.date_from.data
     query['date_to'] = form.date_to.data
     query['language'] = form.language.data
-
     if form.sort_by.data == "subjectivity" or form.sort_by.data == "polarity":
         query['sa'] = form.sort_by.data
         query['sort_by'] = 'relevancy'

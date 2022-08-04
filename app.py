@@ -117,28 +117,24 @@ with app.app_context():
 
 @app.route('/headlines', methods=['GET', 'POST'])
 def headlines():
-    # For Development to Limit API Requests:
-    # if CURR_USER_KEY in session:
-    #     user = User.query.get(g.user.id)
-    #     if not user.queried_stories:
-    #         """Generic Headlines with user logged in"""
-    #         # if user does not have queried_stories, user hasn't arrived at route through search.
-    #         # therefore, we want to make an api call requesting general headlines
-    #         results = api_call(None)
-    #         return render_template('/show_stories.html', results=results)
-
-    #     """Search Results From User"""
-    #     results = user.queried_stories
-    #     return render_template('/show_stories.html', results=results)
-    # else:
-    #     """Generic Headlines without user logged in"""
+    """Default Search Query if user logged in with a saved query as default"""
+    if CURR_USER_KEY in session:
+        user = User.query.get(g.user.id)
+        queries = user.queries
+        default = [query for query in queries if query.default]
+        if default:
+            return redirect(f"search/{default[0].id}")
+        else:
+            """Otherwise, Generic Top Headlines"""
+            results = top_headlines_call()
+            return render_template('/show_stories.html', results=results)
     results = top_headlines_call()
     return render_template('/show_stories.html', results=results)
 
 
 @app.route(f'/headlines/<category>')
 def show_for_category(category):
-    """Display top headlines for given category based off of link clicked from homepage"""
+    """Display top headlines for given category based off link clicked from homepage"""
     category = category.lower()
     results = cat_calls(category, slideshow=False)
     return render_template('show_stories.html', results=results)
@@ -152,24 +148,26 @@ def search_form():
         form = SearchForm()
         if form.validate_on_submit():
             try:
-                make_session_query(form)
+                query = make_session_query(form)
                 if form.saved_query.data or form.default.data:
                     add_saved_query(g.user.id, form)
-                    query = Query.query.filter_by(user_id=g.user.id).all()
-                advanced_search_call(session['query'])
+                advanced_search_call(query)
                 return redirect('/search/results')
             except:
                 return render_template('/search.html', form=form, nested=True)
         else:
             return render_template('/search.html', form=form, nested=True)
 
-
-@app.route('/search/simple', methods=['GET'])
-def search_simple():
-    """API Call and Results for Simple Search"""
-    keyword = request.args.get("search")
-    results = simple_search_call(keyword)
-    return render_template('/show_stories.html', results=results, nested=True)
+@app.route('/search/<int:query_id>')
+def search_user_queries(query_id):
+    """Makes advanced search call based off of pre-saved queryxw"""
+    if CURR_USER_KEY in session:
+        # todo: check to make sure I can't access this route if im not logged in
+        query_obj = Query.query.get(query_id)
+        query_dict = transfer_db_query_to_session(query_obj)
+        advanced_search_call(query_dict)
+        print("888888")
+        return redirect('/search/results')
 
 
 @app.route('/search/results')
@@ -183,6 +181,14 @@ def handle_results():
             results = order_sub()
         else:
             return render_template('/show_stories.html', results=results, nested=True)
+    return render_template('/show_stories.html', results=results, nested=True)
+
+
+@app.route('/search/simple', methods=['GET'])
+def search_simple():
+    """API Call and Results for Simple Search"""
+    keyword = request.args.get("search")
+    results = simple_search_call(keyword)
     return render_template('/show_stories.html', results=results, nested=True)
 
     

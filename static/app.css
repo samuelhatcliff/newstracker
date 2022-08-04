@@ -165,7 +165,6 @@ h1 {
 .navbar {
     background-color: black;
     color:rgb(65, 65, 65);
-    overflow: hidden;
 }
 .navbar-toggler {
     margin-right:10px;
@@ -190,6 +189,10 @@ h1 {
 
 .navbar-nav{
     margin:0px;
+}
+
+#dropdown {
+    z-index: 2;
 }
 
 #search{

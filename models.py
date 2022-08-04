@@ -30,6 +30,9 @@ class User(db.Model):
                           nullable=False)
     saved_stories = db.relationship(
         'Story', secondary='saved_stories', backref='users')
+    
+    queries = db.relationship('Query')
+    
 
     @classmethod
     def register(cls, username, pwd, email, first_name, last_name):
@@ -103,8 +106,8 @@ class Query(db.Model):
     default = db.Column(db.Boolean, nullable = True)
     keyword = db.Column(db.String, nullable = True)
     quantity = db.Column(db.Integer, default = 10, nullable = True)
-    date_from = db.Column(db.DateTime, nullable = True)
-    date_to = db.Column(db.DateTime, nullable = True)
+    date_from = db.Column(db.String, nullable = True)
+    date_to = db.Column(db.String, nullable = True)
     language = db.Column(db.String, nullable = True)
     sort_by = db.Column(db.String, nullable = True)
     type = db.Column(db.String, nullable = True)

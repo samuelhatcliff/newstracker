@@ -84,6 +84,8 @@ def simple_search_call(query):
 def advanced_search_call(query):
     from_ = str(query['date_from'])
     to = str(query['date_to'])
+    print("777777DATE FROM, DATA TO", from_, to, type(from_), type(to) )
+
     if to == 'None' and from_ == 'None':
         data = newsapi.get_everything(q=f"{query['keyword']}", sources=f"{query['source']}", language=f"{query['language']}", sort_by=f"{query['sort_by']}"
                                       )
