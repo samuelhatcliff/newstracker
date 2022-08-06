@@ -13,8 +13,7 @@ for (let button of saButtons) {
         let input = text.nextSibling;
         let value = input.value;
         let storyID = button.getAttribute('data-story')
-        console.log("TRYTYYYY", storyID)
-
+        console.log("ATTEMPT:", storyID)
         if (value === "Get Polarity") {
             try {
                 let req = await axios.post(`/${storyID}/polarity`);

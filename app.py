@@ -51,7 +51,7 @@ server_session = Session(app)
 
 # Todo:
 
-# implement saved queries (quick queries feauture)
+# write logic for if saved query is current date: to = None
 # Redeploy!
 # re-write polarity ordering
 # write else statement for if user not in session
@@ -68,10 +68,6 @@ server_session = Session(app)
 # path of the local route was included to fix nested routes bootstrap bug. figure out how to fix this in production
 # make sure api key is hidden and works
 # connect redis to heroku
-
-# Notes:
-# Instead of changing current search query to sqlobject instead of session[dict],
-# convert sqlobject to session[dict] when the time comes to incorporate that feature
 
 #TODONOW: -move templates out of nested structure
 #-rewrite code and distinguish between session['saved] and session['results]
@@ -166,7 +162,6 @@ def search_user_queries(query_id):
         query_obj = Query.query.get(query_id)
         query_dict = transfer_db_query_to_session(query_obj)
         advanced_search_call(query_dict)
-        print("888888")
         return redirect('/search/results')
 
 
@@ -330,8 +325,13 @@ def logout():
 
 @app.route('/<id>/polarity', methods=['POST'])
 def show_pol_calls(id):
-    results = session["results"]
-    story = [story for story in results if story['id'] == id][0]
+    try:
+        # check to see if id represents a sqlalchemy object that needs converted to dict to be fed to SA functions
+        db_story = Story.query.get(id)
+        story = transfer_db_story_to_dict(db_story)
+    except:
+        results = session['results']
+        story = [story for story in results if story['id'] == id][0]
     score = polarize(story)
     if not score:
         story['pol'] = "No Data"
@@ -340,11 +340,15 @@ def show_pol_calls(id):
         story['pol'] = str(score)
     return jsonify({'response': story['pol']})
 
-
 @app.route('/<id>/subjectivity', methods=['POST'])
 def show_sub_calls(id):
-    results = session["results"]
-    story = [story for story in results if story['id'] == id][0]
+    try:
+        # check to see if id represents a sqlalchemy object that needs converted to dict to be fed to SA functions
+        db_story = Story.query.get(id)
+        story = transfer_db_story_to_dict(db_story)
+    except:
+        results = session['results']
+        story = [story for story in results if story['id'] == id][0]
     score = subjectize(story)
     if not score:
         story['sub'] = "No Data"
