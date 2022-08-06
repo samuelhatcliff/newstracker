@@ -156,7 +156,7 @@ def search_form():
 
 @app.route('/search/<int:query_id>')
 def search_user_queries(query_id):
-    """Makes advanced search call based off of pre-saved queryxw"""
+    """Makes advanced search call based off of pre-saved query"""
     if CURR_USER_KEY in session:
         # todo: check to make sure I can't access this route if im not logged in
         query_obj = Query.query.get(query_id)
@@ -327,6 +327,7 @@ def logout():
 def show_pol_calls(id):
     try:
         # check to see if id represents a sqlalchemy object that needs converted to dict to be fed to SA functions
+        # write logic to save score to db if story saved
         db_story = Story.query.get(id)
         story = transfer_db_story_to_dict(db_story)
     except:
@@ -357,6 +358,12 @@ def show_sub_calls(id):
         story['sub']= str(score)
     return jsonify({'response': story['sub']})
 
+@app.route('/query/<int:query_id>/delete', methods=['POST'])
+def delete_query(query_id):
+    #add security
+    Query.query.filter_by(id=query_id).delete()
+    db.session.commit()
+    return jsonify({'response': f"Query deleted!"})
 
 
 # @app.route('/')
