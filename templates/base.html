@@ -45,7 +45,15 @@
           </a>
           <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink" id="dropdown">
             {%for query in g.user.queries%}
-            <li><a class="dropdown-item" href="/search/{{query.id}}">{{query.name}}</a></li>
+            <li class="dropdown-item" style="
+            padding-right: 10px"><a class="query-link" href="/search/{{query.id}}">{{query.name}}
+
+              </a>
+              <span class="close">&times;</span>
+
+              <!-- <button type="button" class="btn btn-outline-success btn-sm">Make Default</button> -->
+
+            </li>
             {%endfor%}
 
           </ul>

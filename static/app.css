@@ -166,6 +166,13 @@ h1 {
     background-color: black;
     color:rgb(65, 65, 65);
 }
+
+.close {
+    display: inline-block;
+    font-size: 30px;
+    font-weight: 600;
+  }
+
 .navbar-toggler {
     margin-right:10px;
 }
@@ -191,9 +198,18 @@ h1 {
     margin:0px;
 }
 
-#dropdown {
-    z-index: 2;
+#dropdown-item {
+    display: inline;
+    text-decoration: none;
+    padding-right:10px;
 }
+
+.query-link {
+    display: inline;
+    text-decoration: none;
+    color:#3d3d3d;
+}
+
 
 #search{
     margin-right: 20px;
