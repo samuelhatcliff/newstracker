@@ -26,7 +26,7 @@
 
                             {% else %}
                             <form data-story="{{story.id}}" class="sa-button col-sm my-auto order1 col-6" id="left-b"
-                                action='/{{story.id}}/polarity' , method="POST">
+                                action='/story/{{story.id}}/polarity' , method="POST">
                                 <input type="submit" value="Get Polarity" class="btn btn-dark btn-sm badge-pill">
                             </form>
                             {% endif %}
@@ -43,7 +43,7 @@
 
                             {% else %}
                             <form data-story="{{story.id}}" class="sa-button col-sm my-auto col-6" id="right-b"
-                                action='/{{story.id}}/subjectivity' ,method="POST">
+                                action='/story/{{story.id}}/subjectivity' ,method="POST">
                                 <input type="submit" value="Get Subjectivity" class="btn btn-dark btn-sm badge-pill">
                             </form>
                             {% endif %}

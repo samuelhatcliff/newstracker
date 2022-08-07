@@ -323,7 +323,7 @@ def logout():
 """Sentiment Analysis API for individual stories"""
 
 
-@app.route('/<id>/polarity', methods=['POST'])
+@app.route('/story/<id>/polarity', methods=['POST'])
 def show_pol_calls(id):
     try:
         # check to see if id represents a sqlalchemy object that needs converted to dict to be fed to SA functions
@@ -341,7 +341,7 @@ def show_pol_calls(id):
         story['pol'] = str(score)
     return jsonify({'response': story['pol']})
 
-@app.route('/<id>/subjectivity', methods=['POST'])
+@app.route('/story/<id>/subjectivity', methods=['POST'])
 def show_sub_calls(id):
     try:
         # check to see if id represents a sqlalchemy object that needs converted to dict to be fed to SA functions
