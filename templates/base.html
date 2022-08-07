@@ -77,7 +77,17 @@
       </form>
     </div>
   </nav>
-  <p id="indentation"></p>
+  <div id="indentation">
+  </div>
+  {%with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <section class="messages">
+    {% for category, msg in get_flashed_messages(with_categories=true)%}
+    <span class="{{category}}">{{msg}}</span>
+    {% endfor %}
+  </section>
+  {% endif %}
+  {% endwith %}
 
   {% block content %}
   <!-- content goes here -->

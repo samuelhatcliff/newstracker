@@ -16,6 +16,29 @@ span {
     color:whitesmoke
 }
 
+.messages {
+    padding: 1rem;
+    border-radius: 1rem;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    text-align:center;
+}
+
+.messages .success {
+    background-color: rgba(0, 225, 0, 0.1);
+    font-size:2rem;
+    border-radius:1rem;
+    padding-right:1rem;
+    padding-left:1rem;
+}
+.messages .danger {
+    background-color: rgba(255, 0, 0, 0.1);
+    font-size:2rem;
+    border-radius:1rem;
+    padding-right:1rem;
+    padding-left:1rem;
+}
 .home-body {
     display: flex;
     justify-content: center;
@@ -23,7 +46,7 @@ span {
 
 #indentation {
     margin-bottom: 100px;
-    margin-right:0px
+    margin-right:0px;
 }
 
 @media only screen and (max-width: 576px) {

@@ -15,7 +15,7 @@ for (let button of saButtons) {
         const storyID = button.getAttribute('data-story')
         if (value === "Get Polarity") {
             try {
-                const req = await axios.post(`/${storyID}/polarity`);
+                const req = await axios.post(`/story/${storyID}/polarity`);
                 const resp = req.data.response;
                 input.value = resp;
             } catch (error) {
@@ -23,7 +23,7 @@ for (let button of saButtons) {
             }
         }
         else if (value === "Get Subjectivity") {
-            const req = await axios.post(`/${storyID}/subjectivity`);
+            const req = await axios.post(`/story/${storyID}/subjectivity`);
             const resp = req.data.response;
             input.value = resp;
         }
@@ -36,7 +36,7 @@ for (let button of deleteQueryButtons) {
         console.log("CLICKEDDDD")
         const queryID = button.getAttribute('data-query')
         console.log(queryID)
-        const req = await axios.post(`/query/${queryID}/delete`);
+        const req = await axios.post(`/user/${queryID}/delete`);
         const resp = req.data.response;
         button.value = resp;
     })

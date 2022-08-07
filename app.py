@@ -155,6 +155,9 @@ def search_form():
                 return render_template('/search.html', form=form)
         else:
             return render_template('/search.html', form=form)
+    else:
+        flash("You do not have permission to view this page. Please log-in and try again.", "danger")
+        return redirect("/login")
 
 @app.route('/search/<int:query_id>')
 def search_user_queries(query_id):
@@ -165,6 +168,9 @@ def search_user_queries(query_id):
         query_dict = transfer_db_query_to_session(query_obj)
         advanced_search_call(query_dict)
         return redirect('/search/results')
+    else:
+        flash("You do not have permission to make this action. Please log-in and try again.", "danger")
+        return redirect("/login")
 
 
 @app.route('/search/results')
@@ -178,6 +184,9 @@ def handle_results():
             results = order_sub()
         else:
             return render_template('/show_stories.html', results=results)
+    else:
+        flash("You do not have permission to view this page. Please log-in and try again.", "danger")
+        return redirect("/login")
     return render_template('/show_stories.html', results=results)
 
 
@@ -201,8 +210,8 @@ def user_saved():
         session["saved"] = [story for story in user.saved_stories]
         return render_template("/user.html", user=user, is_empty=is_empty)
     else:
-        flash("Please log-in and try again.", "danger")
-        return redirect("/")
+        flash("You do not have permission to view this page. Please log-in and try again.", "danger")
+        return redirect("/login")
 
 @app.route('/user/queries')
 def user_queries():
@@ -240,8 +249,8 @@ def save_story(id):
         db.session.commit()
         return redirect("/user/saved")
     else:
-        flash("Please log-in and try again.", "danger")
-        return redirect("/")
+        flash("You do not have permission to make this action. Please log-in and try again.", "danger")
+        return redirect("/login")
 
 
 @app.route('/story/<id>/delete_story', methods=["POST"])
@@ -253,8 +262,8 @@ def delete_story(id):
         db.session.commit()
         return redirect("/saved")
     else:
-        flash("Please log-in and try again.", "danger")
-        return redirect("/")
+        flash("You do not have permission to make this action. Please log-in and try again.", "danger")
+        return redirect("/login")
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -290,7 +299,7 @@ def login_user():
         user = User.authenticate(username, password)
         if user:
             do_login(user)
-            flash("Credentials verified. Logging in...", "success")
+            flash("Credentials verified. You are now logged in!", "success")
             return redirect('/headlines')
         else:
             form.username.errors = [
@@ -323,10 +332,10 @@ def login_demo_user():
 @app.route('/logout')
 def logout():
     """Handle logout of user."""
-    flash(f"You have successfully logged out.", "primary")
+    flash(f"You have successfully logged out.", "success")
     user = User.query.get(g.user.id)
     do_logout(user)
-    return redirect("/")
+    return redirect("/headlines")
 
 
 """Sentiment Analysis API for individual stories"""
@@ -367,12 +376,15 @@ def show_sub_calls(id):
         story['sub']= str(score)
     return jsonify({'response': story['sub']})
 
-@app.route('/query/<int:query_id>/delete', methods=['POST'])
+@app.route('/user/<int:query_id>/delete', methods=['POST'])
 def delete_query(query_id):
-    #add security
-    Query.query.filter_by(id=query_id).delete()
-    db.session.commit()
-    return jsonify({'response': f"Query deleted!"})
+    if CURR_USER_KEY in session:
+        Query.query.filter_by(id=query_id).delete()
+        db.session.commit()
+        return jsonify({'response': f"Query deleted!"})
+    else:
+        flash("You do not have permission to make this action. Please log-in and try again.", "danger")
+        return redirect("/login")
 
 
 # @app.route('/')
