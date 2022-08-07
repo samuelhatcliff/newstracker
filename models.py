@@ -29,7 +29,7 @@ class User(db.Model):
     last_name = db.Column(db.String(30),
                           nullable=False)
     saved_stories = db.relationship(
-        'Story', secondary='saved_stories', backref='users')
+        'Story')
     
     queries = db.relationship('Query')
     
@@ -61,6 +61,7 @@ class User(db.Model):
 class Story(db.Model):
     __tablename__ = "stories"
     id = db.Column(db.String, nullable = False, unique = True, primary_key = True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     """information taken from newsapi request"""
     headline = db.Column(db.String, nullable=False)
@@ -77,21 +78,21 @@ class Story(db.Model):
     pol = db.Column(db.Text)
 
     def __repr__(self):
-        return f"<ID: {self.id}, H:{self.headline}, S:{self.source}>"
+        return f"<ID: {self.id}, User_ID: {self.user_id} H:{self.headline}, S:{self.source}>"
 
 
-class SavedStory(db.Model):
-    __tablename__ = "saved_stories"
-    id = db.Column(db.Integer,
-                   primary_key=True,
-                   autoincrement=True)
+# class SavedStory(db.Model):
+#     __tablename__ = "saved_stories"
+#     id = db.Column(db.Integer,
+#                    primary_key=True,
+#                    autoincrement=True)
 
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    story_id = db.Column(db.Text, db.ForeignKey(
-        'stories.id'), nullable=False)
+#     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+#     story_id = db.Column(db.Text, db.ForeignKey(
+#         'stories.id'), nullable=False)
 
-    def __repr__(self):
-        return f"<ID: {self.id}, User ID#:{self.user_id}, Story ID#:{self.story_id}>"
+#     def __repr__(self):
+#         return f"<ID: {self.id}, User ID#:{self.user_id}, Story ID#:{self.story_id}>"
 
 
 class Query(db.Model):

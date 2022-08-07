@@ -39,6 +39,7 @@ span {
     padding-right:1rem;
     padding-left:1rem;
 }
+
 .home-body {
     display: flex;
     justify-content: center;
@@ -60,6 +61,13 @@ span {
 
 
 /* card styles for each news story*/
+.no-stories {
+    /* padding:2rem; */
+    margin-left:2rem;
+    margin-right:2rem;
+    text-align:center;
+    display:flex;
+}
 
 .row {
     margin: auto;

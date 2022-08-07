@@ -24,10 +24,10 @@ app = Flask(__name__)
 production = False
 if not production:
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-        'DATABASE_URL', 'postgresql:///news-tracker6')
+        'DATABASE_URL', 'postgresql:///news-tracker7')
 else:
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-        'DATABASE_URL', 'postgresql:///news-tracker6').replace("://", "ql://", 1)
+        'DATABASE_URL', 'postgresql:///news-tracker7').replace("://", "ql://", 1)
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
@@ -51,6 +51,7 @@ server_session = Session(app)
 
 # Todo:
 
+#rewrite session results as object to increase speed of look-up
 # write logic for if saved query is current date: to = None
 # Redeploy!
 # re-write polarity ordering
@@ -96,6 +97,7 @@ def do_logout(user):
 with app.app_context():
     @app.route('/')
     def homepage():
+        return redirect("/login")
         no_user = True
         if g.user:
             no_user = False
@@ -203,6 +205,7 @@ def user_saved():
     if CURR_USER_KEY in session:
         user = User.query.get(g.user.id)
         is_empty = False
+        print("!!!!!!", user.saved_stories)
         if len(user.saved_stories) == 0:
             is_empty = True
         if "saved" in session:
@@ -236,17 +239,17 @@ def open_story_link(id):
 def save_story(id):
     if CURR_USER_KEY in session:
         results = session["results"]
-        session_story = [story for story in results if story['id'] == id][0]
+        session_story = [story for story in results if story['id'] == id][0] 
         story = Story(headline=session_story['headline'], source=session_story['source'], content=session_story['content'],
                       author=session_story['author'], description=session_story['description'], url=session_story['url'], image=session_story['image'],
-                      published_at=session_story['published_at'], id=session_story['id'])
-        user = User.query.get(g.user.id)
+                      published_at=session_story['published_at'], id=session_story['id'], user_id = g.user.id)
         # REWRITE 
         # if story in user.saved_stories:
         #     flash("This story already exists in your saved stories.", "danger")
         #     return redirect("/")
-        user.saved_stories.append(story)
+        db.session.add(story)
         db.session.commit()
+
         return redirect("/user/saved")
     else:
         flash("You do not have permission to make this action. Please log-in and try again.", "danger")
@@ -256,11 +259,11 @@ def save_story(id):
 @app.route('/story/<id>/delete_story', methods=["POST"])
 def delete_story(id):
     if CURR_USER_KEY in session:
-        story = Story.query.get(id)
-        user = User.query.get(g.user.id)
-        user.saved_stories.remove(story)
+        # story = Story.query.get(id)
+        # user = User.query.get(g.user.id)
+        Story.query.filter_by(id=id).delete()
         db.session.commit()
-        return redirect("/saved")
+        return redirect("/user/saved")
     else:
         flash("You do not have permission to make this action. Please log-in and try again.", "danger")
         return redirect("/login")
