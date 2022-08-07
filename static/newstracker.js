@@ -38,6 +38,7 @@ for (let button of deleteQueryButtons) {
         console.log(queryID)
         const req = await axios.post(`/query/${queryID}/delete`);
         const resp = req.data.response;
+        button.value = resp;
     })
 }
 

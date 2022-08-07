@@ -145,24 +145,26 @@
                   </ol> -->
                   <!-- https://getbootstrap.com/docs/4.0/components/carousel/ -->
                   <div class="carousel-inner">
-                    <div class="carousel-item active" data-interval="3500">
-                      <img class="slide d-block w-100" src="{{obj.top_story.image}}" alt="First slide" ;>
-                      <div class="carousel-caption d-md-block">
-                        <span class="caption">{{obj.top_story.headline}}</span>
-                      </div>
-                    </div>
-                    {%for story in obj.results%}
-                    <div class="carousel-item" data-interval="4000">
-                      <a href="{{story.url}}">
-                        <img class="d-block w-100" src="{{story.image}}" alt="Third slide">
+                    <a href="{{obj.top_story.url}}">
+                      <div class="carousel-item active" data-interval="3500">
+                        <img class="slide d-block w-100" src="{{obj.top_story.image}}" alt="First slide" ;>
                         <div class="carousel-caption d-md-block">
-                          <span class="caption">{{story.headline}}</span>
+                          <span class="caption">{{obj.top_story.headline}}</span>
                         </div>
-                      </a>
-                    </div>
-                    {%endfor%}
+                    </a>
                   </div>
-                  <!-- <a class="carousel-control-prev" role="button" data-slide="prev">
+                  {%for story in obj.results%}
+                  <div class="carousel-item" data-interval="4000">
+                    <a href="{{story.url}}">
+                      <img class="d-block w-100" src="{{story.image}}" alt="Third slide">
+                      <div class="carousel-caption d-md-block">
+                        <span class="caption">{{story.headline}}</span>
+                      </div>
+                    </a>
+                  </div>
+                  {%endfor%}
+                </div>
+                <!-- <a class="carousel-control-prev" role="button" data-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                     <span class="sr-only">Previous</span>
                   </a>
@@ -170,15 +172,15 @@
                     <span class="carousel-control-next-icon" aria-hidden="true"></span>
                     <span class="sr-only">Next</span>
                   </a> -->
-                </div>
               </div>
             </div>
           </div>
-          {%endfor%}
         </div>
+        {%endfor%}
       </div>
     </div>
   </div>
+</div>
 </div>
 
 {% endblock %}

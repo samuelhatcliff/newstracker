@@ -59,7 +59,6 @@ server_session = Session(app)
 # add error handling, testing
 # Redeploy!
 # more permanent fix for slideshows
-# find better way than "nested" to determine bootstrap path for nested routes
 # create separate .env file for app config 
 
 
@@ -69,7 +68,7 @@ server_session = Session(app)
 # make sure api key is hidden and works
 # connect redis to heroku
 
-#TODONOW: -move templates out of nested structure
+#TODONOW: 
 #-rewrite code and distinguish between session['saved] and session['results]
 
 @app.before_request
@@ -97,6 +96,9 @@ def do_logout(user):
 with app.app_context():
     @app.route('/')
     def homepage():
+        no_user = True
+        if g.user:
+            no_user = False
         """NewsTracker Homepage"""
         categories = ['business', 'entertainment',
                     'health', 'science', 'sports', 'technology']
@@ -108,7 +110,7 @@ with app.app_context():
             obj['top_story'] = result[0]
             obj['name'] = categories[index].capitalize()
             data.append(obj)
-        return render_template('/homepage.html', data=data, no_user=True)
+        return render_template('/homepage.html', data=data, no_user=no_user)
 
 
 @app.route('/headlines', methods=['GET', 'POST'])
@@ -150,9 +152,9 @@ def search_form():
                 advanced_search_call(query)
                 return redirect('/search/results')
             except:
-                return render_template('/search.html', form=form, nested=True)
+                return render_template('/search.html', form=form)
         else:
-            return render_template('/search.html', form=form, nested=True)
+            return render_template('/search.html', form=form)
 
 @app.route('/search/<int:query_id>')
 def search_user_queries(query_id):
@@ -175,8 +177,8 @@ def handle_results():
         elif query['sa'] == 'subjectivity':
             results = order_sub()
         else:
-            return render_template('/show_stories.html', results=results, nested=True)
-    return render_template('/show_stories.html', results=results, nested=True)
+            return render_template('/show_stories.html', results=results)
+    return render_template('/show_stories.html', results=results)
 
 
 @app.route('/search/simple', methods=['GET'])
@@ -184,11 +186,11 @@ def search_simple():
     """API Call and Results for Simple Search"""
     keyword = request.args.get("search")
     results = simple_search_call(keyword)
-    return render_template('/show_stories.html', results=results, nested=True)
+    return render_template('/show_stories.html', results=results)
 
     
-@app.route('/saved')
-def user():
+@app.route('/user/saved')
+def user_saved():
     if CURR_USER_KEY in session:
         user = User.query.get(g.user.id)
         is_empty = False
@@ -197,10 +199,17 @@ def user():
         if "saved" in session:
             session.pop("saved")
         session["saved"] = [story for story in user.saved_stories]
-        return render_template("/user.html", user=user, is_empty=is_empty, nested=True)
+        return render_template("/user.html", user=user, is_empty=is_empty)
     else:
         flash("Please log-in and try again.", "danger")
         return redirect("/")
+
+@app.route('/user/queries')
+def user_queries():
+    if CURR_USER_KEY in session:
+        user = User.query.get(g.user.id)
+        all_queries = user.queries
+        return all_queries
 
 
 @app.route('/story/<id>/open')
@@ -229,7 +238,7 @@ def save_story(id):
         #     return redirect("/")
         user.saved_stories.append(story)
         db.session.commit()
-        return redirect("/saved")
+        return redirect("/user/saved")
     else:
         flash("Please log-in and try again.", "danger")
         return redirect("/")
