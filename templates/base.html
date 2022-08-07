@@ -45,18 +45,14 @@
             {%for query in g.user.queries%}
             <li class="dropdown-item" style="
             padding-right: 10px"><a class="query-link" href="/search/{{query.id}}">{{query.name}}
-
               </a>
               <span data-query="{{query.id}}" class="close">&times;</span>
-
               <!-- <button type="button" class="btn btn-outline-success btn-sm">Make Default</button> -->
-
             </li>
             {%endfor%}
             {% else %}
             <span class="dropdown-item">You currently have no saved queries.</span>
             {% endif %}
-
           </ul>
         </li>
         <a class="nav-item nav-link" href="/logout">Logout</a>

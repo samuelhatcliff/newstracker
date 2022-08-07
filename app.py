@@ -144,7 +144,6 @@ def show_for_category(category):
 def search_form():
     """This function creates a dictionary extracting data from the search form to be sent to the news-api"""
     if CURR_USER_KEY in session:
-        # todo: check to make sure I can't access this route if im not logged in
         form = SearchForm()
         if form.validate_on_submit():
             try:
@@ -165,7 +164,6 @@ def search_form():
 def search_user_queries(query_id):
     """Makes advanced search call based off of pre-saved query"""
     if CURR_USER_KEY in session:
-        # todo: check to make sure I can't access this route if im not logged in
         query_obj = Query.query.get(query_id)
         query_dict = transfer_db_query_to_session(query_obj)
         advanced_search_call(query_dict)
@@ -205,7 +203,6 @@ def user_saved():
     if CURR_USER_KEY in session:
         user = User.query.get(g.user.id)
         is_empty = False
-        print("!!!!!!", user.saved_stories)
         if len(user.saved_stories) == 0:
             is_empty = True
         if "saved" in session:
@@ -238,18 +235,19 @@ def open_story_link(id):
 @app.route('/story/<id>/save_story', methods=["POST"])
 def save_story(id):
     if CURR_USER_KEY in session:
+        user = User.query.get(g.user.id)
         results = session["results"]
         session_story = [story for story in results if story['id'] == id][0] 
         story = Story(headline=session_story['headline'], source=session_story['source'], content=session_story['content'],
                       author=session_story['author'], description=session_story['description'], url=session_story['url'], image=session_story['image'],
                       published_at=session_story['published_at'], id=session_story['id'], user_id = g.user.id)
-        # REWRITE 
-        # if story in user.saved_stories:
-        #     flash("This story already exists in your saved stories.", "danger")
-        #     return redirect("/")
-        db.session.add(story)
-        db.session.commit()
-
+        try:
+            db.session.add(story)
+            db.session.commit()
+        except exc.SQLAlchemyError as e:
+            if isinstance(e.orig, UniqueViolation):
+                flash(f'The story "{story.headline}" already exists in your saved stories.', 'danger')
+                return redirect("/user/saved")            
         return redirect("/user/saved")
     else:
         flash("You do not have permission to make this action. Please log-in and try again.", "danger")
@@ -302,7 +300,7 @@ def login_user():
         user = User.authenticate(username, password)
         if user:
             do_login(user)
-            flash("Credentials verified. You are now logged in!", "success")
+            flash("Credentials verified. You are now logged in.", "success")
             return redirect('/headlines')
         else:
             form.username.errors = [
@@ -388,43 +386,3 @@ def delete_query(query_id):
     else:
         flash("You do not have permission to make this action. Please log-in and try again.", "danger")
         return redirect("/login")
-
-
-# @app.route('/')
-# def slideshow():
-#     if CURR_USER_KEY in session:
-#         # DELETE THIS. this is only to limit the number of api calls
-#         user = User.query.get(g.user.id)
-#         user_queried_stories = user.queried_stories
-#         first = user_queried_stories[0]
-#         headlines = user_queried_stories
-#         top_story = first
-#         business = user_queried_stories
-#         business1 = first
-#         entertainment = user_queried_stories
-#         entertainment1 = first
-#         health = user_queried_stories
-#         health1 = first
-#         sports = user_queried_stories
-#         sports1 = first
-#         technology = user_queried_stories
-#         technology1 = first
-#         science = user_queried_stories
-#         science1 = first
-
-#         return render_template('/homepage.html',
-#                                headlines=headlines,
-#                                top_story=top_story,
-#                                business=business,
-#                                business1=business1,
-#                                ent=entertainment,
-#                                ent1=entertainment1,
-#                                health=health,
-#                                health1=health1,
-#                                science=science,
-#                                science1=science1,
-#                                sports=sports,
-#                                sports1=sports1,
-#                                tech=technology,
-#                                tech1=technology1
-#                                )

@@ -80,21 +80,6 @@ class Story(db.Model):
     def __repr__(self):
         return f"<ID: {self.id}, User_ID: {self.user_id} H:{self.headline}, S:{self.source}>"
 
-
-# class SavedStory(db.Model):
-#     __tablename__ = "saved_stories"
-#     id = db.Column(db.Integer,
-#                    primary_key=True,
-#                    autoincrement=True)
-
-#     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-#     story_id = db.Column(db.Text, db.ForeignKey(
-#         'stories.id'), nullable=False)
-
-#     def __repr__(self):
-#         return f"<ID: {self.id}, User ID#:{self.user_id}, Story ID#:{self.story_id}>"
-
-
 class Query(db.Model):
     __tablename__ = "queries"
     id = db.Column(db.Integer,
