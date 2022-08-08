@@ -257,8 +257,6 @@ def save_story(id):
 @app.route('/story/<id>/delete_story', methods=["POST"])
 def delete_story(id):
     if CURR_USER_KEY in session:
-        # story = Story.query.get(id)
-        # user = User.query.get(g.user.id)
         Story.query.filter_by(id=id).delete()
         db.session.commit()
         return redirect("/user/saved")
@@ -269,7 +267,7 @@ def delete_story(id):
 
 @app.route('/register', methods=['GET', 'POST'])
 def register_user():
-    form = RegisterForm()
+    form = RegisterForm(prefix='form-register-')
     if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
@@ -281,6 +279,7 @@ def register_user():
         try:
             db.session.add(new_user)
             db.session.commit()
+            flash("Congratulations! You have successfully created an account.", "success")
             do_login(new_user)
             return redirect('/headlines')
         except exc.SQLAlchemyError as e:
@@ -288,6 +287,8 @@ def register_user():
                 form.username.errors = [
                     "The username you entered is already taken. Please pick another one."]
             # https://www.youtube.com/embed/iBYCoLhziX4?showinfo=0&controls=1&rel=0&autoplay=1
+    else:
+        print("REGISTRATION FAILED")
     return render_template('register.html', form=form)
 
 

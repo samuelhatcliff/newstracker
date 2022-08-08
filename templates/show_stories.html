@@ -4,13 +4,12 @@
 <span class="no-stories">We weren't able to find anything. Try checking your spelling or widening your search query.
 </span>
 {% endif %}
-
-{% for story in results%}
 <section id="stories">
+    {% for story in results%}
     <div class="container">
         <ul>
             <div class="row justify-content-center">
-                <div class="card my-4 ">
+                <div class="card my-4">
                     <div class="card-body text-center">
                         <div class="row media">
                             {% if story.pol%}
@@ -55,7 +54,7 @@
             </div>
         </ul>
     </div>
+    {%endfor%}
 </section>
 
-{%endfor%}
 {% endblock %}
