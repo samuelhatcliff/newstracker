@@ -45,9 +45,12 @@ def order_sub():
     return ordered
 
 
-def transfer_db_query_to_session(query):
+def transfer_db_query_to_dict(query):
     """Converts a saved query from db to session[dict]"""
     dict = {}
+    dict['name'] = query.name
+    dict['id'] = query.id
+    dict['user_id'] = query.user_id
     dict['keyword'] = query.keyword
     dict['source'] = query.source
     dict['quantity'] = query.quantity
@@ -65,7 +68,8 @@ def transfer_db_query_to_session(query):
 def transfer_db_story_to_dict(story):
     """Converts a saved story from db to dict"""
     dict = {}
-    dict['id'] = story.id;
+    dict['id'] = story.id
+    dict['user_id'] = story.user_id
     dict['headline'] = story.headline
     dict['source'] = story.source
     dict['content'] = story.content
@@ -74,6 +78,16 @@ def transfer_db_story_to_dict(story):
     dict['url'] = story.url
     dict['image'] = story.image
     dict['published_at'] = story.published_at
+    return dict
+
+def transfer_db_user_to_dict(user):
+    dict = {}
+    dict['id'] = user.id
+    dict['username'] = user.username
+    dict['password'] = user.password
+    dict['email'] = user.email
+    dict['first_name'] = user.first_name
+    dict['last_name'] = user.last_name
     return dict
 
 

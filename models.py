@@ -29,9 +29,9 @@ class User(db.Model):
     last_name = db.Column(db.String(30),
                           nullable=False)
     saved_stories = db.relationship(
-        'Story')
+        'Story', cascade="all, delete-orphan")
     
-    queries = db.relationship('Query')
+    queries = db.relationship('Query', cascade="all, delete-orphan")
     
 
     @classmethod

@@ -405,7 +405,6 @@ class With_User_With_Data(TestCase):
                 change_session['results'] = [story]
 
             test = Story.query.get(self.user_id)
-            print(test, ":::::::")
             self.assertRaises(exc.SQLAlchemyError, client.post, f"/story/{self.story_id}/save_story")
             with self.assertRaises(exc.SQLAlchemyError):
                 client.post(f"/story/{self.story_id}/save_story")
