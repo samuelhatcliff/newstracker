@@ -10,7 +10,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///newstracker-test'
 app.config['SQLALCHEMY_ECHO'] = False
 app.config['TESTING'] = True
 app.config['DEBUG_TB_HOSTS'] = ['dont-show-debug-toolbar']
-
+app.config['WTF_CSRF_ENABLED'] = False
 db.drop_all()
 db.create_all()
 
@@ -167,40 +167,35 @@ class No_User(TestCase):
     #         self.assertIn('Try NewsTracker with our dummy account', html)
     #         self.assertIn('<div class="carousel slide" data-ride="carousel">', html)
 
-    #NOT WORKING, CANT GET WTFORMS TO WORK
-    # def test_create_user(self):
-    #     """Simulates POST Request to create a new user"""
-    #     with app.test_client() as client:
-    #         res = client.post("/register", follow_redirects=True, data=registration_data)
-    #         html = res.get_data(as_text=True)
-    #         self.assertEqual(res.status_code, 200)
-    #         # self.assertIn('Congratulations! You have successfully created an account.', html)
+    def test_create_user(self):
+        """Simulates POST Request to create a new user"""
+        with app.test_client() as client:
+            res = client.post("/register", follow_redirects=True, data=registration_data)
+            html = res.get_data(as_text=True)
+            self.assertEqual(res.status_code, 200)
+            self.assertIn('Congratulations! You have successfully created an account.', html)
 
-    # def test_login_user(self):
-    #     """Simulates POST Request to login a user"""
-    #     with app.test_client() as client:
-    #         user_creds = User.query.get(self.user_id)
-    #         res = client.post("/login", follow_redirects=True, data={'username': user_creds.username,
-    #         'password': user_creds.password})
-    #         html = res.get_data(as_text=True)
-    #         self.assertEqual(res.status_code, 200)
-    #         self.assertIn('Credentials verified. You are now logged in.', html)
+    def test_login_user(self):
+        """Simulates POST Request to login a user"""
+        with app.test_client() as client:
+            user_creds = User.query.get(self.user_id)
+            res = client.post("/login", follow_redirects=True, data={'username': user_creds.username,
+            'password': "test4444"})
+            html = res.get_data(as_text=True)
+            self.assertEqual(res.status_code, 200)
+            self.assertIn('Credentials verified. You are now logged in.', html)
 
-    # def test_login_user_invalid(self):
-    #     """Simulates an invalid POST Request to register a user"""
-    #     with app.test_client() as client:
-    #         user_creds = User.query.get(self.user_id)
-    #         res = client.post("/login", follow_redirects=True, data={'username':'testuser',
-    #         'password':'pass1',
-    #         'email':'test@email.com',
-    #         'first_name':'test',
-    #         'last_name':'user'})
-    #         html = res.get_data(as_text=True)
-    #         self.assertIn('The username you entered is already taken. Please pick another one.', html)
+    def test_login_user_invalid(self):
+        """Simulates an invalid POST Request to register a user"""
+        with app.test_client() as client:
+            res = client.post("/login", follow_redirects=True, data={'username':'testuser',
+            'password':'pass1',
+            'email':'test@email.com',
+            'first_name':'test',
+            'last_name':'user'})
+            html = res.get_data(as_text=True)
+            self.assertIn('Invalid username or password. Please try again', html)
 
-
-
-                            
 
 class With_User_Without_Data(TestCase):
     def setUp(self):
