@@ -43,21 +43,20 @@ from flask_session import Session
 app.config['SESSION_TYPE'] = 'redis'
 app.config['SESSION_USE_SIGNER'] = True
 app.config['SESSION_PERMANENT'] = False
-#CHANGE THIS FOR REDEPLOYMENT
-# app.config['SESSION_REDIS'] = redis.from_url('redis://localhost:5000')
+
 
 server_session = Session(app)
 
 
 # Todo:
 
-#rewrite session results as object to increase speed of look-up
+# rewrite session results as object to increase speed of look-up
 # write logic for if saved query is current date: to = None
 # Redeploy!
 # re-write polarity ordering
 # write else statement for if user not in session
 # Redeploy!
-# add error handling, testing
+# add more error handling, testing
 # Redeploy!
 # more permanent fix for slideshows
 # create separate .env file for app config 
@@ -97,7 +96,7 @@ def do_logout(user):
 with app.app_context():
     @app.route('/')
     def homepage():
-        return redirect("/login")
+        # return redirect("/login")
         no_user = True
         if g.user:
             no_user = False
@@ -235,9 +234,9 @@ def open_story_link(id):
 @app.route('/story/<id>/save_story', methods=["POST"])
 def save_story(id):
     if CURR_USER_KEY in session:
-        user = User.query.get(g.user.id)
         results = session["results"]
         session_story = [story for story in results if story['id'] == id][0] 
+        print("story111", session_story)
         story = Story(headline=session_story['headline'], source=session_story['source'], content=session_story['content'],
                       author=session_story['author'], description=session_story['description'], url=session_story['url'], image=session_story['image'],
                       published_at=session_story['published_at'], id=session_story['id'], user_id = g.user.id)
@@ -288,7 +287,7 @@ def register_user():
                     "The username you entered is already taken. Please pick another one."]
             # https://www.youtube.com/embed/iBYCoLhziX4?showinfo=0&controls=1&rel=0&autoplay=1
     else:
-        print("REGISTRATION FAILED")
+        print("Form Not Validated")
     return render_template('register.html', form=form)
 
 
@@ -333,11 +332,15 @@ def login_demo_user():
 
 @app.route('/logout')
 def logout():
-    """Handle logout of user."""
-    flash(f"You have successfully logged out.", "success")
-    user = User.query.get(g.user.id)
-    do_logout(user)
-    return redirect("/headlines")
+    """Handle logout of user."""    
+    if CURR_USER_KEY in session:
+        flash(f"You have successfully logged out.", "success")
+        user = User.query.get(g.user.id)
+        do_logout(user)
+        return redirect("/headlines")
+    else:
+        return redirect("/login")
+
 
 
 """Sentiment Analysis API for individual stories"""

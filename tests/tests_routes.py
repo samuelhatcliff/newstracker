@@ -291,7 +291,26 @@ class With_User_Without_Data(TestCase):
 
 
 
+class With_User_With_Data(TestCase):
+    def setUp(self):
+        """Register and Login sample user. (No Query or Story data)"""
+        #clear previous
+        User.query.delete()
+        #register user
+        user = User.register(
+            "testuser", "test4444", "test@test.com", "test", "user")
+        db.session.add(user)
+        db.session.commit()
+        self.user_id = user.id
+        sample_story = {'headline': 'Leaked documents show the hoops Roblox jumped through to do business in China',
+         'source': 'Engadget', 'content': "In late June, Blizzard delayed", 'url': 'https://www.engadget.com/roblox-china-documents-172350532.html',
+              'image': 'https://s.yimg.com/os/creatr-uploaded-images/2022-07/804e2750-0c3c-11ed-97f7-998944b9b6f4',
+               'published_at': datetime.datetime(2022, 7, 25, 17, 23, 50, tzinfo=tzutc()), 'id': '75f3410055'}
+        sample_query= {'keyword': 'UK', 'source': '', 'quantity': 8, 'date_from': None, 'date_to': datetime.date(2022, 8, 8), 'language': 'en', 'sa': 'polarity', 'sort_by': 'relevancy'}
 
+
+    def tearDown(self):
+        db.session.rollback()
 
 
             

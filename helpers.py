@@ -92,6 +92,7 @@ def make_session_query(form):
         query['sort_by'] = form.sort_by.data
         query['sa'] = None
     session['query'] = query
+    print('query111', query)
     return query
 
 
@@ -111,7 +112,7 @@ def add_saved_query(user_id, form):
     else:
         sort_by = form.sort_by.data
         sa = None
-    #TODO: query sqlalchemy object needs name. build responsive form that asks if query should be default and allows space to name query
+    
     query = Query(
                       name = name,
                       user_id = user_id,
