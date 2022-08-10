@@ -1,6 +1,8 @@
 from models import db, User, Query, Story
 from sent_analysis import subjectize, polarize, parse_async
 from flask import session
+from sqlalchemy import exc
+from psycopg2.errors import UniqueViolation
 
 """Helper Functions"""
 
@@ -97,17 +99,35 @@ def dict_query_to_db(user_id, dict):
     if dict['sort_by'] == "subjectivity" or dict['sort_by'] == "polarity":
         dict['sa'] = dict['sort_by']
         dict['sort_by'] = 'relevancy'
-    query = Query(user_id = user_id,
-        name = dict['name'],
-        source = dict['source'],
-        quantity = dict['quantity'], 
-        date_from = dict['date_from'],
-        date_to = dict['date_to'],
-        language = dict['language'], 
-        sort_by = dict['sort_by'],
-        sa = dict['sa'],
-        type = dict['type']
-        )
+    dict['type'] = "Detailed Search" 
+    print(
+    user_id,
+    dict['name'],
+    dict['source'],
+    dict['quantity'],
+    dict['date_from'],
+    dict['date_to'],
+    dict['language'],
+    dict['sort_by'],
+    dict['sa'],
+    dict['type']
+    )
+    try:
+        query = Query(user_id = user_id,
+            name = dict['name'],
+            source = dict['source'],
+            quantity = dict['quantity'], 
+            date_from = dict['date_from'],
+            date_to = dict['date_to'],
+            language = dict['language'], 
+            sort_by = dict['sort_by'],
+            sa = dict['sa'],
+            type = dict['type']
+            )
+        print("^^^^^^....")
+    except exc.SQLAlchemyError as e:
+        print(e, e.origin, "ERROR11")
+
     return query
 
 def dict_story_to_db(user_id, dict):
@@ -142,5 +162,11 @@ def form_query_to_dict(form):
     else:
         query['sort_by'] = form.sort_by.data
         query['sa'] = None
+    
+    if form.default.data:
+        query['name'] = form.name.data
+        query['default'] = True
+    elif form.saved_query.data:
+        query['name'] = form.name.data
     session['query'] = query
     return query

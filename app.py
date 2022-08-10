@@ -2,6 +2,7 @@
 import os
 import creds
 from flask import Flask, request, render_template, flash, redirect, render_template, jsonify, session, g
+from flask_debugtoolbar import DebugToolbarExtension 
 from models import connect_db, db, User, Story, Query
 from flask_bcrypt import Bcrypt
 bcrypt = Bcrypt()
@@ -33,6 +34,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 secret_key = os.environ.get(creds.secret_key)
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY", creds.secret_key)
+app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
+
 
 connect_db(app)
 # db.drop_all()
@@ -150,7 +153,8 @@ def search_form():
             try:
                 dict_query = form_query_to_dict(form)
                 if form.saved_query.data or form.default.data:
-                    db_query = dict_query_to_db(g.user.id, dict_query)
+                    print("lllllll", dict_query['name'])
+                    db_query = dict_query_to_db(g.user.id, session['query'])
                     db.session.add(db_query)
                     db.session.commit()
                 advanced_search_call(dict_query)
