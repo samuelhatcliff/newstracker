@@ -16,30 +16,20 @@ def connect_db(app):
 class User(db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.String(20),
-                         nullable=False,
-                         unique=True)
-    password = db.Column(db.Text,
-                         nullable=False)
-    email = db.Column(db.String(50),
-                      nullable=False,
-                      unique=True)
-    first_name = db.Column(db.String(30),
-                           nullable=False)
-    last_name = db.Column(db.String(30),
-                          nullable=False)
+    username = db.Column(db.String(20), nullable=False,unique=True)
+    password = db.Column(db.Text, nullable=False)
+    email = db.Column(db.String(50), nullable=False, unique=True)
+    first_name = db.Column(db.String(30), nullable=False)
+    last_name = db.Column(db.String(30), nullable=False)
     saved_stories = db.relationship(
         'Story', cascade="all, delete-orphan")
+    queries = db.relationship(
+        'Query', cascade="all, delete-orphan")
     
-    queries = db.relationship('Query', cascade="all, delete-orphan")
-    
-
     @classmethod
     def register(cls, username, pwd, email, first_name, last_name):
         hashed = bcrypt.generate_password_hash(pwd)
-
         hashed_utf8 = hashed.decode("utf8")
-
         new_user = cls(username=username, password=hashed_utf8,
                        email=email, first_name=first_name, last_name=last_name)
         db.session.add(new_user)
@@ -48,7 +38,6 @@ class User(db.Model):
     @classmethod
     def authenticate(cls, username, pwd):
         u = User.query.filter_by(username=username).first()
-
         if u and bcrypt.check_password_hash(u.password, pwd):
             return u
         else:
@@ -82,9 +71,7 @@ class Story(db.Model):
 
 class Query(db.Model):
     __tablename__ = "queries"
-    id = db.Column(db.Integer,
-                   primary_key=True,
-                   autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     name = db.Column(db.String, nullable = False)
