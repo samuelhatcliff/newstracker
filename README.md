@@ -71,9 +71,10 @@ The navbar for someone that's not logged in to a user account will look like thi
 The search bar on the far right allows both non users and users to run a quick search for news stories by keyword. 
 <img src="static/photos/non_user_flows/simple-search.png" width="350">
 If a visitor would like to take advantage of the app's user-feautures and optimize their experience with a resuable account capable of permanently saving news stories and search preferences, they can use the `Register`/`Login` navbar links to create an account or log in. 
-
+<p>
 <img src="static/photos/non_user_flows/login.png" width="350">
 <img src="static/photos/non_user_flows/register.png" width="350">
+   </p>
 ### Users:
   A visitor can use the links in the navbar to log-in or register. After which, they will be redirected to a feed of headlines (*referred to as "Headlines" in the navbar*)
   or a feed displaying results from their default search query, if previously selected. 
