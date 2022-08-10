@@ -77,8 +77,7 @@ If a visitor would like to take advantage of the app's user-feautures and optimi
 </p>
 
 ### Users:
-  A visitor can use the links in the navbar to log-in or register. After which, they will be redirected to a feed of headlines (*referred to as "Headlines" in the navbar*)
-  or a feed displaying results from their default search query, if previously selected.
+  After logging in, a user will be redirected to `Headlines` which will either display a feed of general top headlines, or a feed of their results from their default search query, if they have set a default. 
   
   Below is a screenshot from a headlines feed where a user's default query is set to UK, and ordered by polarity. 
   <img src="static/photos/user_flows/uber-uk.png" width="350">
@@ -86,7 +85,7 @@ If a visitor would like to take advantage of the app's user-feautures and optimi
   A user's navbar now contains `Detailed Search`, `My Stories`, and `My Queries`.
   <img src="static/photos/user_flows/user-nav.png" width="500">
 
- A user can navigate to `Detailed Search` where they can submit a search query much more specific than the simple search. Parameters that can be specified include `Keyword`, `Source`, `Language`, `Quantity` `Date From`, `Date To`, `Save Search`, `Make Default`, and `Sort By`, where the user has the option to incorporat Sentiment Analysis in the search by ordering by `Subjectivity` or `Polarity`.
+ A user can navigate to `Detailed Search` where they can submit a search query much more specific than the simple search. Parameters that can be specified include `Keyword`, `Source`, `Language`, `Quantity` `Date From`, `Date To`, `Save Search`, `Make Default`, and `Sort By`, where the user has the option to incorporate Sentiment Analysis in the search by ordering by `Subjectivity` or `Polarity`.
  <p>
     <img src="static/photos/user_flows/detailed-search.png" width="350">
     <img src="static/photos/user_flows/search-by.png" width="350">
