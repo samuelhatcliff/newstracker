@@ -1,4 +1,4 @@
-from models import db, User, Query
+from models import db, User, Query, Story
 from sent_analysis import subjectize, polarize, parse_async
 from flask import session
 
@@ -44,9 +44,9 @@ def order_sub():
                         key=lambda story: story['sub'], reverse=True)
     return ordered
 
-
-def transfer_db_query_to_dict(query):
-    """Converts a saved query from db to session[dict]"""
+"""Conversions form SqlAlchemy object to dictionary"""
+def db_query_to_dict(query):
+    """Converts Query SqlAlchemy object to dict"""
     dict = {}
     dict['name'] = query.name
     dict['id'] = query.id
@@ -61,12 +61,11 @@ def transfer_db_query_to_dict(query):
     dict['sort_by'] = query.sort_by
     if "query" in session:
         session.pop("query")
-
     session["query"] = dict
     return dict
 
-def transfer_db_story_to_dict(story):
-    """Converts a saved story from db to dict"""
+def db_story_to_dict(story):
+    """Converts Story SqlAlchemy object to dict"""
     dict = {}
     dict['id'] = story.id
     dict['user_id'] = story.user_id
@@ -80,7 +79,8 @@ def transfer_db_story_to_dict(story):
     dict['published_at'] = story.published_at
     return dict
 
-def transfer_db_user_to_dict(user):
+def db_user_to_dict(user):
+    """Converts User SqlAlchemy object to dict"""
     dict = {}
     dict['id'] = user.id
     dict['username'] = user.username
@@ -90,8 +90,45 @@ def transfer_db_user_to_dict(user):
     dict['last_name'] = user.last_name
     return dict
 
+"""Conversions from dictionary to SqlAlchemy object"""
 
-def make_session_query(form):
+def dict_query_to_db(user_id, dict):
+    """Adds saved query to associated user in db"""
+    if dict['sort_by'] == "subjectivity" or dict['sort_by'] == "polarity":
+        dict['sa'] = dict['sort_by']
+        dict['sort_by'] = 'relevancy'
+    query = Query(user_id = user_id,
+        name = dict['name'],
+        source = dict['source'],
+        quantity = dict['quantity'], 
+        date_from = dict['date_from'],
+        date_to = dict['date_to'],
+        language = dict['language'], 
+        sort_by = dict['sort_by'],
+        sa = dict['sa'],
+        type = dict['type']
+        )
+    return query
+
+def dict_story_to_db(user_id, dict):
+    """Adds saved story to associated user in db"""
+    story = Story(user_id = user_id,
+    headline = dict['headline'],
+    source = dict['source'],
+    content = dict['content'], 
+    author = dict['author'],
+    description = dict['description'],
+    url = dict['url'], 
+    image = dict['image'],
+    published_at = dict['published_at'],
+    sub = dict['sub'],
+    pol = dict['pol']
+    )
+    return story
+
+"""Conversions from form data to dict"""
+def form_query_to_dict(form):
+    """Converts form data to dict"""
     query = {}
     query['keyword'] = form.keyword.data
     query['source'] = form.source.data
@@ -106,41 +143,4 @@ def make_session_query(form):
         query['sort_by'] = form.sort_by.data
         query['sa'] = None
     session['query'] = query
-    print('query111', query)
     return query
-
-
-def add_saved_query(user_id, form):
-    """Adds saved query to associated user in db"""
-    keyword = form.keyword.data
-    source = form.source.data
-    quantity = form.quantity.data
-    date_from = form.date_from.data
-    date_to = form.date_to.data
-    language = form.language.data
-    default = form.default.data
-    name = form.name.data
-    if form.sort_by.data == "subjectivity" or form.sort_by.data == "polarity":
-        sa = form.sort_by.data
-        sort_by = 'relevancy'
-    else:
-        sort_by = form.sort_by.data
-        sa = None
-    
-    query = Query(
-                      name = name,
-                      user_id = user_id,
-                      keyword=keyword,
-                      source=source,
-                      quantity=quantity,
-                      language=language,
-                      default=default,
-                      type="detailed_search",
-                      sa=sa,
-                      sort_by=sort_by,
-                      date_from=date_from,
-                      date_to=date_to,
-                      )
-
-    db.session.add(query)
-    db.session.commit()

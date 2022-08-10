@@ -148,10 +148,12 @@ def search_form():
         form = SearchForm()
         if form.validate_on_submit():
             try:
-                query = make_session_query(form)
+                dict_query = form_query_to_dict(form)
                 if form.saved_query.data or form.default.data:
-                    add_saved_query(g.user.id, form)
-                advanced_search_call(query)
+                    db_query = dict_query_to_db(g.user.id, dict_query)
+                    db.session.add(db_query)
+                    db.session.commit()
+                advanced_search_call(dict_query)
                 return redirect('/search/results')
             except:
                 return render_template('/search.html', form=form)
@@ -166,7 +168,7 @@ def search_user_queries(query_id):
     """Makes advanced search call based off of pre-saved query"""
     if CURR_USER_KEY in session:
         query_obj = Query.query.get(query_id)
-        query_dict = transfer_db_query_to_dict(query_obj)
+        query_dict = db_query_to_dict(query_obj)
         advanced_search_call(query_dict)
         return redirect('/search/results')
     else:
@@ -347,7 +349,7 @@ def show_pol_calls(id):
         # check to see if id represents a sqlalchemy object that needs converted to dict to be fed to SA functions
         # write logic to save score to db if story saved
         db_story = Story.query.get(id)
-        story = transfer_db_story_to_dict(db_story)
+        story = db_story_to_dict(db_story)
     except:
         results = session['results']
         story = [story for story in results if story['id'] == id][0]
@@ -364,7 +366,7 @@ def show_sub_calls(id):
     try:
         # check to see if id represents a sqlalchemy object that needs converted to dict to be fed to SA functions
         db_story = Story.query.get(id)
-        story = transfer_db_story_to_dict(db_story)
+        story = db_story_to_dict(db_story)
     except:
         results = session['results']
         story = [story for story in results if story['id'] == id][0]
@@ -397,7 +399,7 @@ def get_all_users():
     """Gets all users"""
     if CURR_USER_KEY in session:
         users = User.query.all()
-        dict_list = [transfer_db_user_to_dict(user) for user in users]
+        dict_list = [db_user_to_dict(user) for user in users]
         return jsonify(users = dict_list)
 
 @app.route('/users/delete', methods=["DELETE"])
@@ -417,7 +419,7 @@ def get_user(user_id):
     """Gets a user by user_id"""
     if CURR_USER_KEY in session:
         user = User.query.get(user_id)
-        dict = transfer_db_user_to_dict(user)
+        dict = db_user_to_dict(user)
         return jsonify(user = dict)
 
 @app.route('/users/<int:user_id>', methods=["DELETE"])
@@ -464,7 +466,7 @@ def edit_user(user_id):
         try:
             db.session.add(user)
             db.session.commit()
-            dict = transfer_db_user_to_dict(user)
+            dict = db_user_to_dict(user)
             return jsonify(updated_user = dict)
         except exc.SQLAlchemyError as e:
             if isinstance(e.orig, UniqueViolation):
@@ -473,40 +475,30 @@ def edit_user(user_id):
                 response = {"message": "Sorry, something went wrong. Unable to update user."}
             return response
 
+"""USER QUERIES"""
+
 @app.route('/users/<int:user_id>/queries/new', methods=["POST"])
 def new_query(user_id):
     """Creates a new query and associates it with user_id"""
     data = request.json['query']
-    if data['sort_by'] == "subjectivity" or data['sort_by'] == "polarity":
-        data['sa'] = data['sort_by']
-        data['sort_by'] = 'relevancy'
     try:
-        query = Query(user_id = user_id,
-        name = data['name'],
-        source = data['source'],
-        quantity = data['quantity'], 
-        date_from = data['date_from'],
-        date_to = data['date_to'],
-        language = data['language'], 
-        sort_by = data['sort_by'],
-        sa = data['sa'],
-        type = data['type']
-        )
+        query = dict_query_to_db(user_id, data)
         db.session.add(query)
         db.session.commit()
-        dict = transfer_db_query_to_dict(query)
-        return jsonify(new_query = dict)
 
     except exc.SQLAlchemyError as e:
         response = {"message": f"{e.origin}"}
         return response
+
+    dict = db_query_to_dict(query)
+    return jsonify(new_query = dict)
 
 @app.route('/users/<int:user_id>/queries/', methods=["GET"])
 def get_all_queries_by_user(user_id):
     """Gets all queries matching user_id"""
     user = User.query.get(user_id)
     queries = user.queries
-    dict_list = [transfer_db_query_to_dict(query) for query in queries]
+    dict_list = [db_query_to_dict(query) for query in queries]
     return jsonify(queries = dict_list)    
 
 @app.route('/users/<int:user_id>/queries/<int:query_id>/edit', methods=["PUT"])
@@ -520,28 +512,15 @@ def edit_query(user_id, query_id):
     except ValueError:
         response = {"Value Error": "The user id is not associated with the query id."}
         return response
-
-    if data['sort_by'] == "subjectivity" or data['sort_by'] == "polarity":
-        data['sa'] = data['sort_by']
-        data['sort_by'] = 'relevancy'
     try:
-        query.name = data['name'],
-        query.source = data['source'],
-        query.quantity = data['quantity'], 
-        query.date_from = data['date_from'],
-        query.date_to = data['date_to'],
-        query.language = data['language'], 
-        query.sort_by = data['sort_by'],
-        query.sa = data['sa'],
-        query.type = data['type']
+        query = dict_query_to_db(user_id, data)
         db.session.add(query)
         db.session.commit()
-        dict = transfer_db_query_to_dict(query)
-        return jsonify(updated_query = dict)
-
     except exc.SQLAlchemyError as e:
-        response = {"Unable to update query": f"{e.origin}"}
+        response = {"message": f"{e.origin}"}
         return response
+    dict = db_query_to_dict(query)
+    return jsonify(updated_query = dict)
 
 @app.route('/users/<int:user_id>/queries/<int:query_id>/delete', methods=["DELETE"])
 def delete_query(user_id, query_id):
@@ -562,6 +541,84 @@ def delete_query(user_id, query_id):
         response = {"Unable to delete query": f"{e.origin}"}
         return response
 
+"""USER STORIES"""
+
+@app.route('/users/<int:user_id>/stories/new', methods=["POST"])
+def new_story(user_id):
+    """Creates a new story and associates it with user_id"""
+    data = request.json['story']
+    try:
+        story = Story(user_id = user_id,
+        headline = data['headline'],
+        source = data['source'],
+        content = data['content'], 
+        author = data['author'],
+        description = data['description'],
+        url = data['url'], 
+        image = data['image'],
+        published_at = data['published_at'],
+        sub = data['sub'],
+        pol = data['pol']
+        )
+        db.session.add(story)
+        db.session.commit()
+        dict = db_query_to_dict(story)
+        return jsonify(new_story = dict)
+
+    except exc.SQLAlchemyError as e:
+        response = {"message": f"{e.origin}"}
+        return response
+
+@app.route('/users/<int:user_id>/stories/', methods=["GET"])
+def get_all_stories_by_user(user_id):
+    """Gets all queries matching user_id"""
+    user = User.query.get(user_id)
+    stories = user.stories
+    dict_list = [db_story_to_dict(story) for story in stories]
+    return jsonify(stories = dict_list)    
+
+@app.route('/users/<int:user_id>/stories/<int:story_id>/edit', methods=["PUT"])
+def edit_query(user_id, story_id):
+    """Edits a User Story by User and Query ids"""
+    data = request.json['query']
+    story = Story.query.get(story_id)
+    try:
+        if user_id != story.user_id:
+            raise ValueError("The user id is not associated with the story id.")
+    except ValueError:
+        response = {"Value Error": "The user id is not associated with the story id."}
+        return response
+
+    try:
+        story = dict_story_to_db(user_id, data)
+        db.session.add(story)
+        db.session.commit()
+        dict = db_query_to_dict(story)
+        return jsonify(updated_story = dict)
+
+    except exc.SQLAlchemyError as e:
+        response = {"message": f"{e.origin}"}
+        return response
+
+@app.route('/users/<int:user_id>/queries/<int:story_id>/delete', methods=["DELETE"])
+def delete_query(user_id, story_id):
+    """Deletes a User Story by User and Query ids"""
+    story = Query.query.get(story_id)
+    try:
+        if user_id != story.user_id:
+            raise ValueError("The user id is not associated with the story id.")
+    except ValueError:
+        response = {"Value Error": "The user id is not associated with the story id."}
+        return response
+
+    try:
+        Query.query.filter_by(id=story_id).delete()
+        db.session.commit()
+        return {"message":"Success! Story was deleted."}
+    except exc.SQLAlchemyError as e:
+        response = {"Unable to delete story": f"{e.origin}"}
+        return response
+
 """QUERIES"""
 
 @app.route('/queries', methods=["GET"])
@@ -569,7 +626,7 @@ def get_all_queries():
     """Gets all queries"""
     if CURR_USER_KEY in session:
         queries = Query.query.all()
-        dict_list = [transfer_db_query_to_dict(query) for query in queries]
+        dict_list = [db_query_to_dict(query) for query in queries]
         return jsonify(queries = dict_list)
 
 @app.route('/queries/<int:query_id>', methods=["GET"])
@@ -577,7 +634,7 @@ def get_query(query_id):
     """Gets a query by query_id"""
     if CURR_USER_KEY in session:
         query = Query.query.get(query_id)
-        dict = transfer_db_query_to_dict(query)
+        dict = db_query_to_dict(query)
         return jsonify(query= dict)
 
 
@@ -588,7 +645,7 @@ def get_all_stories():
     """Gets all stories"""
     if CURR_USER_KEY in session:
         stories = Story.query.all()
-        dict_list = [transfer_db_story_to_dict(story) for story in stories]
+        dict_list = [db_story_to_dict(story) for story in stories]
         return jsonify(stories = dict_list)
 
 @app.route('/stories/<story_id>', methods=["GET"]) #story ids are non-numerical as they are inherited from sessions randomly generated uuid() ids
@@ -596,7 +653,7 @@ def get_story(story_id):
     """Gets story by story id"""
     if CURR_USER_KEY in session:
         story = Story.query.get(story_id)
-        dict = transfer_db_story_to_dict(story)
+        dict = db_story_to_dict(story)
         return jsonify(story = dict)
 
 
