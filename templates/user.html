@@ -55,7 +55,7 @@
                         <li class="card-subtitle mb-2 text-center blockquote-footer" id="date">{{story.published_at}}
                         </li>
                         <p class="card-text text-center" id="content">{{story.content}}</p>
-                        <form action='/story/{{story.id}}/delete_story' , method="POST" id="save">
+                        <form action='/story/{{story.id}}/remove' , method="POST" id="save">
                             <input type="submit" value="Remove Story" class="btn btn-danger btn-sm badge-pill">
                         </form>
                     </div>
