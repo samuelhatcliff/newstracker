@@ -59,18 +59,29 @@ Python, Flask, SQLAlchemy, Redis, NewsAPI, NLTK, Newspaper, Multiprocessing, Axi
 
 ## User-Flow: 
 ### Non-Users:
-  The homepage of NewsTracker contains an easily accessible Demo User login button on the top right of the page, which allows a visitor to access the same feautures as a real user.
+  The homepage of NewsTracker contains an easily accessible Demo User login button on the top right of the page, which allows a visitor to access the same feautures as a real user. Below are multiple Bootstrap carousels
+  containing the top headlines for each category permitted to us by the News Api. Clicking on each story as they pass through the carousel results 
+  in said story opening up in a new window, while clicking the category name itself returns a feed of headlines containing the stories displayed in the carousel.  
    <p align="center">
 <img src="static/photos/non_user_flows/dummy-login.png" width="350">
 </p>
-The page as a whole contains cards on the left side explaining various features of the app,
-  while the right side contains multiple Bootstrap carousels
-  containing the top headlines for each category permitted to us by the News Api.  Clicking on each story as they pass through the carousel results 
-  in said story opening up in a new window, while clicking the category name itself returns a feed of headlines containing the stories displayed in the carousel.  
- <p align="center">
-<img src="static/photos/user_flows/homepage-mobile.png" width="350">
+The left side of the page contains cards explaining various features of the app.
+   <p align="center">
+<img src="static/photos/non_user_flows/non-user-intro.png" width="350">
 </p>
-  
+The navbar for someone that's not logged in to a user account will look like this:
+   <p align="center">
+<img src="static/photos/non_user_flows/non-user-nav.png" width="350">
+</p>
+The search bar on the far right allows both non users and users to run a quick search for news stories by keyword. 
+<p align="center">
+<img src="static/photos/non_user_flows/simple-search.png" width="350">
+</p>
+If a visitor would like to take advantage of the app's user-feautures and optimize their experience with a resuable account capable of permanently saving news stories and search preferences, they can use the `Register`/`Login` navbar links to create an account or log in. 
+<p align="center">
+<img src="static/photos/non_user_flows/login" width="350">
+<img src="static/photos/non_user_flows/register" width="350">
+</p>
   ### Users:
 
   A visitor can use the links in the navbar to log-in or register. After which, they will be redirected to a feed of headlines (*referred to as "Headlines" in the navbar*)
