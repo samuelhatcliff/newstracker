@@ -67,7 +67,7 @@ Python, Flask, SQLAlchemy, Redis, NewsAPI, NLTK, Newspaper, Multiprocessing, Axi
 <img src="static/photos/non_user_flows/dummy-login.png" width="350">
 </p>
 The left side of the page contains cards explaining various features of the app.
-  <div></div>
+  <p></p>
    <p align="center">
 <img src="static/photos/non_user_flows/non-user-intro.png" width="350">
 </p>
@@ -87,7 +87,7 @@ If a visitor would like to take advantage of the app's user-feautures and optimi
 <img src="static/photos/non_user_flows/login.png" width="350">
 <img src="static/photos/non_user_flows/register.png" width="350">
 </p>
-  ### Users:
+### Users:
 
   A visitor can use the links in the navbar to log-in or register. After which, they will be redirected to a feed of headlines (*referred to as "Headlines" in the navbar*)
   or a feed displaying results from their default search query, if previously selected. 
