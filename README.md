@@ -67,7 +67,7 @@ Python, Flask, SQLAlchemy, Redis, NewsAPI, NLTK, Newspaper, Multiprocessing, Axi
 The left side of the page contains cards explaining various features of the app.
 <img src="static/photos/non_user_flows/non-user-intro.png" width="350">
 What the navbar looks like for someone that's not logged in to a user account. 
-<img src="static/photos/non_user_flows/non-user-nav.png" width="350">
+<img src="static/photos/non_user_flows/non-user-nav.png" width="500">
 The search bar on the far right allows both non users and users to run a quick search for news stories by keyword. 
 <img src="static/photos/non_user_flows/simple-search.png" width="350">
 If a visitor would like to take advantage of the app's user-feautures and optimize their experience with a resuable account capable of permanently saving news stories and search preferences, they can use the `Register`/`Login` navbar links to create an account or log in. 
