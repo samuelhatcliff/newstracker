@@ -79,8 +79,8 @@ The search bar on the far right allows both non users and users to run a quick s
 </p>
 If a visitor would like to take advantage of the app's user-feautures and optimize their experience with a resuable account capable of permanently saving news stories and search preferences, they can use the `Register`/`Login` navbar links to create an account or log in. 
 <p align="center">
-<img src="static/photos/non_user_flows/login" width="350">
-<img src="static/photos/non_user_flows/register" width="350">
+<img src="static/photos/non_user_flows/login.png" width="350">
+<img src="static/photos/non_user_flows/register.png" width="350">
 </p>
   ### Users:
 
