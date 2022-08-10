@@ -87,6 +87,11 @@ If a visitor would like to take advantage of the app's user-feautures and optimi
   <img src="static/photos/user_flows/user-nav.png" width="500">
 
  A user can navigate to `Detailed Search` where they can submit a search query much more specific than the simple search. Parameters that can be specified include `Keyword`, `Source`, `Language`, `Quantity` `Date From`, `Date To`, `Save Search`, `Make Default`, and `Sort By`, where the user has the option to incorporat Sentiment Analysis in the search by ordering by `Subjectivity` or `Polarity`.
+ <p>
+    <img src="static/photos/user_flows/detailed-search.png" width="350">
+    <img src="static/photos/user_flows/search-by.png" width="350">
+</p>
+
   Along with the option of filtering one's search results by polarity or subjectivity, a user may choose to get such sentimental analysis data on any individual stories
   wherever they are rendered, with the exception of the category-carousels on the home-page. 
  
