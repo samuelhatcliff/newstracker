@@ -70,7 +70,7 @@ What the navbar looks like for someone that's not logged in to a user account.
 <img src="static/photos/non_user_flows/non-user-nav.png" width="500">
 The search bar on the far right allows both non users and users to run a quick search for news stories by keyword. 
 <img src="static/photos/non_user_flows/simple-search.png" width="350">
-If a visitor would like to take advantage of the app's user-feautures and optimize their experience with a resuable account capable of permanently saving news stories and search preferences, they can use the `Register`/`Login` navbar links to create an account or log in. 
+If a visitor would like to take advantage of the app's user-feautures and optimize their experience with a resuable account capable of permanently saving news stories and search preferences, they can use the `Register` or `Login` navbar links to create an account or log in. 
 <p>
 <img src="static/photos/non_user_flows/register.png" width="350">
 <img src="static/photos/non_user_flows/login.png" width="350">
@@ -78,11 +78,15 @@ If a visitor would like to take advantage of the app's user-feautures and optimi
 
 ### Users:
   A visitor can use the links in the navbar to log-in or register. After which, they will be redirected to a feed of headlines (*referred to as "Headlines" in the navbar*)
-  or a feed displaying results from their default search query, if previously selected. 
+  or a feed displaying results from their default search query, if previously selected.
   
-  Now that a user is logged in, they may want to user features of the application only available to users, such as the Advanced Search feature (*"Detailed Search" in 
-  the navbar*) or refer to previous saved stories (*"My Stories" in the navbar*).
-  
+  Below is a screenshot from a headlines feed where a user's default query is set to UK, and ordered by polarity. 
+  <img src="static/photos/user_flows/uber-uk.png" width="350">
+
+  A user's navbar now contains `Detailed Search`, `My Stories`, and `My Queries`.
+  <img src="static/photos/user_flows/user-nav.png" width="500">
+
+ A user can navigate to `Detailed Search` where they can submit a search query much more specific than the simple search. Parameters that can be specified include `Keyword`, `Source`, `Language`, `Quantity` `Date From`, `Date To`, `Save Search`, `Make Default`, and `Sort By`, where the user has the option to incorporat Sentiment Analysis in the search by ordering by `Subjectivity` or `Polarity`.
   Along with the option of filtering one's search results by polarity or subjectivity, a user may choose to get such sentimental analysis data on any individual stories
   wherever they are rendered, with the exception of the category-carousels on the home-page. 
  
