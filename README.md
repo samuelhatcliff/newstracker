@@ -61,7 +61,7 @@ Python, Flask, SQLAlchemy, Redis, NewsAPI, NLTK, Newspaper, Multiprocessing, Axi
 ### Non-Users:
   The homepage of NewsTracker contains an easily accessible Demo User login button on the top right of the page, which allows a visitor to access the same feautures as a real user.
    <p align="center">
-<img src="static/photos/user_flows/dummy-login" width="350">
+<img src="static/photos/user_flows/dummy login" width="350">
 </p>
 The page as a whole contains cards on the left side explaining various features of the app,
   while the right side contains multiple Bootstrap carousels
