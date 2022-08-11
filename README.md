@@ -13,14 +13,14 @@
     [- ii. Flask's Server-Side Session with Redis](#flasks-server-side-session-with-redis)  
     [- iii. News-Api](#News-Api)  
     [- iv. Summary](#summary-1)  
-[IV. Challenges/Reflections](#challenges)\
+[IV. Challenges/Reflections](#challengesreflections)\
     [- i. Limitations of NewsApi's Free Tier](#limitations-of-newsapis-free-tier)  
     [- ii. Storage and State Deliberations: Postgres VS Client-Side Session VS Server-Side Session](#storage-and-state-deliberations-postgres-vs-client-side-session-vs-server-side-session)\
     [- iii. Sentimental Analysis Accuracy](#sentimental-analysis-accuracy)
 
 
 ### Technology/Tools: 
-Python, Flask, SQLAlchemy, Redis, NewsAPI, NLTK, Newspaper, Multiprocessing, Axios, WTForms, CSS, Bootstrap.
+Python, Flask, SQLAlchemy, Redis, Postgresql, NewsAPI, NLTK, Textblob, Newspaper, Multiprocessing, Javascript, Axios, WTForms, CSS, Bootstrap.
 
 
 ### Summary: 
@@ -144,7 +144,7 @@ After extracting the resulting data from the api, the data is saved to Flasks's 
 
 
 
-## Challenges: 
+## Challenges/Reflections 
 ### Limitations of NewsApi's Free Tier
 #### Problem: Inability to access a story's full content.
   The free version of news API does not allow developers to access the entirety of a story's content, only providing the first few sentences. This is a huge problem for our app, since one of the key features we've imagined is to perform sentimental analysis on the body of each article, not just the headline or a few sentences! 
@@ -200,5 +200,10 @@ To remedy this, I made sure that SQLAlchemy objects and session dictionaries con
   #### Polarity
   Generally speaking, polarity results are probabilistically more likely to be useful for investors as opposed to politically active news consumers. This is because investors have a much more straightforward relationship with the companies they search for in that *news that is good for the company is good for them, and news that is bad for the company is bad for them*. A notable exception would be if an investor is shorting a company, to which the inverse of the above relationship can simply be applied. NLTK's Polarity analysis seems to do a decent job at recognizing when an advancement has been made by an organization or individual; whether its expansion, deals, agreements, the announcement of new services, etc. It also does a fair job at detecting when an organization or individual has experienced some sort of threat or loss. This is great if we're just dealing with investors, who hold the simple relationship with the topic of their search (likely to be a company or CEO) where good news from that specific keyword tends to signal a greater return on investment. 
   
-  However, polarity becomes much more complex when the user is searching from the perspective of a politically-minded individual with a specific set of nuanced political beliefs. For some, a story with the headline "Russia on the verse of running out of soldiers" would be considered "good news", for instance, but actually ends up being classfied as "Negative" because Russia, the subject and likely keyword of the story, is itself experiencing something negative. As is the case with politics, the failures of an enemy are often victories for a particular cause or individual. When viewed from the politically agnostic perspective of NLTK's polarity library, any positive 
-advancement or progress is viewed as positive. News events such as the passing of legislation are frequently intepreted as positive, even though the polarity of such things are entirely dependent on the values and beliefs of a particular user. 
+  However, polarity becomes much more complex when the user is searching from the perspective of a politically-minded individual with a specific set of nuanced beliefs. For some, a story with the headline "Russia on the verge of running out of soldiers" would be considered "good news", for instance, but actually ends up being classfied as "Negative" because Russia, the subject and likely keyword of the story, is itself experiencing something negative. As is the case with politics, the failures of an enemy are often victories for a particular cause or individual. When viewed from the politically agnostic perspective of NLTK's polarity library, any positive 
+advancement or progress is viewed as positive. News events such as the passing of legislation are frequently intepreted as positive, even though the polarity of such things are entirely dependent on the values and beliefs of a particular user. Therefore, while the 4th scenario outlined in the [Purpose](#purpose) section might be somewhat useful, the subjective values of a user is simply too great of a factor to be ignored, making this usecase not all that attractive. 
+
+    Something that might help remedy this problem would be to collect data on a user either through a survey, or allowing them to rate the accuracy of polarity results according to their taste, and adjust the polarity calculation of new stories accordingly. Although I think this is a fascinating problem, it's currently above my skillset to attempt to implement. If any readers know of any existing libraries, projects, or resources that might address these sorts of issues, do feel free message me! 
+    
+  #### Subjectivity
+  The accuracy of Textblob's subjectivity library is a bit more difficult to determine compared to NTLK's polarity library. For polarity analysis, our method of choice for checking if an output is accurate has been to hold it up against our own understanding of whether a story is positive or negative. It's a lot easier to look at an article (often just the headline is needed), absorb its semantic content, and determine if its a positive or negative development than it is to read an entire article and try to evaluate on our own where it lies on the spectrum of subjectivity. Because of this additional complexity, I personally haven't spent too much time assessing the accuracy of the app's subjectivity analysis at this point. It would be interesting to incorporate external projects and resources such as [Ad Fontes](https://adfontesmedia.com/) and [Media Bias/Fact Check](https://mediabiasfactcheck.com/reuters/) and evaluate how they compare to a macro-analysis of newstracker's subjectivity scores. However, it shouldn't be forgotten that these NLP libraries are only capable of assessing how subjective the tone of a text is. An article could be littered with tons of false information, that if written in an objective tone without the use of subjective embellishments, would probably be classified as objective. The knowledge itself that these sorts of situations exist already somewhat hinders use cases #1 and #2. I'm inclined to categorize the situation where an article is written using false information stated as facts as more of an edge case that one should be aware of, rather than an instand disqualifier for the sort of utility described in scenarios #1 and #2. Any suggestions or resources that could be useful in evaluating the accuracy of Textblob's subjectivity library and how it can be applied to the usecases I've described is certainly welcome! 
