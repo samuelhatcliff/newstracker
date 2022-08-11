@@ -83,6 +83,7 @@ If a visitor would like to take advantage of the app's user-feautures and optimi
   <img src="static/photos/user_flows/uber-uk.png" width="350">
 
   A user's navbar now contains `Detailed Search`, `My Stories`, and `My Queries`.
+  <p></p>
   <img src="static/photos/user_flows/user-nav.png" width="500">
 
  A user can navigate to `Detailed Search` where they can submit a search query much more specific than the simple search. Parameters that can be specified include `Keyword`, `Source`, `Language`, `Quantity` `Date From`, `Date To`, `Save Search`, `Make Default`, and `Sort By`, where the user has the option to incorporate Sentiment Analysis in the search by ordering by `Subjectivity` or `Polarity`.
