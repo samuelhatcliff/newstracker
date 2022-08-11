@@ -14,8 +14,8 @@
     [- iii. News-Api](#News-Api)  
     [- iv. Summary](#summary-1)  
 [IV. Challenges/Reflections](#challengesreflections)\
-    [- i. Sentimental Analysis Accuracy](#sentimental-analysis-accuracy)
-    [- ii. Limitations of NewsApi's Free Tier](#limitations-of-newsapis-free-tier)  
+    [- i. Sentimental Analysis Accuracy](#sentimental-analysis-accuracy)\
+    [- ii. Limitations of NewsApi's Free Tier](#limitations-of-newsapis-free-tier)\  
     [- iii. Storage and State Deliberations: Postgres VS Client-Side Session VS Server-Side Session](#storage-and-state-deliberations-postgres-vs-client-side-session-vs-server-side-session)\
 
 
@@ -54,8 +54,7 @@ Python, Flask, SQLAlchemy, Redis, Postgresql, NewsAPI, NLTK, Textblob, Newspaper
     on their mental health, and want to expose themselves to more positive and uplifting news may use the polarity 
     feature to filter out negative stories. 
 
-  As you can see, there are many potential use-cases for NewsTracker that will only continue to increase as more features are added. I would note, however, 
-  that NLTK's Sentimental Analysis features are not perfect, and a user should not expect to get accurate results or insights 100% of the time. 
+ Although there are many different use cases that type of application might provide to its users, as described above, I also think it is important to mention that current NLP Sentiment Analysis capabilities aren't perfect, and a user should not expect to get accurate results or insights 100% of the time. A more thorough analysis of the accuracy of these features and how they might apply to each of the 4 scenarios outlined above can be found under the [Sentimental Analysis Accuracy](#sentimental-analysis-accuracy) section of this ReadMe. 
 
 
 ## User-Flow: 
