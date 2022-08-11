@@ -102,9 +102,10 @@ A user can now access and run this particular search query through the drop down
 
   Along with the option of filtering one's search results by polarity or subjectivity, a user may choose to get such sentimental analysis data on any individual stories
   wherever they are rendered, with the exception of the category-carousels on the home-page. 
+ <p>
  <img src="static/photos/user_flows/monkey-before.png" width="350">
  <img src="static/photos/user_flows/monkey-after.png" width="350">
-
+</p>
 
 ## Data: 
 ### Postgresql/Flask-SqlAlchemy
