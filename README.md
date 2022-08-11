@@ -93,11 +93,18 @@ If a visitor would like to take advantage of the app's user-feautures and optimi
 
 If a user has a particular search query that they'd like to re-use, but they don't want to have to re-enter the same information into the search form each time, they can mark that they want to save the query, then must proceed to give it a name. 
 A user can now access and run this particular search query through the drop down menu of `My Queries`.
+<p>
+<img align="center" src="static/photos/user_flows/give-name.png" width="500">
+</p>
 <img src="static/photos/user_flows/my-queries-zoomed-out.png" width="350">
+<img src="static/photos/user_flows/queries-dropdown.png" width="350">
 
   Along with the option of filtering one's search results by polarity or subjectivity, a user may choose to get such sentimental analysis data on any individual stories
   wherever they are rendered, with the exception of the category-carousels on the home-page. 
- 
+ <img src="static/photos/user_flows/monkey-before.png" width="350">
+ <img src="static/photos/user_flows/monkey-after.png" width="350">
+
+
 ## Data: 
 ### Postgresql/Flask-SqlAlchemy
 
