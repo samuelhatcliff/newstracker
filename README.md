@@ -77,8 +77,7 @@ If a visitor would like to take advantage of the app's user-feautures and optimi
 </p>
 
 ### Users:
-  A visitor can use the links in the navbar to log-in or register. After which, they will be redirected to a feed of headlines (*referred to as "Headlines" in the navbar*)
-  or a feed displaying results from their default search query, if previously selected.
+  After logging in, a user will be redirected to `Headlines` which will either display a feed of general top headlines, or a feed of their results from their default search query, if they have set a default. 
   
   Below is a screenshot from a headlines feed where a user's default query is set to UK, and ordered by polarity. 
   <img src="static/photos/user_flows/uber-uk.png" width="350">
@@ -86,7 +85,16 @@ If a visitor would like to take advantage of the app's user-feautures and optimi
   A user's navbar now contains `Detailed Search`, `My Stories`, and `My Queries`.
   <img src="static/photos/user_flows/user-nav.png" width="500">
 
- A user can navigate to `Detailed Search` where they can submit a search query much more specific than the simple search. Parameters that can be specified include `Keyword`, `Source`, `Language`, `Quantity` `Date From`, `Date To`, `Save Search`, `Make Default`, and `Sort By`, where the user has the option to incorporat Sentiment Analysis in the search by ordering by `Subjectivity` or `Polarity`.
+ A user can navigate to `Detailed Search` where they can submit a search query much more specific than the simple search. Parameters that can be specified include `Keyword`, `Source`, `Language`, `Quantity` `Date From`, `Date To`, `Save Search`, `Make Default`, and `Sort By`, where the user has the option to incorporate Sentiment Analysis in the search by ordering by `Subjectivity` or `Polarity`.
+ <p>
+    <img src="static/photos/user_flows/detailed-search.png" width="350">
+    <img src="static/photos/user_flows/search-by.png" width="350">
+</p>
+
+If a user has a particular search query that they'd like to re-use, but they don't want to have to re-enter the same information into the search form each time, they can mark that they want to save the query, then must proceed to give it a name. 
+A user can now access and run this particular search query through the drop down menu of `My Queries`.
+<img src="static/photos/user_flows/my-queries-zoomed-out.png" width="350">
+
   Along with the option of filtering one's search results by polarity or subjectivity, a user may choose to get such sentimental analysis data on any individual stories
   wherever they are rendered, with the exception of the category-carousels on the home-page. 
  
