@@ -80,6 +80,7 @@ If a visitor would like to take advantage of the app's user-feautures and optimi
   After logging in, a user will be redirected to `Headlines` which will either display a feed of general top headlines, or a feed of their results from their default search query, if they have set a default. 
   
   Below is a screenshot from a headlines feed where a user's default query is set to UK, and ordered by polarity. 
+  
   <img src="static/photos/user_flows/uber-uk.png" width="350">
 
   A user's navbar now contains `Detailed Search`, `My Stories`, and `My Queries`.
