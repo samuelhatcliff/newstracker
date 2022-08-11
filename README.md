@@ -61,14 +61,17 @@ Python, Flask, SQLAlchemy, Redis, Postgresql, NewsAPI, NLTK, Textblob, Newspaper
 ### Non-Users:
   The homepage of NewsTracker contains an easily accessible Demo User login button on the top right of the page, which allows a visitor to access the same feautures as a real user. Below are multiple Bootstrap carousels
   containing the top headlines for each category permitted to us by the News Api. Clicking on each story as they pass through the carousel results 
-  in said story opening up in a new window, while clicking the category name itself returns a feed of headlines containing the stories displayed in the carousel.  
-  <div></div>
+  in said story opening up in a new window, while clicking the category name itself returns a feed of headlines containing the stories displayed in the carousel. 
+  
 <img src="static/photos/non_user_flows/dummy-login.png" width="350">
 The left side of the page contains cards explaining various features of the app.
+
 <img src="static/photos/non_user_flows/non-user-intro.png" width="350">
 What the navbar looks like for someone that's not logged in to a user account. 
+
 <img src="static/photos/non_user_flows/non-user-nav.png" width="500">
 The search bar on the far right allows both non users and users to run a quick search for news stories by keyword. 
+
 <img src="static/photos/non_user_flows/simple-search.png" width="350">
 If a visitor would like to take advantage of the app's user-feautures and optimize their experience with a resuable account capable of permanently saving news stories and search preferences, they can use the `Register` or `Login` navbar links to create an account or log in. 
 <p>
