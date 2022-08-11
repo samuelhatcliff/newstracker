@@ -80,9 +80,11 @@ If a visitor would like to take advantage of the app's user-feautures and optimi
   After logging in, a user will be redirected to `Headlines` which will either display a feed of general top headlines, or a feed of their results from their default search query, if they have set a default. 
   
   Below is a screenshot from a headlines feed where a user's default query is set to UK, and ordered by polarity. 
+  
   <img src="static/photos/user_flows/uber-uk.png" width="350">
 
   A user's navbar now contains `Detailed Search`, `My Stories`, and `My Queries`.
+  <p></p>
   <img src="static/photos/user_flows/user-nav.png" width="500">
 
  A user can navigate to `Detailed Search` where they can submit a search query much more specific than the simple search. Parameters that can be specified include `Keyword`, `Source`, `Language`, `Quantity` `Date From`, `Date To`, `Save Search`, `Make Default`, and `Sort By`, where the user has the option to incorporate Sentiment Analysis in the search by ordering by `Subjectivity` or `Polarity`.
@@ -93,11 +95,17 @@ If a visitor would like to take advantage of the app's user-feautures and optimi
 
 If a user has a particular search query that they'd like to re-use, but they don't want to have to re-enter the same information into the search form each time, they can mark that they want to save the query, then must proceed to give it a name. 
 A user can now access and run this particular search query through the drop down menu of `My Queries`.
+
+<p>
 <img src="static/photos/user_flows/my-queries-zoomed-out.png" width="350">
+</p>
 
   Along with the option of filtering one's search results by polarity or subjectivity, a user may choose to get such sentimental analysis data on any individual stories
   wherever they are rendered, with the exception of the category-carousels on the home-page. 
- 
+ <img src="static/photos/user_flows/monkey-before.png" width="350">
+ <img src="static/photos/user_flows/monkey-after.png" width="350">
+
+
 ## Data: 
 ### Postgresql/Flask-SqlAlchemy
 
@@ -108,7 +116,7 @@ A diagram of our Postgresql schema is shown below.
 </p>    
 
 ### Flask's Server-Side Session with Redis
-  Data that doesn't need to persist, in our case being regular search queries and search results that a user does not choose to save, are temporarily stored memory with Flask's Server-Side Session configured through a Redis database. By taking the approach of avoiding using our Postgresql database except when absolutely necessary, we reduce latency and increase overall permformance. A more in depth explanation discussing the trade-offs of using Posgresql, Server Side Session, and Client Side Session for this project can be found here. Below is a basic diagram of how Session is used to temporarily store data.
+  Data that doesn't need to persist, in our case being regular search queries and search results that a user does not choose to save, are temporarily stored memory with Flask's Server-Side Session configured through a Redis database. By taking the approach of avoiding using our Postgresql database except when absolutely necessary, we reduce latency and increase overall permformance. A more in depth explanation discussing the trade-offs of using Posgresql, Server Side Session, and Client Side Session for this project can be found [here](#storage-and-state-deliberations-postgres-vs-client-side-session-vs-server-side-session). Below is a basic diagram of how Session is used to temporarily store data.
  <p align="center"> 
 <img src="static/photos/session-diagram.png" width="500">
 </p>
