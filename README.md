@@ -15,16 +15,16 @@
     [- iv. Summary](#summary-1)  
 [IV. Challenges/Reflections](#challengesreflections)\
     [- i. Sentimental Analysis Accuracy](#sentimental-analysis-accuracy)\
-    [- ii. Limitations of NewsApi's Free Tier](#limitations-of-newsapis-free-tier)\  
+    [- ii. Limitations of NewsApi's Free Tier](#limitations-of-newsapis-free-tier)\
     [- iii. Storage and State Deliberations: Postgres VS Client-Side Session VS Server-Side Session](#storage-and-state-deliberations-postgres-vs-client-side-session-vs-server-side-session)\
 
 
 
-### Technology/Tools: 
+### Technology/Tools 
 Python, Flask, SQLAlchemy, Redis, Postgresql, NewsAPI, NLTK, Textblob, Newspaper, Multiprocessing, Javascript, Axios, WTForms, CSS, Bootstrap.
 
 
-### Summary: 
+### Summary 
   NewsTracker is an application designed to enhance and optimize the way a user interacts with news stories. 
   This is achieved primarily using a search engine that connects to [NewsAPI](https://newsapi.org/) which allows the user to narrow-down the content of their results.  
   
@@ -34,7 +34,7 @@ Python, Flask, SQLAlchemy, Redis, Postgresql, NewsAPI, NLTK, Textblob, Newspaper
   Other features available to users include the ability to save stories that they want to refer back to later, save multiple search queries for easy-access through an accordian drop-down, and the ability to set one of said queries as a user's default so that their headline feed will be base its results off that query
   default so that the main headline page will show results based off of the user's default search query. 
 
-### Purpose: 
+### Purpose 
   The ability to run an advanced search query to display a specific type of story and store it permanently in a user's account could be beneficial for 
   anyone wanting to keep up with current events and/or investment opportunities. Getting Sentimental Analysis prior to reading a story has a variety of potential 
   benefits. Imagine the following scenarios:
@@ -57,8 +57,8 @@ Python, Flask, SQLAlchemy, Redis, Postgresql, NewsAPI, NLTK, Textblob, Newspaper
  Although there are many different use cases that type of application might provide to its users, as described above, I also think it is important to mention that current NLP Sentiment Analysis capabilities aren't perfect, and a user should not expect to get accurate results or insights 100% of the time. A more thorough analysis of the accuracy of these features and how they might apply to each of the 4 scenarios outlined above can be found under the [Sentimental Analysis Accuracy](#sentimental-analysis-accuracy) section of this ReadMe. 
 
 
-## User-Flow: 
-### Non-Users:
+## User-Flow 
+### Non-Users
   The homepage of NewsTracker contains an easily accessible Demo User login button on the top right of the page, which allows a visitor to access the same feautures as a real user. Below are multiple Bootstrap carousels
   containing the top headlines for each category permitted to us by the News Api. Clicking on each story as they pass through the carousel results 
   in said story opening up in a new window, while clicking the category name itself returns a feed of headlines containing the stories displayed in the carousel. 
@@ -79,7 +79,7 @@ If a visitor would like to take advantage of the app's user-feautures and optimi
 <img src="static/photos/non_user_flows/login.png" width="350">
 </p>
 
-### Users:
+### Users
   After logging in, a user will be redirected to `Headlines` which will either display a feed of general top headlines, or a feed of their results from their default search query, if they have set a default. 
   
   Below is a screenshot from a headlines feed where a user's default query is set to UK, and ordered by polarity. 
@@ -110,7 +110,7 @@ A user can now access and run this particular search query through the drop down
  <img src="static/photos/user_flows/monkey-after.png" width="350">
 </p>
 
-## Data: 
+## Data 
 ### Postgresql/Flask-SqlAlchemy
 
   News Tracker uses a Postgresql database configured through Flask-Sqlalchemy on the backend to store information that we want to persist in our application regardless of the client. When reduced to the absolute minimum amount necessary for the application to work as envisioned, we are left only with information pertaining to a registered user. This is composed of information given by a user upon registration, as well as stories and search queries that they may have saved. In SQL terms, we are left with a simple schema containing 3 tables: `User`, `Story`, and `Query`, where `Story` and `Query` are associated with their respective user by a foreign key in a one-way, one-to-many relationsip.
