@@ -96,8 +96,10 @@ A user can now access and run this particular search query through the drop down
 <p>
 <img align="center" src="static/photos/user_flows/give-name.png" width="500">
 </p>
+<p>
 <img src="static/photos/user_flows/my-queries-zoomed-out.png" width="350">
-<img src="static/photos/user_flows/queries-dropdown.png" width="350">
+<img src="static/photos/user_flows/queries-dropdown.png" width="300">
+</p>
 
   Along with the option of filtering one's search results by polarity or subjectivity, a user may choose to get such sentimental analysis data on any individual stories
   wherever they are rendered, with the exception of the category-carousels on the home-page. 
