@@ -95,7 +95,7 @@ If a visitor would like to take advantage of the app's user-feautures and optimi
 
 If a user has a particular search query that they'd like to re-use, but they don't want to have to re-enter the same information into the search form each time, they can mark that they want to save the query, then must proceed to give it a name. 
 A user can now access and run this particular search query through the drop down menu of `My Queries`.
-<p align="center>
+<p align="center">
 <img src="static/photos/user_flows/give-name.png" width="500">
 </p>
 <p>
