@@ -21,7 +21,7 @@
     [- i. Automatic Sentiment Analysis Scores for User Search Queries](#automatic-sentiment-analysis-scores-for-user-search-queries)\
     [- ii. Macro-Analysis](#macro-analysis)\
     [- iii. Integration of Twitter API](#integration-of-twitter-api)\
-    [- iv. React.js Front-End](#react.js-front-end)
+    [- iv. React.js Front-End](#reactjs-front-end)
 
     
 
