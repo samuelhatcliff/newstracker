@@ -153,7 +153,6 @@ def search_form():
             try:
                 dict_query = form_query_to_dict(form)
                 if form.saved_query.data or form.default.data:
-                    print("lllllll", dict_query['name'])
                     db_query = dict_query_to_db(g.user.id, session['query'])
                     db.session.add(db_query)
                     db.session.commit()

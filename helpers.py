@@ -100,33 +100,17 @@ def dict_query_to_db(user_id, dict):
         dict['sa'] = dict['sort_by']
         dict['sort_by'] = 'relevancy'
     dict['type'] = "Detailed Search" 
-    print(
-    user_id,
-    dict['name'],
-    dict['source'],
-    dict['quantity'],
-    dict['date_from'],
-    dict['date_to'],
-    dict['language'],
-    dict['sort_by'],
-    dict['sa'],
-    dict['type']
-    )
-    try:
-        query = Query(user_id = user_id,
-            name = dict['name'],
-            source = dict['source'],
-            quantity = dict['quantity'], 
-            date_from = dict['date_from'],
-            date_to = dict['date_to'],
-            language = dict['language'], 
-            sort_by = dict['sort_by'],
-            sa = dict['sa'],
-            type = dict['type']
-            )
-        print("^^^^^^....")
-    except exc.SQLAlchemyError as e:
-        print(e, e.origin, "ERROR11")
+    query = Query(user_id = user_id,
+        name = dict['name'],
+        source = dict['source'],
+        quantity = dict['quantity'], 
+        date_from = dict['date_from'],
+        date_to = dict['date_to'],
+        language = dict['language'], 
+        sort_by = dict['sort_by'],
+        sa = dict['sa'],
+        type = dict['type']
+        )
 
     return query
 
