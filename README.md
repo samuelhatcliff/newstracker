@@ -13,17 +13,25 @@
     [- ii. Flask's Server-Side Session with Redis](#flasks-server-side-session-with-redis)  
     [- iii. News-Api](#News-Api)  
     [- iv. Summary](#summary-1)  
-[IV. Challenges](#challenges)\
-    [- i. Limitations of NewsApi's Free Tier](#limitations-of-newsapis-free-tier)  
-    [- ii. Storage and State Deliberations: Postgres VS Client-Side Session VS Server-Side Session](#storage-and-state-deliberations-postgres-vs-client-side-session-vs-server-side-session)\
-    [- iii. Sentimental Analysis Accuracy: ](#sentimental-analysis-accuracy)
+[IV. Challenges/Reflections](#challengesreflections)\
+    [- i. Sentimental Analysis Accuracy](#sentimental-analysis-accuracy)\
+    [- ii. Limitations of NewsApi's Free Tier](#limitations-of-newsapis-free-tier)\
+    [- iii. Storage and State Deliberations: Postgres VS Client-Side Session VS Server-Side Session](#storage-and-state-deliberations-postgres-vs-client-side-session-vs-server-side-session)\
+[V. Future Ideas](#futureideas)\
+    [- i. Automatic Sentiment Analysis Scores for User Search Queries](#automatic-sentiment-analysis-scores-for-user-search-queries)\
+    [- ii. Macro-Analysis](#macro-analysis)\
+    [- iii. Integration of Twitter API](#integration-of-twitter-api)\
+    [- iv. React.js Front-End](#reactjs-front-end)
+
+    
 
 
-### Technology/Tools: 
-Python, Flask, SQLAlchemy, Redis, NewsAPI, NLTK, Newspaper, Multiprocessing, Axios, WTForms, CSS, Bootstrap.
+
+### Technology/Tools 
+Python, Flask, SQLAlchemy, Redis, Postgresql, NewsAPI, NLTK, Textblob, Newspaper, Multiprocessing, Javascript, Axios, WTForms, CSS, Bootstrap.
 
 
-### Summary: 
+### Summary 
   NewsTracker is an application designed to enhance and optimize the way a user interacts with news stories. 
   This is achieved primarily using a search engine that connects to [NewsAPI](https://newsapi.org/) which allows the user to narrow-down the content of their results.  
   
@@ -33,7 +41,7 @@ Python, Flask, SQLAlchemy, Redis, NewsAPI, NLTK, Newspaper, Multiprocessing, Axi
   Other features available to users include the ability to save stories that they want to refer back to later, save multiple search queries for easy-access through an accordian drop-down, and the ability to set one of said queries as a user's default so that their headline feed will be base its results off that query
   default so that the main headline page will show results based off of the user's default search query. 
 
-### Purpose: 
+### Purpose 
   The ability to run an advanced search query to display a specific type of story and store it permanently in a user's account could be beneficial for 
   anyone wanting to keep up with current events and/or investment opportunities. Getting Sentimental Analysis prior to reading a story has a variety of potential 
   benefits. Imagine the following scenarios:
@@ -53,22 +61,24 @@ Python, Flask, SQLAlchemy, Redis, NewsAPI, NLTK, Newspaper, Multiprocessing, Axi
     on their mental health, and want to expose themselves to more positive and uplifting news may use the polarity 
     feature to filter out negative stories. 
 
-  As you can see, there are many potential use-cases for NewsTracker that will only continue to increase as more features are added. I would note, however, 
-  that NLTK's Sentimental Analysis features are not perfect, and a user should not expect to get accurate results or insights 100% of the time. 
+ Although there are many different use cases that type of application might provide to its users, as described above, I also think it is important to mention that current NLP Sentiment Analysis capabilities aren't perfect, and a user should not expect to get accurate results or insights 100% of the time. A more thorough analysis of the accuracy of these features and how they might apply to each of the 4 scenarios outlined above can be found under the [Sentimental Analysis Accuracy](#sentimental-analysis-accuracy) section of this ReadMe. 
 
 
-## User-Flow: 
-### Non-Users:
+## User-Flow 
+### Non-Users
   The homepage of NewsTracker contains an easily accessible Demo User login button on the top right of the page, which allows a visitor to access the same feautures as a real user. Below are multiple Bootstrap carousels
   containing the top headlines for each category permitted to us by the News Api. Clicking on each story as they pass through the carousel results 
-  in said story opening up in a new window, while clicking the category name itself returns a feed of headlines containing the stories displayed in the carousel.  
-  <div></div>
+  in said story opening up in a new window, while clicking the category name itself returns a feed of headlines containing the stories displayed in the carousel. 
+  
 <img src="static/photos/non_user_flows/dummy-login.png" width="350">
 The left side of the page contains cards explaining various features of the app.
+
 <img src="static/photos/non_user_flows/non-user-intro.png" width="350">
 What the navbar looks like for someone that's not logged in to a user account. 
+
 <img src="static/photos/non_user_flows/non-user-nav.png" width="500">
 The search bar on the far right allows both non users and users to run a quick search for news stories by keyword. 
+
 <img src="static/photos/non_user_flows/simple-search.png" width="350">
 If a visitor would like to take advantage of the app's user-feautures and optimize their experience with a resuable account capable of permanently saving news stories and search preferences, they can use the `Register` or `Login` navbar links to create an account or log in. 
 <p>
@@ -76,7 +86,7 @@ If a visitor would like to take advantage of the app's user-feautures and optimi
 <img src="static/photos/non_user_flows/login.png" width="350">
 </p>
 
-### Users:
+### Users
   After logging in, a user will be redirected to `Headlines` which will either display a feed of general top headlines, or a feed of their results from their default search query, if they have set a default. 
   
   Below is a screenshot from a headlines feed where a user's default query is set to UK, and ordered by polarity. 
@@ -102,11 +112,12 @@ A user can now access and run this particular search query through the drop down
 
   Along with the option of filtering one's search results by polarity or subjectivity, a user may choose to get such sentimental analysis data on any individual stories
   wherever they are rendered, with the exception of the category-carousels on the home-page. 
+ <p>
  <img src="static/photos/user_flows/monkey-before.png" width="350">
  <img src="static/photos/user_flows/monkey-after.png" width="350">
+</p>
 
-
-## Data: 
+## Data 
 ### Postgresql/Flask-SqlAlchemy
 
   News Tracker uses a Postgresql database configured through Flask-Sqlalchemy on the backend to store information that we want to persist in our application regardless of the client. When reduced to the absolute minimum amount necessary for the application to work as envisioned, we are left only with information pertaining to a registered user. This is composed of information given by a user upon registration, as well as stories and search queries that they may have saved. In SQL terms, we are left with a simple schema containing 3 tables: `User`, `Story`, and `Query`, where `Story` and `Query` are associated with their respective user by a foreign key in a one-way, one-to-many relationsip.
@@ -143,7 +154,23 @@ After extracting the resulting data from the api, the data is saved to Flasks's 
 
 
 
-## Challenges: 
+## Challenges/Reflections 
+### Sentimental Analysis Accuracy
+  Referring back to the [Purpose](#purpose) section of this document, the target demographic of this application may be broken down into two types of people: Investors; as laid out in scenarios 1 and 3, and News Consumers, as laid out in scenarios 2 and 4. Let's first take a look at how newstracker's polarity feauture might be more or less useful for investors vs consumers of news. 
+  #### Polarity
+  Generally speaking, polarity results are probabilistically more likely to be useful for investors as opposed to politically active news consumers. This is because investors have a much more straightforward relationship with the companies they search for in that *news that is good for the company is good for them, and news that is bad for the company is bad for them*. A notable exception would be if an investor is shorting a company, to which the inverse of the above relationship can simply be applied. NLTK's Polarity analysis seems to do a decent job at recognizing when an advancement has been made by an organization or individual; whether its expansion, deals, agreements, the announcement of new services, etc. It also does a fair job at detecting when an organization or individual has experienced some sort of threat or loss. This is great if we're just dealing with investors, who hold the simple relationship with the topic of their search (likely to be a company or CEO) where good news from that specific keyword tends to signal a greater return on investment. 
+  
+  However, polarity becomes much more complex when the user is searching from the perspective of a politically-minded individual with a specific set of nuanced beliefs. For some, a story with the headline "Russia on the verge of running out of soldiers" would be considered "good news", for instance, but actually ends up being classfied as "Negative" because Russia, the subject and likely keyword of the story, is itself experiencing something negative. As is the case with politics, the failures of an enemy are often victories for a particular cause or individual. When viewed from the politically agnostic perspective of NLTK's polarity library, any positive 
+advancement or progress is viewed as positive. News events such as the passing of legislation are frequently intepreted as positive, even though the polarity of such things are entirely dependent on the values and beliefs of a particular user. Therefore, while the 4th scenario outlined in the [Purpose](#purpose) section might be somewhat useful, the subjective values of a user is simply too great of a factor to be ignored, making this usecase not all that attractive. 
+
+Something that might help remedy this problem would be to collect data on a user either through a survey, or allowing them to rate the accuracy of polarity results according to their taste, and adjust the polarity calculation of new stories accordingly. Although I think this is a fascinating problem, it's currently above my skillset to attempt to implement. If any readers know of any existing libraries, projects, or resources that might address these sorts of issues, do feel free message me! 
+
+    
+  #### Subjectivity
+  The accuracy of Textblob's subjectivity library is a bit more difficult to determine compared to NTLK's polarity library. For polarity analysis, our method of choice for checking if an output is accurate has been to hold it up against our own understanding of whether a story is positive or negative. It's a lot easier to look at an article (often just the headline is needed), absorb its semantic content, and determine if its a positive or negative development than it is to read an entire article and try to evaluate on our own where it lies on the spectrum of subjectivity. Because of this additional complexity, I personally haven't spent too much time assessing the accuracy of the app's subjectivity analysis at this point. It would be interesting to incorporate external projects and resources such as [Ad Fontes](https://adfontesmedia.com/) and [Media Bias/Fact Check](https://mediabiasfactcheck.com/reuters/) and evaluate how they compare to a macro-analysis of newstracker's subjectivity scores. 
+
+However, it shouldn't be forgotten that these NLP libraries are only capable of assessing how subjective the tone of a text is. An article could be littered with tons of false information, that if written in an objective tone without the use of subjective embellishments, would probably be classified as objective. The knowledge itself that these sorts of situations exist already somewhat hinders use cases #1 and #2. I'm inclined to categorize the situation where an article is written using false information stated as facts as more of an edge case that one should be aware of, rather than an instand disqualifier for the sort of utility described in scenarios #1 and #2. Any suggestions or resources that could be useful in evaluating the accuracy of Textblob's subjectivity library and how it can be applied to the usecases I've described is certainly welcome!
+
 ### Limitations of NewsApi's Free Tier
 #### Problem: Inability to access a story's full content.
   The free version of news API does not allow developers to access the entirety of a story's content, only providing the first few sentences. This is a huge problem for our app, since one of the key features we've imagined is to perform sentimental analysis on the body of each article, not just the headline or a few sentences! 
@@ -193,6 +220,19 @@ For example, story data from a user’s saved stories will be stored in the data
 
 #### Solution: Have SQLalchemy objects inherit uuids as primary key when created. 
 To remedy this, I made sure that SQLAlchemy objects and session dictionaries contain the same exact data. When the SQLAlchemy objects are created, the inherit the session ID generated by uuid as the primary key. Since these keys are 10 digits, it is extremely improbable that the same random id would be generated twice. If this application was actually widely used, I would probably implement some logic to call uuid() recursively if we get a SQLAlchemy error of violating the unique key restraint. 
+
+## Future Ideas
+### Automatic Sentiment Analysis Scores for User Search Queries
+In order to further optimize user experience, we could save the user some time by automatically running sentiment analysis on each topic that they have saved in their search queries, and display the average score associated with each query in their "My Queries" tab. This could save a ton of time and effort for a user whose primary concern is the average sentiment analysis of a particular topic, rather than getting results story-by-story. Messaging services could also be added to sent texts or emails to users alerting them of drastic shifts in sentiment. 
+
+### Macro-Analysis
+API requests could be scheduled using a chron scheduler to analyse as many breaking news stories as possible per day. Trends within companies, industries, countries, individuals, etc could be identified throughout time. For example, it might be interesting to be able to determine what company received the most positive press per a given year. Or which news source scored the highest or lowest in terms of subjectivity. A new SQL table confined only to the columns of sentiment analysis scores and keywords in order to save database memory. We could even narrow it down further by only storing the keyword/source, average score, and number of stories/scores that have been included in the average score. Each time a new story containing the keyword/source enters our app through an api call, we would simply calculate a new average and increment the quanitity of stories associated with the keyword/source by 1. 
+
+### Integration of Twitter API
+Twitter's API could provide users the ability to digest information in bite-sized pieces, and could be incorporated into the weighting of sentimental analysis. Twitter's API offers the content of a tweet in its http resonses, so there wouldn't be any need to implement webscraping and run parallel requests as was needed with news-api. Additionally, visual representations of such insights could be useful to investors, marketers, etc, and provide the user with a more enjoyable experience. 
+
+### React.js Front-End
+If I could build this app again from scratch, I would definitely include a front-end framework in order to make it more responsive and more efficiently re-use the same pieces of html and css. I chose to work the Jinja templates originally because I hadn't yet been introduced to React in my course. For the most part, Jinja works just fine with news tracker, but there are some pieces in particular that I find myself really wishing I was working with a front-end framework. For example, the detailed search form could be less cluttered if it was more responsive. 
+
   
-### Sentimental Analysis Accuracy: 
-  
+
