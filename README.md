@@ -17,8 +17,13 @@
     [- i. Sentimental Analysis Accuracy](#sentimental-analysis-accuracy)\
     [- ii. Limitations of NewsApi's Free Tier](#limitations-of-newsapis-free-tier)\
     [- iii. Storage and State Deliberations: Postgres VS Client-Side Session VS Server-Side Session](#storage-and-state-deliberations-postgres-vs-client-side-session-vs-server-side-session)\
-    [IV. Future Ideas](#futureideas)\
+[V. Future Ideas](#futureideas)\
+    [- i. Automatic Sentiment Analysis Scores for User Search Queries](#automatic-sentiment-analysis-scores-for-user-search-queries)\
+    [- ii. Macro-Analysis](#macro-analysis)\
+    [- iii. Integration of Twitter API] (#integration-of-twitter-api)
+    [- iv. React.js Front-End] (#react.js-front-end)
 
+    
 
 
 
@@ -218,7 +223,7 @@ To remedy this, I made sure that SQLAlchemy objects and session dictionaries con
 
 ## Future Ideas
 ### Automatic Sentiment Analysis Scores for User Search Queries
-In order to further optimize user experience, we could save the user some time by automatically running sentiment analysis on each topic that they have saved in their search queries, and display the average score associated with each query in their "My Queries" tab. This could save a ton of time and effort for a user whose primary concern is the average sentiment analysis of a particular topic, rather than getting results story-by-story. 
+In order to further optimize user experience, we could save the user some time by automatically running sentiment analysis on each topic that they have saved in their search queries, and display the average score associated with each query in their "My Queries" tab. This could save a ton of time and effort for a user whose primary concern is the average sentiment analysis of a particular topic, rather than getting results story-by-story. Messaging services could also be added to sent texts or emails to users alerting them of drastic shifts in sentiment. 
 
 ### Macro-Analysis
 API requests could be scheduled using a chron scheduler to analyse as many breaking news stories as possible per day. Trends within companies, industries, countries, individuals, etc could be identified throughout time. For example, it might be interesting to be able to determine what company received the most positive press per a given year. Or which news source scored the highest or lowest in terms of subjectivity. A new SQL table confined only to the columns of sentiment analysis scores and keywords in order to save database memory. We could even narrow it down further by only storing the keyword/source, average score, and number of stories/scores that have been included in the average score. Each time a new story containing the keyword/source enters our app through an api call, we would simply calculate a new average and increment the quanitity of stories associated with the keyword/source by 1. 
@@ -226,7 +231,7 @@ API requests could be scheduled using a chron scheduler to analyse as many break
 ### Integration of Twitter API
 Twitters API could provide users the ability to digest information in bite-sized pieces, and could be incorporated into the weighting of sentimental analysis. Twitter's API offers the content of a tweet in its http resonses, so there wouldn't be any need to implement webscraping and run parallel requests as was needed with news-api. Additionally, visual representations of such insights could be useful to investors, marketers, etc, and provide the user with a more enjoyable experience. 
 
-### React.js Integration
+### React.js Front-End
 If I could build this app again from scratch, I would definitely include a front-end framework in order to make it more responsive and more efficiently re-use the same pieces of html and css. I chose to work the Jinja templates originally because I hadn't yet been introduced to React in my course. For the most part, Jinja works just fine with news tracker, but there are some pieces in particular that I find myself really wishing I was working with a front-end framework. For example, the detailed search form could be less cluttered if it was more responsive. 
 
   
