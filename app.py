@@ -102,6 +102,7 @@ with app.app_context():
     @app.route('/')
     def homepage():
         # return redirect("/login")
+        print("test change")
         no_user = True
         if g.user:
             no_user = False
