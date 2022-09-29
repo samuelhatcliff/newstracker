@@ -1,7 +1,8 @@
 # flask, local, and system imports
 import os
+import redis
 from flask import Flask, request, render_template, flash, redirect, render_template, jsonify, session, g
-from flask_debugtoolbar import DebugToolbarExtension 
+# from flask_debugtoolbar import DebugToolbarExtension 
 from models import connect_db, db, User, Story, Query
 from flask_bcrypt import Bcrypt
 bcrypt = Bcrypt()
@@ -47,6 +48,8 @@ db.create_all()
 
 #server-side session
 from flask_session import Session
+SESSION_REDIS = redis.from_url(os.environ.get('SESSION_REDIS'))
+
 app.config['SESSION_TYPE'] = 'redis'
 app.config['SESSION_USE_SIGNER'] = True
 app.config['SESSION_PERMANENT'] = False
