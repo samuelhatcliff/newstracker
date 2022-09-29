@@ -1,6 +1,5 @@
 # flask, local, and system imports
 import os
-import creds
 from flask import Flask, request, render_template, flash, redirect, render_template, jsonify, session, g
 from flask_debugtoolbar import DebugToolbarExtension 
 from models import connect_db, db, User, Story, Query
@@ -22,18 +21,23 @@ from helpers import *
 # set-up app
 CURR_USER_KEY = "curr_user"
 app = Flask(__name__)
-production = False
-if not production:
+production = True
+# if not production:
+#     import creds
+#     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+#         'DATABASE_URL', 'postgresql:///news-tracker7')
+#     app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY", creds.secret_key)
+#     secret_key = os.environ.get(creds.secret_key)
+
+
+if production:
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
         'DATABASE_URL', 'postgresql:///news-tracker7')
-else:
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-        'DATABASE_URL', 'postgresql:///news-tracker7').replace("://", "ql://", 1)
+    app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
+
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
-secret_key = os.environ.get(creds.secret_key)
-app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY", creds.secret_key)
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
 
 
