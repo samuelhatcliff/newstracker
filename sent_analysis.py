@@ -1,14 +1,16 @@
 # libraries for parsing and sentiment analysis
 import nltk
-from textblob import TextBlob
-from nltk.sentiment.vader import SentimentIntensityAnalyzer as SIA
-from nltk.corpus import stopwords
-from newspaper import Article
-sia = SIA()
 # nltk corupus downloads
 nltk.download('vader_lexicon')
 nltk.download('stopwords')
 nltk.download('punkt')
+from nltk.sentiment.vader import SentimentIntensityAnalyzer as SIA
+sia = SIA()
+
+from textblob import TextBlob
+from nltk.corpus import stopwords
+from newspaper import Article
+
 # utility 
 from multiprocessing.dummy import Pool as ThreadPool
 import re
