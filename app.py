@@ -48,9 +48,10 @@ db.create_all()
 
 #server-side session
 from flask_session import Session
-SESSION_REDIS = redis.from_url(os.environ.get('SESSION_REDIS'))
 
 app.config['SESSION_TYPE'] = 'redis'
+app.config['SESSION_REDIS'] = redis.from_url(os.environ.get('REDIS_URL'))
+
 app.config['SESSION_USE_SIGNER'] = True
 app.config['SESSION_PERMANENT'] = False
 
