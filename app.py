@@ -51,11 +51,10 @@ from flask_session import Session
 
 app.config['SESSION_TYPE'] = 'redis'
 app.config['SESSION_REDIS'] = redis.from_url(os.environ.get('REDIS_URL'))
-
 app.config['SESSION_USE_SIGNER'] = True
 app.config['SESSION_PERMANENT'] = False
 
-
+print('test')
 server_session = Session(app)
 
 
