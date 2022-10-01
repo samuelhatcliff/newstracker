@@ -297,24 +297,37 @@ def login_user():
 
 @app.route('/login/demo', methods=['POST'])
 def login_demo_user():
-    username = 'demo-user'
+    random = uuid.uuid4().hex[:8]
+    username = f"demo-user{random}"
     password = 'demouser'
-    user = User.authenticate(username, password)
-    if user:
-        do_login(user)
-        return redirect('/headlines')
-    else:
-        print("Something went wrong when trying to authenticate demo user. Attemping registration.")
-        try:
-            User.register(
-                username, password, 'demo@user.com', 'demo', 'user')
-            user = User.authenticate(username, password)
-            if user:
-                do_login(user)
-                return redirect('/headlines')
-        except:
-            print("something went wrong when trying to register demo user")
-    return redirect('/login')
+    first_name = "first"
+    last_name = "name"
+    email = f"demo{random}@user.com"
+    demo_user = User.register(
+            username, password, email, first_name, last_name)
+    db.session.commit()
+    db.session.add(demo_user)
+    db.session.commit()
+    do_login(demo_user)
+    return redirect('/headlines')  
+    # username = 'demo-user'
+    # password = 'demouser'
+    # user = User.authenticate(username, password)
+    # if user:
+    #     do_login(user)
+    #     return redirect('/headlines')
+    # else:
+    #     print("Something went wrong when trying to authenticate demo user. Attemping registration.")
+    #     try:
+    #         User.register(
+    #             username, password, 'demo@user.com', 'demo', 'user')
+    #         user = User.authenticate(username, password)
+    #         if user:
+    #             do_login(user)
+    #             return redirect('/headlines')
+    #     except:
+    #         print("something went wrong when trying to register demo user")
+    # return redirect('/login')
 
 
 @app.route('/logout')
