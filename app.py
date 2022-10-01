@@ -58,27 +58,7 @@ print('test')
 server_session = Session(app)
 
 
-# Todo:
 
-# rewrite session results as object to increase speed of look-up
-# write logic for if saved query is current date: to = None
-# Redeploy!
-# re-write polarity ordering
-# write else statement for if user not in session
-# Redeploy!
-# add more error handling, testing
-# Redeploy!
-# more permanent fix for slideshows
-# create separate .env file for app config 
-# change the date_from to automatically be one month out from present day, newstracker free tier only allows for one month in the past 
-
-
-
-# When deploying:
-# watch out for <link rel="stylesheet" href="http://127.0.0.1:5000/static/app.css"> that links css file. the absolute
-# path of the local route was included to fix nested routes bootstrap bug. figure out how to fix this in production
-# make sure api key is hidden and works
-# connect redis to heroku
 
 #TODONOW: 
 #-rewrite code and distinguish between session['saved] and session['results]
