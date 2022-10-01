@@ -36,7 +36,7 @@ def delete_all_users():
 @app.route('/users/<int:user_id>', methods=["GET"])
 def get_user(user_id):
     """Gets a user by user_id"""
-    user = User.query.get(user_id)
+    user = User.query.get_or_404(user_id)
     dict = db_user_to_dict(user)
     return jsonify(user = dict)
 
@@ -113,7 +113,7 @@ def new_query(user_id):
 @app.route('/users/<int:user_id>/queries/', methods=["GET"])
 def get_all_queries_by_user(user_id):
     """Gets all queries matching user_id"""
-    user = User.query.get(user_id)
+    user = User.query.get_or_404(user_id)
     queries = user.queries
     dict_list = [db_query_to_dict(query) for query in queries]
     return jsonify(queries = dict_list)    
@@ -178,7 +178,7 @@ def new_story(user_id):
 @app.route('/users/<int:user_id>/stories/', methods=["GET"])
 def get_all_stories_by_user(user_id):
     """Gets all queries matching user_id"""
-    user = User.query.get(user_id)
+    user = User.query.get_or_404(user_id)
     stories = user.stories
     dict_list = [db_story_to_dict(story) for story in stories]
     return jsonify(stories = dict_list)    
@@ -187,7 +187,7 @@ def get_all_stories_by_user(user_id):
 def edit_story(user_id, story_id):
     """Edits a User Story by User and Query ids"""
     data = request.json['query']
-    story = Story.query.get(story_id)
+    story = Story.query.get_or_404(story_id)
     try:
         if user_id != story.user_id:
             raise ValueError("The user id is not associated with the story id.")
@@ -209,7 +209,7 @@ def edit_story(user_id, story_id):
 @app.route('/users/<int:user_id>/queries/<int:story_id>/delete', methods=["DELETE"])
 def delete_story(user_id, story_id):
     """Deletes a User Story by User and Query ids"""
-    story = Query.query.get(story_id)
+    story = Query.query.get_or_404(story_id)
     try:
         if user_id != story.user_id:
             raise ValueError("The user id is not associated with the story id.")
@@ -237,7 +237,7 @@ def get_all_queries():
 @app.route('/queries/<int:query_id>', methods=["GET"])
 def get_query(query_id):
     """Gets a query by query_id"""
-    query = Query.query.get(query_id)
+    query = Query.query.get_or_404(query_id)
     dict = db_query_to_dict(query)
     return jsonify(query= dict)
 
@@ -254,7 +254,7 @@ def get_all_stories():
 @app.route('/stories/<story_id>', methods=["GET"]) #story ids are non-numerical as they are inherited from sessions randomly generated uuid() ids
 def get_story(story_id):
     """Gets story by story id"""
-    story = Story.query.get(story_id)
+    story = Story.query.get_or_404(story_id)
     dict = db_story_to_dict(story)
     return jsonify(story = dict)
 

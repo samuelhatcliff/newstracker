@@ -310,24 +310,6 @@ def login_demo_user():
     db.session.commit()
     do_login(demo_user)
     return redirect('/headlines')  
-    # username = 'demo-user'
-    # password = 'demouser'
-    # user = User.authenticate(username, password)
-    # if user:
-    #     do_login(user)
-    #     return redirect('/headlines')
-    # else:
-    #     print("Something went wrong when trying to authenticate demo user. Attemping registration.")
-    #     try:
-    #         User.register(
-    #             username, password, 'demo@user.com', 'demo', 'user')
-    #         user = User.authenticate(username, password)
-    #         if user:
-    #             do_login(user)
-    #             return redirect('/headlines')
-    #     except:
-    #         print("something went wrong when trying to register demo user")
-    # return redirect('/login')
 
 
 @app.route('/logout')
