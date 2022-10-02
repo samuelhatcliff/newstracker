@@ -21,3 +21,7 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
+    SQLALCHEMY_DATABASE_URI = 'postgresql:///newstracker-test'
+    SQLALCHEMY_ECHO = False
+    DEBUG_TB_HOSTS= ['dont-show-debug-toolbar']
+    WTF_CSRF_ENABLED = False
