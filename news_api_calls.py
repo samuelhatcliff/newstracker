@@ -6,12 +6,12 @@ from newsapi.newsapi_client import NewsApiClient
 from dateutil import parser
 # newsApi imports
 from newsapi.newsapi_client import NewsApiClient
-production = True
-if not production:
-    import creds
-    my_api_key = os.environ.get("API_KEY", creds.api_key)
-else:
-    my_api_key = os.environ.get("API_KEY")
+# production = True
+# if not production:
+#     import creds
+#     my_api_key = os.environ.get("API_KEY", creds.api_key)
+# else:
+my_api_key = os.environ.get("API_KEY")
 
 newsapi = NewsApiClient(api_key=my_api_key)
 #async imports
