@@ -4,8 +4,10 @@ load_dotenv()
 from flask import Flask, request, render_template, flash, redirect, render_template, jsonify, session, g
 app = Flask(__name__)
 if app.config["ENV"] == "production":
+    print("IN PRODUCTION 2222")
     app.config.from_object('config.ProductionConfig')
 elif app.config["ENV"] == "development":
+    print("IN DEVELOPMENT 11111")
     app.config.from_object('config.DevelopmentConfig')
 else:
     app.config.from_object('config.TestingConfig')

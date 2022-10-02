@@ -1,5 +1,6 @@
 import os 
 import redis
+
 class Config(object):
     DEBUG = False
     TESTING = False
@@ -11,13 +12,14 @@ class Config(object):
     SESSION_USE_SIGNER = True
     SESSION_PERMANENT = False
 
-class ProductionConfig(Config):
-    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
-    SESSION_REDIS = redis.from_url(os.getenv('REDIS_URL'))
-
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = 'postgresql:///news-tracker7'
+    SESSION_REDIS = redis.from_url('redis://localhost:6379')
+
+class ProductionConfig(Config):
+    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
+    SESSION_REDIS = redis.from_url(os.getenv('REDIS_URL', 'redis://localhost:6379')) #2nd argument for local db is necessary for some reason because the production version keeps getting called in development.
 
 class TestingConfig(Config):
     TESTING = True
