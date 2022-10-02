@@ -10,6 +10,8 @@ newsapi = NewsApiClient(api_key=my_api_key)
 #async imports
 from multiprocessing.dummy import Pool as ThreadPool
 
+
+"""Individual functions for handling API response data"""
 def collect_results(articles):
     results = []
     for article in articles:
@@ -32,7 +34,6 @@ def collect_results(articles):
         results.append(story)
     return results
 
-
 def save_to_session(articles):
     """Saves results from api calls as a list of session objects"""
     if "results" in session: # clears previous session results if they exist
@@ -43,15 +44,6 @@ def save_to_session(articles):
 
 
 """Individual functions for separate types of API Calls"""
-def async_reqs(query):
-    """Executes Asyncronous API requests for cat_calls"""
-    pool = ThreadPool(10)
-    results = pool.map(cat_calls, query)
-    pool.close()
-    pool.join()
-    return results
-
-
 def cat_calls(query, slideshow = True):
     """API call to get generalized headlines for a specific catagory"""
     data = newsapi.get_top_headlines(language="en", category=f"{query}")
@@ -61,7 +53,6 @@ def cat_calls(query, slideshow = True):
         return data
     saved = save_to_session(articles)
     return saved
-
 
 def top_headlines_call():
     """API call to get top headlines for all categories"""
@@ -77,7 +68,6 @@ def simple_search_call(query):
     spliced = articles[:10]
     saved = save_to_session(spliced)
     return saved
-
 
 def advanced_search_call(query):
     from_ = str(query['date_from'])
@@ -104,3 +94,12 @@ def advanced_search_call(query):
     spliced = articles[:quantity]
     saved = save_to_session(spliced)
     return saved
+
+
+"""Executes Asyncronous API requests for cat_calls"""
+def async_reqs(query):
+    pool = ThreadPool(10)
+    results = pool.map(cat_calls, query)
+    pool.close()
+    pool.join()
+    return results
