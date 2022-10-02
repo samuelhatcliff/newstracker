@@ -19,3 +19,5 @@ class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = 'postgresql:///news-tracker7'
 
+class TestingConfig(Config):
+    TESTING = True
