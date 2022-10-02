@@ -13,11 +13,9 @@ class Config(object):
 
 class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
-    SESSION_REDIS = redis.from_url(os.environ.get('REDIS_URL'))
+    SESSION_REDIS = redis.from_url(os.getenv('REDIS_URL'))
 
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = 'postgresql:///news-tracker7'
 
-class TestingConfig(Config):
-    TESTING = True
