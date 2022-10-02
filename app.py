@@ -1,21 +1,17 @@
-# flask, local, and system imports
-import os
+# flask, config, and env imports
 from dotenv import load_dotenv
 load_dotenv()
 from flask import Flask, request, render_template, flash, redirect, render_template, jsonify, session, g
 app = Flask(__name__)
 if app.config["ENV"] == "production":
     app.config.from_object('config.ProductionConfig')
-else:
+elif app.config["ENV"] == "development":
     app.config.from_object('config.DevelopmentConfig')
-
-import redis
-# from flask_debugtoolbar import DebugToolbarExtension 
-from models import connect_db, db, User, Story, Query
-from flask_bcrypt import Bcrypt
-bcrypt = Bcrypt()
+else:
+    app.config.from_object('config.TestingConfig')
 
 # imports from other modules in directory
+from models import connect_db, db, User, Story, Query
 from forms import RegisterForm, LoginForm, SearchForm
 from news_api_calls import *
 from sent_analysis import subjectize, polarize
@@ -29,44 +25,12 @@ from helpers import *
 
 # set-up app
 CURR_USER_KEY = "curr_user"
-production = True
-# if not production:
-#     import creds
-#     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-#         'DATABASE_URL', 'postgresql:///news-tracker7')
-#     app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY", creds.secret_key)
-#     secret_key = os.environ.get(creds.secret_key)
-
-
-# if production:
-#     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-#         'DATABASE_URL', 'postgresql:///news-tracker7')
-#     app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
-
-
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# app.config['SQLALCHEMY_ECHO'] = True
-# app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
-
-# app.config['SESSION_TYPE'] = 'redis'
-# app.config['SESSION_REDIS'] = redis.from_url(os.environ.get('REDIS_URL'))
-# app.config['SESSION_USE_SIGNER'] = True
-# app.config['SESSION_PERMANENT'] = False
-
 connect_db(app)
-# db.drop_all()
 db.create_all()
 
 #server-side session
 from flask_session import Session
-
-
-
-print('test')
 server_session = Session(app)
-
-
-
 
 #TODONOW: 
 #-rewrite code and distinguish between session['saved] and session['results]
