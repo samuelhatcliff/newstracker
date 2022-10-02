@@ -1,4 +1,3 @@
-
 """Restful Server-Side API"""
 
 from flask import request, jsonify

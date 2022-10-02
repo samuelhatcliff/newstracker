@@ -10,15 +10,17 @@ elif app.config["ENV"] == "development":
 else:
     app.config.from_object('config.TestingConfig')
 
-CURR_USER_KEY = "curr_user"
-
 #server-side session
+CURR_USER_KEY = "curr_user"
 from flask_session import Session
 server_session = Session(app)
 
+#db set-up
 from models import connect_db, db
 connect_db(app)
 db.create_all()
-from views import sa_views, site_views
+
+#view imports
+from views import sa_views, site_views, api
 
 #todo: write app.before_request middleware for security, include here 
